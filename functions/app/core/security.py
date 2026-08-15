@@ -1,4 +1,4 @@
-"""Middleware de seguridad: verificación de ID Tokens de Firebase Auth y RBAC por Custom Claims."""
+"""Security middleware: Firebase Auth ID Token verification and RBAC via Custom Claims."""
 
 from dataclasses import dataclass
 
@@ -6,7 +6,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth as firebase_auth
 
-from app.core import firebase as _firebase_init  # noqa: F401  (garantiza la inicialización del Admin SDK)
+from app.core import firebase as _firebase_init  # noqa: F401  (ensures the Admin SDK is initialized)
 
 _bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -19,7 +19,7 @@ class CurrentUser:
     email: str | None
     name: str | None
     picture: str | None
-    role: str
+    role: str | None
 
 
 def get_current_user(
@@ -28,7 +28,7 @@ def get_current_user(
     if credentials is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Falta el token de autenticación",
+            detail="Missing authentication token",
         )
 
     try:
@@ -36,10 +36,10 @@ def get_current_user(
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token inválido o expirado",
+            detail="Invalid or expired token",
         ) from exc
 
-    role = decoded.get("role") if decoded.get("role") in ROLES else "user"
+    role = decoded.get("role") if decoded.get("role") in ROLES else None
 
     return CurrentUser(
         uid=decoded["uid"],
@@ -51,13 +51,13 @@ def get_current_user(
 
 
 def require_role(*allowed_roles: str):
-    """Dependencia factory: restringe el endpoint a los roles indicados."""
+    """Dependency factory: restricts the endpoint to the given roles."""
 
     def dependency(user: CurrentUser = Depends(get_current_user)) -> CurrentUser:
         if user.role not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="No tienes permisos suficientes para acceder a este recurso",
+                detail="You don't have enough permissions to access this resource",
             )
         return user
 

@@ -1,0 +1,130 @@
+{
+  "app": {
+    "name": "ElosuE!",
+    "tagline": "Gestión del hogar",
+    "title": "ElosuE! - Gestión del hogar"
+  },
+  "login": {
+    "loginWithGoogle": "Iniciar sesión con Google",
+    "loginError": "No se ha podido iniciar sesión. Inténtalo de nuevo."
+  },
+  "pending": {
+    "message": "Tu cuenta está pendiente de aprobación por un administrador. En cuanto se te asigne un rol podrás acceder a la aplicación.",
+    "logout": "Cerrar sesión"
+  },
+  "sidebar": {
+    "home": "Inicio",
+    "finance": "Caja Fuerte",
+    "financeSummary": "Resumen",
+    "financeTransactions": "Movimientos",
+    "financeReview": "Revisión",
+    "calendar": "Calendario",
+    "schedule": "Horarios",
+    "settings": "Configuración",
+    "users": "Usuarios",
+    "reset": "Restablecer",
+    "collapseMenu": "Colapsar menú",
+    "expandMenu": "Expandir menú",
+    "logout": "Cerrar sesión"
+  },
+  "home": {
+    "greeting": "Hola, {name}",
+    "summary": "Resumen general del hogar (próximamente)."
+  },
+  "finance": {
+    "title": "Caja Fuerte",
+    "balance": "Saldo actual",
+    "recentMovements": "Últimos movimientos",
+    "noMovements": "Todavía no hay movimientos.",
+    "addMovement": "Añadir movimiento",
+    "loadError": "No se ha podido cargar la información de la caja fuerte.",
+    "types": {
+      "expense": "Gasto",
+      "income": "Ingreso",
+      "adjustment": "Ajuste"
+    },
+    "methods": {
+      "cash": "Efectivo",
+      "card": "Tarjeta"
+    },
+    "statuses": {
+      "draft": "Borrador",
+      "confirmed": "Confirmado"
+    },
+    "fields": {
+      "type": "Tipo",
+      "method": "Método de pago",
+      "amount": "Importe",
+      "description": "Concepto",
+      "date": "Fecha",
+      "status": "Estado",
+      "createdBy": "Creado por",
+      "actions": "Acciones"
+    },
+    "form": {
+      "newTitle": "Nuevo movimiento",
+      "editTitle": "Editar movimiento",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "saveError": "No se ha podido guardar el movimiento."
+    },
+    "transactions": {
+      "title": "Movimientos",
+      "loadError": "No se ha podido cargar el listado de movimientos.",
+      "loadMore": "Cargar más"
+    },
+    "review": {
+      "title": "Revisión",
+      "empty": "No hay movimientos pendientes de revisión.",
+      "loadError": "No se ha podido cargar el listado de revisión."
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "confirmMovement": "Confirmar movimiento",
+      "confirmDelete": "¿Seguro que quieres eliminar «{description}»? Esta acción no se puede deshacer.",
+      "deleteError": "No se ha podido eliminar el movimiento.",
+      "confirmError": "No se ha podido confirmar el movimiento."
+    }
+  },
+  "calendar": {
+    "title": "Calendario",
+    "comingSoon": "Módulo de calendario: próximamente."
+  },
+  "schedule": {
+    "title": "Horarios",
+    "comingSoon": "Módulo de horarios: próximamente."
+  },
+  "users": {
+    "title": "Gestión de usuarios",
+    "filters": {
+      "active": "Activos",
+      "new": "Usuarios nuevos",
+      "inactive": "Inactivos"
+    },
+    "columns": {
+      "user": "Usuario",
+      "email": "Email",
+      "role": "Rol",
+      "active": "Activo"
+    },
+    "noRole": "Sin rol",
+    "roles": {
+      "admin": "Admin",
+      "manager": "Manager",
+      "user": "User"
+    },
+    "loadError": "No se ha podido cargar el listado de miembros.",
+    "roleUpdateError": "No se ha podido actualizar el rol de {email}.",
+    "activeUpdateError": "No se ha podido actualizar el estado de {email}."
+  },
+  "settings": {
+    "reset": {
+      "title": "Restablecer aplicación",
+      "warning": "Esta acción restablece la aplicación a su estado de fábrica: se eliminarán TODOS los movimientos de la Caja Fuerte y TODOS los usuarios registrados (la tabla de usuarios completa), incluida tu propia cuenta y la sesión actual. Esta acción no se puede deshacer. Tras restablecer, tendrás que volver a iniciar sesión y se te asignará de nuevo el rol de administrador como primer usuario.",
+      "confirmLabel": "Escribe {word} para confirmar",
+      "submit": "Restablecer aplicación",
+      "error": "No se ha podido restablecer la aplicación."
+    }
+  }
+}

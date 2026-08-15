@@ -8,12 +8,17 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   const isLoginPage = to.path === "/";
+  const isPendingPage = to.path === "/pending";
 
-  if (!authStore.isAuthenticated && !isLoginPage) {
-    return navigateTo("/");
+  if (!authStore.isAuthenticated) {
+    return isLoginPage ? undefined : navigateTo("/");
   }
 
-  if (authStore.isAuthenticated && isLoginPage) {
-    return navigateTo("/inicio");
+  if (!authStore.isApproved) {
+    return isPendingPage ? undefined : navigateTo("/pending");
+  }
+
+  if (isLoginPage || isPendingPage) {
+    return navigateTo("/home");
   }
 });

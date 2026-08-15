@@ -9,6 +9,7 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
+    "@nuxtjs/i18n": "^10.6.0",
     "@pinia/nuxt": "^0.5.5",
     "firebase": "^10.14.0",
     "nuxt-primevue": "^3.0.0",

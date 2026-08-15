@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import AppLogo from "~/core/components/AppLogo.vue";
 import GithubLink from "~/core/components/GithubLink.vue";
 import { useAuthStore } from "~/core/stores/auth";
 
 definePageMeta({ layout: false });
 
 const authStore = useAuthStore();
+const { t } = useI18n();
 const loading = ref(false);
 const errorMessage = ref("");
 
@@ -13,9 +15,9 @@ async function handleLogin() {
   errorMessage.value = "";
   try {
     await authStore.loginWithGoogle();
-    await navigateTo("/inicio");
+    await navigateTo("/home");
   } catch (error) {
-    errorMessage.value = "No se ha podido iniciar sesión. Inténtalo de nuevo.";
+    errorMessage.value = t("login.loginError");
   } finally {
     loading.value = false;
   }
@@ -23,13 +25,13 @@ async function handleLogin() {
 </script>
 
 <template>
-  <div class="relative flex min-h-screen flex-col items-center justify-center gap-8 bg-slate-50 px-4">
+  <div class="relative flex min-h-svh flex-col items-center justify-center gap-8 bg-slate-50 px-4">
     <GithubLink class="fixed right-4 top-4" size="h-6 w-6" />
 
-    <img :src="'/img/logo-home.svg'" alt="ElosuE! - Gestión del hogar" />
+    <AppLogo />
 
     <Button
-      label="Iniciar sesión con Google"
+      :label="t('login.loginWithGoogle')"
       icon="pi pi-google"
       :loading="loading"
       @click="handleLogin"

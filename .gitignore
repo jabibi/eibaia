@@ -2,11 +2,12 @@
 .claude/
 *.log
 
-# Frontend (Nuxt)
-frontend/node_modules/
-frontend/.nuxt/
-frontend/.output/
-frontend/dist/
+# Frontend (Nuxt) — unanchored so they also match under frontend/src (custom srcDir)
+node_modules/
+.nuxt/
+.output/
+dist/
+frontend/dist
 
 # Backend (Python)
 functions/venv/

@@ -5,13 +5,19 @@ export default defineNuxtConfig({
 
   ssr: false,
 
-  modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "nuxt-primevue"],
+  modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "nuxt-primevue", "@nuxtjs/i18n"],
+
+  i18n: {
+    locales: [{ code: "es", name: "Español", file: "es.json" }],
+    defaultLocale: "es",
+    strategy: "no_prefix",
+  },
 
   css: [
+    "~/assets/css/main.css",
     "primevue/resources/themes/lara-light-indigo/theme.css",
     "primevue/resources/primevue.min.css",
     "primeicons/primeicons.css",
-    "~/assets/css/main.css",
   ],
 
   primevue: {

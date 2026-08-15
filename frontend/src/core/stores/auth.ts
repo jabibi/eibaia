@@ -10,19 +10,20 @@ export type Role = "admin" | "manager" | "user";
 
 interface AuthState {
   user: User | null;
-  role: Role;
+  role: Role | null;
   ready: boolean;
 }
 
 export const useAuthStore = defineStore("auth", {
   state: (): AuthState => ({
     user: null,
-    role: "user",
+    role: null,
     ready: false,
   }),
 
   getters: {
     isAuthenticated: (state) => state.user !== null,
+    isApproved: (state) => state.role !== null,
     isAdmin: (state) => state.role === "admin",
     isManager: (state) => state.role === "admin" || state.role === "manager",
   },
@@ -34,7 +35,7 @@ export const useAuthStore = defineStore("auth", {
       return new Promise<void>((resolve) => {
         onAuthStateChanged($firebaseAuth, async (user) => {
           this.user = user;
-          this.role = await resolveRole(user);
+          this.role = user ? await syncRole(user) : null;
           this.ready = true;
           resolve();
         });
@@ -45,14 +46,14 @@ export const useAuthStore = defineStore("auth", {
       const { $firebaseAuth, $googleProvider } = useNuxtApp();
       const { user } = await signInWithPopup($firebaseAuth, $googleProvider);
       this.user = user;
-      this.role = await resolveRole(user);
+      this.role = await syncRole(user);
     },
 
     async logout() {
       const { $firebaseAuth } = useNuxtApp();
       await signOut($firebaseAuth);
       this.user = null;
-      this.role = "user";
+      this.role = null;
     },
 
     async getIdToken(forceRefresh = false) {
@@ -61,8 +62,35 @@ export const useAuthStore = defineStore("auth", {
   },
 });
 
-async function resolveRole(user: User | null): Promise<Role> {
-  if (!user) return "user";
+async function resolveRole(user: User): Promise<Role | null> {
   const { claims } = await user.getIdTokenResult();
-  return (claims.role as Role) ?? "user";
+  return (claims.role as Role) ?? null;
+}
+
+/**
+ * Resolves the role from the token and cross-checks it against the backend, which may
+ * promote the first-ever registered user to admin (see ensure_first_admin). If the backend
+ * returns a different role, forces an ID token refresh. A `null` role means no role has been
+ * assigned yet (no access).
+ */
+async function syncRole(user: User): Promise<Role | null> {
+  const tokenRole = await resolveRole(user);
+
+  try {
+    const config = useRuntimeConfig();
+    const token = await user.getIdToken();
+    const profile = await $fetch<{ role: Role | null }>("/users/me", {
+      baseURL: config.public.apiBase,
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (profile.role !== tokenRole) {
+      await user.getIdToken(true);
+      return profile.role;
+    }
+  } catch {
+    // Backend unavailable: fall back to the token's role.
+  }
+
+  return tokenRole;
 }

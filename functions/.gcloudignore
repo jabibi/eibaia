@@ -1,0 +1,10 @@
+.gcloudignore
+.git
+.gitignore
+venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+.env
+serviceAccountKey.json
+*firebase-adminsdk*.json

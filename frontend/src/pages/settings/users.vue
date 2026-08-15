@@ -4,8 +4,8 @@ import UsersAdmin from "~/modules/users/views/UsersAdmin.vue";
 
 const authStore = useAuthStore();
 
-if (!authStore.isManager) {
-  await navigateTo("/inicio");
+if (!authStore.isAdmin) {
+  await navigateTo("/home");
 }
 </script>
 

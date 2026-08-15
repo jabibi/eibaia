@@ -1,8 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="120 55 260 370" width="260" height="370">
   <defs>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap');
-      
       .brand-title {
         font-family: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Arial, sans-serif;
         font-weight: 800;

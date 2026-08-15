@@ -1,4 +1,4 @@
-"""Inicialización del Firebase Admin SDK (singleton compartido por toda la app)."""
+"""Firebase Admin SDK initialization (singleton shared across the app)."""
 
 from pathlib import Path
 
@@ -9,10 +9,10 @@ _LOCAL_SERVICE_ACCOUNT = Path(__file__).resolve().parents[2] / "serviceAccountKe
 
 if not firebase_admin._apps:
     if _LOCAL_SERVICE_ACCOUNT.exists():
-        # Desarrollo local: credenciales explícitas de la cuenta de servicio.
+        # Local development: explicit service account credentials.
         firebase_admin.initialize_app(credentials.Certificate(str(_LOCAL_SERVICE_ACCOUNT)))
     else:
-        # Cloud Functions: credenciales por defecto del entorno gestionado.
+        # Cloud Functions: default credentials from the managed environment.
         firebase_admin.initialize_app()
 
 

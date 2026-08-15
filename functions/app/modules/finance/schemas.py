@@ -1,0 +1,52 @@
+from datetime import date as Date
+from typing import Literal
+
+from pydantic import BaseModel
+
+MovementType = Literal["expense", "income", "adjustment"]
+PaymentMethod = Literal["cash", "card"]
+MovementStatus = Literal["draft", "confirmed"]
+
+
+class MovementIn(BaseModel):
+    type: MovementType
+    method: PaymentMethod | None = None
+    amount_cents: int
+    description: str
+    date: Date
+
+
+class MovementUpdateIn(BaseModel):
+    type: MovementType | None = None
+    method: PaymentMethod | None = None
+    amount_cents: int | None = None
+    description: str | None = None
+    date: Date | None = None
+
+
+class StatusUpdateIn(BaseModel):
+    status: Literal["confirmed"]
+
+
+class MovementOut(BaseModel):
+    id: str
+    type: MovementType
+    method: PaymentMethod | None
+    amount_cents: int
+    description: str
+    date: Date
+    status: MovementStatus
+    created_by: str
+    created_by_name: str | None
+    created_at: str | None
+    reviewed_by: str | None = None
+    reviewed_at: str | None = None
+
+
+class MovementListOut(BaseModel):
+    movements: list[MovementOut]
+    next_page_token: str | None = None
+
+
+class BalanceOut(BaseModel):
+    balance_cents: int
