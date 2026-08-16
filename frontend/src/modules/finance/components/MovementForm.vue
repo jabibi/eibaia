@@ -6,6 +6,7 @@ const props = defineProps<{ movementId?: string }>();
 
 const { t } = useI18n();
 const router = useRouter();
+const route = useRoute();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -81,7 +82,12 @@ async function handleSubmit() {
   }
 }
 
-onMounted(loadExisting);
+onMounted(() => {
+  if (!props.movementId && route.query.type === "card") {
+    method.value = "card";
+  }
+  loadExisting();
+});
 </script>
 
 <template>

@@ -3,6 +3,7 @@ import { apiFetch } from "~/core/api/http";
 export type MovementType = "expense" | "income" | "adjustment";
 export type PaymentMethod = "cash" | "card";
 export type MovementStatus = "draft" | "confirmed";
+export type MovementScope = "cash" | "card";
 
 export interface Movement {
   id: string;
@@ -34,17 +35,25 @@ interface MovementListResponse {
   next_page_token: string | null;
 }
 
-export function getBalance() {
-  return apiFetch<{ balance_cents: number }>("/finance/balance");
+export interface MonthlyStat {
+  total_cents: number;
+  count: number;
 }
 
-export function getRecentMovements(limit = 10) {
-  return apiFetch<Movement[]>("/finance/movements/recent", { query: { limit } });
+export interface FinanceSummary {
+  balance_cents: number;
+  cash_expenses_month: MonthlyStat;
+  card_expenses_month: MonthlyStat;
+  pending_drafts_count: number;
 }
 
-export function listMovements(pageToken?: string | null, status?: MovementStatus) {
+export function getSummary() {
+  return apiFetch<FinanceSummary>("/finance/summary");
+}
+
+export function listMovements(pageToken?: string | null, status?: MovementStatus, scope?: MovementScope) {
   return apiFetch<MovementListResponse>("/finance/movements", {
-    query: { page_token: pageToken ?? undefined, status },
+    query: { page_token: pageToken ?? undefined, status, scope },
   });
 }
 

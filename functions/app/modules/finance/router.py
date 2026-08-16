@@ -4,10 +4,11 @@ from app.core.security import CurrentUser, require_role
 
 from . import services
 from .schemas import (
-    BalanceOut,
+    FinanceSummaryOut,
     MovementIn,
     MovementListOut,
     MovementOut,
+    MovementScope,
     MovementStatus,
     MovementUpdateIn,
     StatusUpdateIn,
@@ -36,23 +37,19 @@ def _can_mutate(user: CurrentUser, data: dict) -> bool:
     return data["created_by"] == user.uid and data["status"] == "draft"
 
 
-@router.get("/balance", response_model=BalanceOut)
-def read_balance(_user: CurrentUser = Depends(_ANY_ROLE)):
-    return BalanceOut(balance_cents=services.get_balance_cents())
-
-
-@router.get("/movements/recent", response_model=list[MovementOut])
-def read_recent_movements(limit: int = 10, _user: CurrentUser = Depends(_ANY_ROLE)):
-    return services.list_recent(limit=limit)
+@router.get("/summary", response_model=FinanceSummaryOut)
+def read_summary(_user: CurrentUser = Depends(_ANY_ROLE)):
+    return services.get_summary()
 
 
 @router.get("/movements", response_model=MovementListOut)
 def list_movements(
     page_token: str | None = None,
     status: MovementStatus | None = None,
+    scope: MovementScope | None = None,
     _user: CurrentUser = Depends(_ANY_ROLE),
 ):
-    movements, next_page_token = services.list_movements(page_token=page_token, status=status)
+    movements, next_page_token = services.list_movements(page_token=page_token, status=status, scope=scope)
     return MovementListOut(movements=movements, next_page_token=next_page_token)
 
 

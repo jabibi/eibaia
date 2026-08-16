@@ -1,10 +1,27 @@
+from datetime import date
+
 from firebase_admin import firestore
 
 from app.core.firebase import get_db
 
-from .schemas import MovementIn, MovementOut, MovementStatus, MovementType, PaymentMethod, MovementUpdateIn
+from .schemas import (
+    FinanceSummaryOut,
+    MonthlyStatOut,
+    MovementIn,
+    MovementOut,
+    MovementScope,
+    MovementStatus,
+    MovementType,
+    PaymentMethod,
+    MovementUpdateIn,
+)
 
 COLLECTION = "finance_movements"
+
+
+def _affects_cash(type_: MovementType, method: PaymentMethod | None) -> bool:
+    """Whether a movement moves the cash safe balance. Only card expenses don't."""
+    return not (type_ == "expense" and method == "card")
 
 
 def validate_business_rules(type_: MovementType, method: PaymentMethod | None, amount_cents: int) -> None:
@@ -69,6 +86,7 @@ def create_movement(payload: MovementIn, uid: str, display_name: str | None) -> 
             "created_by": uid,
             "created_by_name": display_name,
             "created_at": firestore.SERVER_TIMESTAMP,
+            "affects_cash": _affects_cash(payload.type, payload.method),
         }
     )
     return doc_to_out(doc_ref.get())
@@ -94,7 +112,12 @@ def update_movement(movement_id: str, payload: MovementUpdateIn) -> MovementOut:
     merged_amount = payload.amount_cents if payload.amount_cents is not None else existing["amount_cents"]
     validate_business_rules(merged_type, merged_method, merged_amount)
 
-    updates = {"type": merged_type, "method": merged_method, "amount_cents": merged_amount}
+    updates = {
+        "type": merged_type,
+        "method": merged_method,
+        "amount_cents": merged_amount,
+        "affects_cash": _affects_cash(merged_type, merged_method),
+    }
     if payload.description is not None:
         updates["description"] = payload.description
     if payload.date is not None:
@@ -111,29 +134,18 @@ def confirm_movement(movement_id: str, reviewer_uid: str) -> MovementOut:
     return doc_to_out(doc_ref.get())
 
 
-def get_balance_cents() -> int:
-    db = get_db()
-    docs = db.collection(COLLECTION).stream()
-    total = 0
-    for doc in docs:
-        data = doc.to_dict()
-        total += _signed_amount(data["type"], data.get("method"), data["amount_cents"])
-    return total
-
-
-def list_recent(limit: int = 10) -> list[MovementOut]:
-    db = get_db()
-    query = db.collection(COLLECTION).order_by("created_at", direction=firestore.Query.DESCENDING).limit(limit)
-    return [doc_to_out(doc) for doc in query.stream()]
-
-
 def list_movements(
-    page_size: int = 20, page_token: str | None = None, status: MovementStatus | None = None
+    page_size: int = 20,
+    page_token: str | None = None,
+    status: MovementStatus | None = None,
+    scope: MovementScope | None = None,
 ) -> tuple[list[MovementOut], str | None]:
     db = get_db()
     query = db.collection(COLLECTION)
     if status is not None:
         query = query.where("status", "==", status)
+    if scope is not None:
+        query = query.where("affects_cash", "==", scope == "cash")
     query = query.order_by("created_at", direction=firestore.Query.DESCENDING)
 
     if page_token:
@@ -144,3 +156,39 @@ def list_movements(
     docs = list(query.limit(page_size).stream())
     next_page_token = docs[-1].id if len(docs) == page_size else None
     return [doc_to_out(doc) for doc in docs], next_page_token
+
+
+def get_summary() -> FinanceSummaryOut:
+    db = get_db()
+    docs = db.collection(COLLECTION).stream()
+    current_month = date.today().strftime("%Y-%m")
+
+    balance_cents = 0
+    cash_total, cash_count = 0, 0
+    card_total, card_count = 0, 0
+    pending_drafts = 0
+
+    for doc in docs:
+        data = doc.to_dict()
+        type_ = data["type"]
+        method = data.get("method")
+        amount = data["amount_cents"]
+
+        balance_cents += _signed_amount(type_, method, amount)
+        if data["status"] == "draft":
+            pending_drafts += 1
+
+        if type_ == "expense" and data["date"].startswith(current_month):
+            if method == "cash":
+                cash_total += amount
+                cash_count += 1
+            elif method == "card":
+                card_total += amount
+                card_count += 1
+
+    return FinanceSummaryOut(
+        balance_cents=balance_cents,
+        cash_expenses_month=MonthlyStatOut(total_cents=cash_total, count=cash_count),
+        card_expenses_month=MonthlyStatOut(total_cents=card_total, count=card_count),
+        pending_drafts_count=pending_drafts,
+    )

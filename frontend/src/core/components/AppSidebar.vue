@@ -31,16 +31,7 @@ function handleAsideClick() {
 
 const menuItems = computed(() => [
   { label: t("sidebar.home"), icon: "pi pi-home", to: "/home", roles: ["admin", "manager", "user"] },
-  {
-    label: t("sidebar.finance"),
-    icon: "pi pi-wallet",
-    to: "/finance",
-    roles: ["admin", "manager", "user"],
-    children: [
-      { label: t("sidebar.financeTransactions"), to: "/finance/transactions", roles: ["admin", "manager", "user"] },
-      { label: t("sidebar.financeReview"), to: "/finance/review", roles: ["admin", "manager"] },
-    ],
-  },
+  { label: t("sidebar.finance"), icon: "pi pi-wallet", to: "/finance", roles: ["admin", "manager", "user"] },
   { label: t("sidebar.calendar"), icon: "pi pi-calendar", to: "/calendar", roles: ["admin", "manager", "user"] },
   { label: t("sidebar.schedule"), icon: "pi pi-clock", to: "/schedule", roles: ["admin", "manager", "user"] },
   {

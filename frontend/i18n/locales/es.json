@@ -15,9 +15,6 @@
   "sidebar": {
     "home": "Inicio",
     "finance": "Caja Fuerte",
-    "financeSummary": "Resumen",
-    "financeTransactions": "Movimientos",
-    "financeReview": "Revisión",
     "calendar": "Calendario",
     "schedule": "Horarios",
     "settings": "Configuración",
@@ -33,11 +30,18 @@
   },
   "finance": {
     "title": "Caja Fuerte",
-    "balance": "Saldo actual",
-    "recentMovements": "Últimos movimientos",
     "noMovements": "Todavía no hay movimientos.",
     "addMovement": "Añadir movimiento",
     "loadError": "No se ha podido cargar la información de la caja fuerte.",
+    "kpi": {
+      "balance": "Saldo actual",
+      "cashMonth": "Gastos en efectivo (mes)",
+      "cardMonth": "Gastos en tarjeta (mes)",
+      "movementsCount": "{count} movimientos",
+      "cardNote": "No afecta al efectivo de la caja",
+      "drafts": "Pendientes de confirmar",
+      "draftsHint": "Ir a revisión"
+    },
     "types": {
       "expense": "Gasto",
       "income": "Ingreso",
@@ -70,6 +74,8 @@
     },
     "transactions": {
       "title": "Movimientos",
+      "titleCash": "Movimientos de efectivo",
+      "titleCard": "Movimientos de tarjeta",
       "loadError": "No se ha podido cargar el listado de movimientos.",
       "loadMore": "Cargar más"
     },

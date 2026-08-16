@@ -6,6 +6,7 @@ from pydantic import BaseModel
 MovementType = Literal["expense", "income", "adjustment"]
 PaymentMethod = Literal["cash", "card"]
 MovementStatus = Literal["draft", "confirmed"]
+MovementScope = Literal["cash", "card"]
 
 
 class MovementIn(BaseModel):
@@ -48,5 +49,13 @@ class MovementListOut(BaseModel):
     next_page_token: str | None = None
 
 
-class BalanceOut(BaseModel):
+class MonthlyStatOut(BaseModel):
+    total_cents: int
+    count: int
+
+
+class FinanceSummaryOut(BaseModel):
     balance_cents: int
+    cash_expenses_month: MonthlyStatOut
+    card_expenses_month: MonthlyStatOut
+    pending_drafts_count: int
