@@ -1,6 +1,5 @@
 import { apiFetch } from "~/core/api/http";
 
-export type Role = "admin" | "manager" | "user";
 export type UserStatus = "active" | "inactive" | "new";
 
 export interface UserItem {
@@ -8,7 +7,7 @@ export interface UserItem {
   email: string | null;
   display_name: string | null;
   photo_url: string | null;
-  role: Role | null;
+  role_id: string | null;
   disabled: boolean;
 }
 
@@ -21,10 +20,10 @@ export function listUsers(status: UserStatus = "active") {
   return apiFetch<UserListResponse>("/users", { query: { status } });
 }
 
-export function updateUserRole(uid: string, role: Role) {
+export function updateUserRole(uid: string, roleId: string) {
   return apiFetch<UserItem>(`/users/${uid}/role`, {
     method: "PATCH",
-    body: { role },
+    body: { role_id: roleId },
   });
 }
 

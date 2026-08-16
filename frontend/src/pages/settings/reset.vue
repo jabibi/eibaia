@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { apiFetch } from "~/core/api/http";
 import { useAuthStore } from "~/core/stores/auth";
+import { usePermissionsStore } from "~/core/stores/permissions";
 
 const authStore = useAuthStore();
+const permissionsStore = usePermissionsStore();
 const { t } = useI18n();
 
-if (!authStore.isAdmin) {
+if (!permissionsStore.has("SYSTEM_ADMIN")) {
   await navigateTo("/home");
 }
 

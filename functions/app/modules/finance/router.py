@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status as http_status
 
-from app.core.security import CurrentUser, require_role
+from app.core.security import CurrentUser, check_permission, require_permission
 
 from . import services
 from .schemas import (
@@ -16,7 +16,7 @@ from .schemas import (
 
 router = APIRouter(prefix="/finance", tags=["finance"])
 
-_ANY_ROLE = require_role("admin", "manager", "user")
+_BASIC = require_permission("CASHBOX_BASIC")
 _MUTABLE_STATUSES = ("draft", "confirmed")
 
 
@@ -28,17 +28,21 @@ def _get_movement_or_404(movement_id: str):
 
 
 def _can_mutate(user: CurrentUser, data: dict) -> bool:
-    """Owner can edit/delete their own draft. A manager/admin can edit/delete any
-    draft or confirmed movement."""
+    """A user with CASHBOX_MANAGE can edit/delete any draft or confirmed movement.
+    Otherwise, the owner can edit/delete their own draft (still requires CASHBOX_BASIC)."""
     if data["status"] not in _MUTABLE_STATUSES:
         return False
-    if user.role in ("admin", "manager"):
+    if check_permission(user, "CASHBOX_MANAGE"):
         return True
-    return data["created_by"] == user.uid and data["status"] == "draft"
+    return (
+        data["created_by"] == user.uid
+        and data["status"] == "draft"
+        and check_permission(user, "CASHBOX_BASIC")
+    )
 
 
 @router.get("/summary", response_model=FinanceSummaryOut)
-def read_summary(_user: CurrentUser = Depends(_ANY_ROLE)):
+def read_summary(_user: CurrentUser = Depends(_BASIC)):
     return services.get_summary()
 
 
@@ -47,20 +51,20 @@ def list_movements(
     page_token: str | None = None,
     status: MovementStatus | None = None,
     scope: MovementScope | None = None,
-    _user: CurrentUser = Depends(_ANY_ROLE),
+    _user: CurrentUser = Depends(_BASIC),
 ):
     movements, next_page_token = services.list_movements(page_token=page_token, status=status, scope=scope)
     return MovementListOut(movements=movements, next_page_token=next_page_token)
 
 
 @router.get("/movements/{movement_id}", response_model=MovementOut)
-def read_movement(movement_id: str, _user: CurrentUser = Depends(_ANY_ROLE)):
+def read_movement(movement_id: str, _user: CurrentUser = Depends(_BASIC)):
     doc = _get_movement_or_404(movement_id)
     return services.doc_to_out(doc)
 
 
 @router.post("/movements", response_model=MovementOut)
-def create_movement(payload: MovementIn, user: CurrentUser = Depends(_ANY_ROLE)):
+def create_movement(payload: MovementIn, user: CurrentUser = Depends(_BASIC)):
     try:
         return services.create_movement(payload, uid=user.uid, display_name=user.name)
     except ValueError as exc:
@@ -68,7 +72,7 @@ def create_movement(payload: MovementIn, user: CurrentUser = Depends(_ANY_ROLE))
 
 
 @router.patch("/movements/{movement_id}", response_model=MovementOut)
-def update_movement(movement_id: str, payload: MovementUpdateIn, user: CurrentUser = Depends(_ANY_ROLE)):
+def update_movement(movement_id: str, payload: MovementUpdateIn, user: CurrentUser = Depends(_BASIC)):
     doc = _get_movement_or_404(movement_id)
     data = doc.to_dict()
 
@@ -82,7 +86,7 @@ def update_movement(movement_id: str, payload: MovementUpdateIn, user: CurrentUs
 
 
 @router.delete("/movements/{movement_id}", status_code=http_status.HTTP_204_NO_CONTENT)
-def delete_movement(movement_id: str, user: CurrentUser = Depends(_ANY_ROLE)):
+def delete_movement(movement_id: str, user: CurrentUser = Depends(_BASIC)):
     doc = _get_movement_or_404(movement_id)
     data = doc.to_dict()
 
@@ -93,11 +97,11 @@ def delete_movement(movement_id: str, user: CurrentUser = Depends(_ANY_ROLE)):
 
 
 @router.patch("/movements/{movement_id}/status", response_model=MovementOut)
-def confirm_movement(movement_id: str, payload: StatusUpdateIn, user: CurrentUser = Depends(_ANY_ROLE)):
+def confirm_movement(movement_id: str, payload: StatusUpdateIn, user: CurrentUser = Depends(_BASIC)):
     doc = _get_movement_or_404(movement_id)
     data = doc.to_dict()
 
-    if user.role not in ("admin", "manager"):
+    if not check_permission(user, "CASHBOX_MANAGE"):
         raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN, detail="Only a manager can confirm a movement")
     if data["status"] != "draft":
         raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST, detail="Only draft movements can be confirmed")

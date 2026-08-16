@@ -2,6 +2,7 @@
 import { deleteMovement, updateMovementStatus, type Movement } from "~/modules/finance/api";
 import { formatCurrency } from "~/core/utils/currency";
 import { useAuthStore } from "~/core/stores/auth";
+import { usePermissionsStore } from "~/core/stores/permissions";
 
 const props = withDefaults(
   defineProps<{ movements: Movement[]; loading?: boolean; showActions?: boolean; emptyMessage?: string }>(),
@@ -16,6 +17,7 @@ const emit = defineEmits<{ (e: "refresh"): void }>();
 
 const { t } = useI18n();
 const authStore = useAuthStore();
+const permissionsStore = usePermissionsStore();
 
 /** Signed amount for display: expenses are always negative regardless of payment
  * method, even though card expenses don't move the cash safe balance. */
@@ -28,7 +30,7 @@ function statusSeverity(status: Movement["status"]) {
 }
 
 function isMutable(movement: Movement): boolean {
-  if (authStore.isManager) return true;
+  if (permissionsStore.has("CASHBOX_MANAGE")) return true;
   return movement.created_by === authStore.user?.uid && movement.status === "draft";
 }
 
@@ -41,7 +43,7 @@ function canDelete(movement: Movement): boolean {
 }
 
 function canConfirm(movement: Movement): boolean {
-  return authStore.isManager && movement.status === "draft";
+  return permissionsStore.has("CASHBOX_MANAGE") && movement.status === "draft";
 }
 
 async function handleDelete(movement: Movement) {

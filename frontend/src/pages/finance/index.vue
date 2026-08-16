@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { getSummary, type FinanceSummary } from "~/modules/finance/api";
 import { formatCurrency } from "~/core/utils/currency";
-import { useAuthStore } from "~/core/stores/auth";
+import { usePermissionsStore } from "~/core/stores/permissions";
 
 const { t } = useI18n();
-const authStore = useAuthStore();
+const permissionsStore = usePermissionsStore();
 
 const summary = ref<FinanceSummary | null>(null);
 const loading = ref(true);
@@ -78,7 +78,7 @@ onMounted(load);
       </NuxtLink>
 
       <NuxtLink
-        v-if="authStore.isManager"
+        v-if="permissionsStore.has('CASHBOX_MANAGE')"
         to="/finance/review"
         class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:border-amber-300 hover:shadow-md"
       >

@@ -3,14 +3,15 @@ import {
   listUsers,
   updateUserActive,
   updateUserRole,
-  type Role,
   type UserItem,
   type UserStatus,
 } from "~/modules/users/api";
+import { listRoles, type UserRole } from "~/modules/roles/api";
 
 const { t } = useI18n();
 
 const users = ref<UserItem[]>([]);
+const roles = ref<UserRole[]>([]);
 const loading = ref(true);
 const errorMessage = ref("");
 const status = ref<UserStatus>("active");
@@ -21,11 +22,15 @@ const statusOptions = computed(() => [
   { label: t("users.filters.inactive"), value: "inactive" as UserStatus },
 ]);
 
-const roleOptions: { label: string; value: Role }[] = [
-  { label: "Admin", value: "admin" },
-  { label: "Manager", value: "manager" },
-  { label: "User", value: "user" },
-];
+const roleOptions = computed(() => roles.value.map((role) => ({ label: role.name, value: role.id })));
+
+async function loadRoles() {
+  try {
+    roles.value = await listRoles();
+  } catch (error) {
+    errorMessage.value = t("users.rolesLoadError");
+  }
+}
 
 async function loadUsers() {
   loading.value = true;
@@ -40,9 +45,9 @@ async function loadUsers() {
   }
 }
 
-async function handleRoleChange(user: UserItem, role: Role) {
+async function handleRoleChange(user: UserItem, roleId: string) {
   try {
-    await updateUserRole(user.uid, role);
+    await updateUserRole(user.uid, roleId);
     await loadUsers();
   } catch (error) {
     errorMessage.value = t("users.roleUpdateError", { email: user.email });
@@ -59,7 +64,10 @@ async function handleActiveChange(user: UserItem, active: boolean) {
 }
 
 watch(status, loadUsers);
-onMounted(loadUsers);
+onMounted(() => {
+  loadRoles();
+  loadUsers();
+});
 </script>
 
 <template>
@@ -94,7 +102,7 @@ onMounted(loadUsers);
       <Column :header="t('users.columns.role')">
         <template #body="{ data }">
           <Dropdown
-            :model-value="data.role"
+            :model-value="data.role_id"
             :options="roleOptions"
             option-label="label"
             option-value="value"

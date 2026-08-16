@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { listMovements, type Movement } from "~/modules/finance/api";
 import MovementList from "~/modules/finance/components/MovementList.vue";
-import { useAuthStore } from "~/core/stores/auth";
+import { usePermissionsStore } from "~/core/stores/permissions";
 
-const authStore = useAuthStore();
+const permissionsStore = usePermissionsStore();
 const { t } = useI18n();
 
-if (!authStore.isManager) {
+if (!permissionsStore.has("CASHBOX_MANAGE")) {
   await navigateTo("/home");
 }
 

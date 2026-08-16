@@ -2,7 +2,6 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-Role = Literal["admin", "manager", "user"]
 UserStatus = Literal["active", "inactive", "new", "all"]
 
 
@@ -11,7 +10,7 @@ class UserOut(BaseModel):
     email: str | None
     display_name: str | None
     photo_url: str | None
-    role: Role | None
+    role_id: str | None
     disabled: bool
 
 
@@ -21,7 +20,7 @@ class UserListOut(BaseModel):
 
 
 class RoleUpdateIn(BaseModel):
-    role: Role
+    role_id: str
 
 
 class ActiveUpdateIn(BaseModel):

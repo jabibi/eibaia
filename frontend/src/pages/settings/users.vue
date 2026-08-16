@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useAuthStore } from "~/core/stores/auth";
+import { usePermissionsStore } from "~/core/stores/permissions";
 import UsersAdmin from "~/modules/users/views/UsersAdmin.vue";
 
-const authStore = useAuthStore();
+const permissionsStore = usePermissionsStore();
 
-if (!authStore.isAdmin) {
+if (!permissionsStore.has("SYSTEM_ADMIN")) {
   await navigateTo("/home");
 }
 </script>

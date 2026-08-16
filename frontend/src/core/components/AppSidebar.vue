@@ -2,8 +2,10 @@
 import GithubLink from "~/core/components/GithubLink.vue";
 import { useSidebar } from "~/core/composables/useSidebar";
 import { useAuthStore } from "~/core/stores/auth";
+import { usePermissionsStore } from "~/core/stores/permissions";
 
 const authStore = useAuthStore();
+const permissionsStore = usePermissionsStore();
 const { t } = useI18n();
 const route = useRoute();
 const sidebar = useSidebar();
@@ -30,28 +32,32 @@ function handleAsideClick() {
 }
 
 const menuItems = computed(() => [
-  { label: t("sidebar.home"), icon: "pi pi-home", to: "/home", roles: ["admin", "manager", "user"] },
-  { label: t("sidebar.finance"), icon: "pi pi-wallet", to: "/finance", roles: ["admin", "manager", "user"] },
-  { label: t("sidebar.calendar"), icon: "pi pi-calendar", to: "/calendar", roles: ["admin", "manager", "user"] },
-  { label: t("sidebar.schedule"), icon: "pi pi-clock", to: "/schedule", roles: ["admin", "manager", "user"] },
+  { label: t("sidebar.home"), icon: "pi pi-home", to: "/home", permissions: [] as string[] },
+  { label: t("sidebar.finance"), icon: "pi pi-wallet", to: "/finance", permissions: ["CASHBOX_BASIC"] },
+  { label: t("sidebar.calendar"), icon: "pi pi-calendar", to: "/calendar", permissions: [] as string[] },
+  { label: t("sidebar.schedule"), icon: "pi pi-clock", to: "/schedule", permissions: [] as string[] },
   {
     label: t("sidebar.settings"),
     icon: "pi pi-cog",
     to: "/settings",
-    roles: ["admin"],
+    permissions: ["SYSTEM_ADMIN"],
     children: [
-      { label: t("sidebar.users"), to: "/settings/users", roles: ["admin"] },
-      { label: t("sidebar.reset"), to: "/settings/reset", roles: ["admin"] },
+      { label: t("sidebar.users"), to: "/settings/users", permissions: ["SYSTEM_ADMIN"] },
+      { label: t("sidebar.reset"), to: "/settings/reset", permissions: ["SYSTEM_ADMIN"] },
     ],
   },
 ]);
 
+function isVisible(item: { permissions: string[] }): boolean {
+  return item.permissions.length === 0 || item.permissions.some((code) => permissionsStore.has(code));
+}
+
 const visibleItems = computed(() =>
   menuItems.value
-    .filter((item) => item.roles.includes(authStore.role))
+    .filter(isVisible)
     .map((item) => ({
       ...item,
-      children: item.children?.filter((child) => child.roles.includes(authStore.role)),
+      children: item.children?.filter(isVisible),
     })),
 );
 

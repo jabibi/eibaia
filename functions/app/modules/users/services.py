@@ -1,6 +1,8 @@
 from firebase_admin import auth as firebase_auth
 
-from .schemas import Role, UserOut, UserStatus
+from app.core.firebase import get_db
+
+from .schemas import UserOut, UserStatus
 
 
 def _to_user_out(user_record: firebase_auth.UserRecord) -> UserOut:
@@ -10,7 +12,7 @@ def _to_user_out(user_record: firebase_auth.UserRecord) -> UserOut:
         email=user_record.email,
         display_name=user_record.display_name,
         photo_url=user_record.photo_url,
-        role=claims.get("role"),
+        role_id=claims.get("role_id"),
         disabled=user_record.disabled,
     )
 
@@ -24,15 +26,18 @@ def list_users(page_token: str | None = None, max_results: int = 100, status: Us
     elif status == "inactive":
         users = [u for u in users if u.disabled]
     elif status == "new":
-        users = [u for u in users if u.role is None and not u.disabled]
+        users = [u for u in users if u.role_id is None and not u.disabled]
 
     return users, page.next_page_token or None
 
 
-def set_user_role(uid: str, role: Role) -> UserOut:
+def set_user_role(uid: str, role_id: str) -> UserOut:
+    if not get_db().collection("user_roles").document(role_id).get().exists:
+        raise ValueError(f"Unknown role_id: {role_id}")
+
     user_record = firebase_auth.get_user(uid)
     claims = dict(user_record.custom_claims or {})
-    claims["role"] = role
+    claims["role_id"] = role_id
     firebase_auth.set_custom_user_claims(uid, claims)
     return _to_user_out(firebase_auth.get_user(uid))
 
@@ -42,10 +47,18 @@ def set_user_active(uid: str, active: bool) -> UserOut:
     return _to_user_out(firebase_auth.get_user(uid))
 
 
-def ensure_first_admin(uid: str) -> Role | None:
-    """If no admin exists yet, promotes uid to admin. Returns the new role, or None if not applicable."""
+def ensure_first_admin(uid: str) -> str | None:
+    """If no admin exists yet, promotes uid to the seeded 'admin' role. Returns
+    the new role_id, or None if not applicable."""
     users, _ = list_users(status="all")
-    if any(u.role == "admin" for u in users):
+    if any(u.role_id == "admin" for u in users):
         return None
     set_user_role(uid, "admin")
     return "admin"
+
+
+def get_permissions_for(role_id: str | None) -> list[str]:
+    if role_id is None:
+        return []
+    doc = get_db().collection("user_roles").document(role_id).get()
+    return list(doc.to_dict().get("group_ids", [])) if doc.exists else []

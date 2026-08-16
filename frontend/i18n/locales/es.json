@@ -115,12 +115,8 @@
       "active": "Activo"
     },
     "noRole": "Sin rol",
-    "roles": {
-      "admin": "Admin",
-      "manager": "Manager",
-      "user": "User"
-    },
     "loadError": "No se ha podido cargar el listado de miembros.",
+    "rolesLoadError": "No se han podido cargar los roles.",
     "roleUpdateError": "No se ha podido actualizar el rol de {email}.",
     "activeUpdateError": "No se ha podido actualizar el estado de {email}."
   },
