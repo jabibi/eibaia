@@ -14,10 +14,10 @@ export default defineNuxtConfig({
   },
 
   css: [
-    "~/assets/css/main.css",
     "primevue/resources/themes/lara-light-indigo/theme.css",
     "primevue/resources/primevue.min.css",
     "primeicons/primeicons.css",
+    "~/assets/css/main.css",
   ],
 
   primevue: {

@@ -7,6 +7,12 @@ import {
   type UserStatus,
 } from "~/modules/users/api";
 import { listRoles, type UserRole } from "~/modules/roles/api";
+import Card from "~/core/components/ui/Card.vue";
+import FormSelect from "~/core/components/ui/FormSelect.vue";
+import StatusBadge from "~/core/components/ui/StatusBadge.vue";
+import TabNav from "~/core/components/ui/TabNav.vue";
+import ToggleSwitch from "~/core/components/ui/ToggleSwitch.vue";
+import { tableCellClass, tableHeaderCellClass, tableRowClass } from "~/core/ui/tableClasses";
 
 const { t } = useI18n();
 
@@ -74,51 +80,80 @@ onMounted(() => {
   <div>
     <h1 class="text-2xl font-semibold text-slate-800">{{ t("users.title") }}</h1>
 
-    <SelectButton
-      v-model="status"
-      :options="statusOptions"
-      option-label="label"
-      option-value="value"
-      class="mt-4"
-    />
+    <TabNav v-model="status" :options="statusOptions" class="mt-6" />
 
     <p v-if="errorMessage" class="mt-2 text-sm text-red-600">{{ errorMessage }}</p>
 
-    <DataTable :value="users" :loading="loading" class="mt-4" data-key="uid">
-      <Column :header="t('users.columns.user')">
-        <template #body="{ data }">
-          <div class="flex items-center gap-2">
-            <img
-              v-if="data.photo_url"
-              :src="data.photo_url"
-              :alt="data.display_name"
-              class="h-8 w-8 rounded-full"
-            />
-            <span>{{ data.display_name ?? "—" }}</span>
-          </div>
-        </template>
-      </Column>
-      <Column field="email" :header="t('users.columns.email')" />
-      <Column :header="t('users.columns.role')">
-        <template #body="{ data }">
-          <Dropdown
-            :model-value="data.role_id"
-            :options="roleOptions"
-            option-label="label"
-            option-value="value"
-            :placeholder="t('users.noRole')"
-            @update:model-value="(role) => handleRoleChange(data, role)"
-          />
-        </template>
-      </Column>
-      <Column :header="t('users.columns.active')">
-        <template #body="{ data }">
-          <InputSwitch
-            :model-value="!data.disabled"
-            @update:model-value="(active) => handleActiveChange(data, active)"
-          />
-        </template>
-      </Column>
-    </DataTable>
+    <Card class="mt-4 overflow-hidden">
+      <table class="w-full text-left text-sm">
+        <thead>
+          <tr class="bg-slate-50">
+            <th :class="tableHeaderCellClass">{{ t("users.columns.user") }}</th>
+            <th :class="tableHeaderCellClass">{{ t("users.columns.email") }}</th>
+            <th :class="tableHeaderCellClass">{{ t("users.columns.role") }}</th>
+            <th :class="tableHeaderCellClass">{{ t("users.columns.active") }}</th>
+            <th :class="[tableHeaderCellClass, 'text-right']">{{ t("users.columns.actions") }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="loading">
+            <td colspan="5" class="px-4 py-6 text-center text-slate-400">{{ t("users.loading") }}</td>
+          </tr>
+          <tr v-else-if="users.length === 0">
+            <td colspan="5" class="px-4 py-6 text-center text-slate-400">{{ t("users.empty") }}</td>
+          </tr>
+          <tr v-for="user in users" :key="user.uid" :class="tableRowClass">
+            <td :class="tableCellClass">
+              <div class="flex items-center gap-2">
+                <img
+                  v-if="user.photo_url"
+                  :src="user.photo_url"
+                  :alt="user.display_name ?? undefined"
+                  class="h-8 w-8 rounded-full"
+                />
+                <span>{{ user.display_name ?? "—" }}</span>
+              </div>
+            </td>
+            <td :class="[tableCellClass, 'text-slate-600']">{{ user.email }}</td>
+            <td :class="tableCellClass">
+              <div class="flex items-center">
+                <FormSelect
+                  :model-value="user.role_id ?? ''"
+                  @update:model-value="(role) => handleRoleChange(user, role)"
+                >
+                  <option value="" disabled>{{ t("users.noRole") }}</option>
+                  <option v-for="role in roleOptions" :key="role.value" :value="role.value">
+                    {{ role.label }}
+                  </option>
+                </FormSelect>
+              </div>
+            </td>
+            <td :class="tableCellClass">
+              <div class="flex items-center">
+                <StatusBadge v-if="status === 'inactive'" :label="t('users.status.inactive')" />
+                <ToggleSwitch
+                  v-else
+                  :model-value="!user.disabled"
+                  @update:model-value="(active) => handleActiveChange(user, active)"
+                />
+              </div>
+            </td>
+            <td :class="[tableCellClass, 'text-right']">
+              <div class="flex items-center justify-end">
+                <button
+                  v-if="status === 'inactive'"
+                  type="button"
+                  class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                  @click="handleActiveChange(user, true)"
+                >
+                  {{ t("users.actions.reactivate") }}
+                </button>
+                <span v-else class="text-slate-300">—</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </Card>
   </div>
 </template>

@@ -15,13 +15,9 @@
   "sidebar": {
     "home": "Inicio",
     "finance": "Caja Fuerte",
-    "calendar": "Calendario",
-    "schedule": "Horarios",
     "settings": "Configuración",
-    "users": "Usuarios",
-    "reset": "Restablecer",
-    "collapseMenu": "Colapsar menú",
-    "expandMenu": "Expandir menú",
+    "collapseMenu": "Cerrar barra lateral",
+    "expandMenu": "Abrir barra lateral",
     "logout": "Cerrar sesión"
   },
   "home": {
@@ -93,14 +89,6 @@
       "confirmError": "No se ha podido confirmar el movimiento."
     }
   },
-  "calendar": {
-    "title": "Calendario",
-    "comingSoon": "Módulo de calendario: próximamente."
-  },
-  "schedule": {
-    "title": "Horarios",
-    "comingSoon": "Módulo de horarios: próximamente."
-  },
   "users": {
     "title": "Gestión de usuarios",
     "filters": {
@@ -108,19 +96,35 @@
       "new": "Usuarios nuevos",
       "inactive": "Inactivos"
     },
+    "status": {
+      "inactive": "Inactivo"
+    },
     "columns": {
       "user": "Usuario",
       "email": "Email",
       "role": "Rol",
-      "active": "Activo"
+      "active": "Activo",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "reactivate": "Reactivar"
     },
     "noRole": "Sin rol",
+    "empty": "No hay usuarios en este estado.",
+    "loading": "Cargando…",
     "loadError": "No se ha podido cargar el listado de miembros.",
     "rolesLoadError": "No se han podido cargar los roles.",
     "roleUpdateError": "No se ha podido actualizar el rol de {email}.",
     "activeUpdateError": "No se ha podido actualizar el estado de {email}."
   },
   "settings": {
+    "title": "Configuración",
+    "loadError": "No se ha podido cargar la información de usuarios.",
+    "cards": {
+      "users": "Usuarios",
+      "reset": "Restablecer aplicación",
+      "resetHint": "Elimina todos los movimientos y usuarios registrados"
+    },
     "reset": {
       "title": "Restablecer aplicación",
       "warning": "Esta acción restablece la aplicación a su estado de fábrica: se eliminarán TODOS los movimientos de la Caja Fuerte y TODOS los usuarios registrados (la tabla de usuarios completa), incluida tu propia cuenta y la sesión actual. Esta acción no se puede deshacer. Tras restablecer, tendrás que volver a iniciar sesión y se te asignará de nuevo el rol de administrador como primer usuario.",

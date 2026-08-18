@@ -18,16 +18,22 @@
   border-color: #4f46e5 !important;
 }
 
-/* SelectButton renders each option as a `.p-button`; only the selected one should look solid. */
+/* SelectButton is a segmented toggle, not an action button — keep it visually
+ * distinct from real buttons like Guardar/Cancelar: softer selected state,
+ * lighter weight, more compact padding. */
+.p-selectbutton .p-button {
+  padding: 0.625rem 1rem !important;
+  font-weight: 500;
+}
 .p-selectbutton .p-button:not(.p-highlight) {
   background-color: #fff !important;
   border-color: #d1d5db !important;
   color: #4b5563 !important;
 }
 .p-selectbutton .p-button.p-highlight {
-  background-color: #6366f1 !important;
-  border-color: #6366f1 !important;
-  color: #fff !important;
+  background-color: #eef2ff !important;
+  border-color: #a5b4fc !important;
+  color: #4338ca !important;
 }
 .p-button-danger:not(.p-button-text):not(.p-button-outlined):not(.p-button-link) {
   background-color: #ef4444 !important;
@@ -39,4 +45,35 @@
 }
 .p-button:disabled {
   opacity: 0.6;
+}
+
+/* Same Preflight-wins-over-layered-primevue issue: padding and icon/label
+ * spacing get zeroed out too, so text hugs the button's edges/icon. */
+.p-button {
+  padding: 0.75rem 1.25rem !important;
+}
+.p-button .p-button-icon-left {
+  margin-right: 0.5rem !important;
+}
+.p-button .p-button-icon-right {
+  margin-left: 0.5rem !important;
+}
+
+/* Same issue again on text inputs and dropdowns: border-width and padding get
+ * zeroed, leaving borderless, cramped fields next to normally-styled ones. */
+.p-inputtext {
+  padding: 0.75rem !important;
+  border: 1px solid #d1d5db !important;
+}
+.p-inputtext:enabled:hover {
+  border-color: #6366f1 !important;
+}
+.p-inputtext:enabled:focus {
+  border-color: #6366f1 !important;
+}
+.p-dropdown {
+  border: 1px solid #d1d5db !important;
+}
+.p-dropdown:not(.p-disabled):hover {
+  border-color: #6366f1 !important;
 }

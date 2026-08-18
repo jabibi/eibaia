@@ -3,7 +3,7 @@ withDefaults(defineProps<{ width?: number; height?: number }>(), { width: 260, h
 </script>
 
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="120 55 260 370" :width="width" :height="height">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="120 55 260 370" :width="width" :height="height" class="select-none"
     <!-- Central circular emblem -->
     <g transform="translate(250, 175)">
       <!-- Outer dashed circle -->

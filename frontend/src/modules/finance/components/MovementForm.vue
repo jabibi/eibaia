@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { createMovement, getMovement, updateMovement, type MovementType, type PaymentMethod } from "~/modules/finance/api";
 import { euroToCents } from "~/core/utils/currency";
+import AppButton from "~/core/components/ui/AppButton.vue";
+import Card from "~/core/components/ui/Card.vue";
+import FormField from "~/core/components/ui/FormField.vue";
+import FormInput from "~/core/components/ui/FormInput.vue";
+import SegmentedControl from "~/core/components/ui/SegmentedControl.vue";
 
 const props = defineProps<{ movementId?: string }>();
 
@@ -14,7 +19,7 @@ const errorMessage = ref("");
 
 const type = ref<MovementType>("expense");
 const method = ref<PaymentMethod>("cash");
-const amount = ref<number | null>(null);
+const amount = ref("");
 const description = ref("");
 const date = ref(new Date().toISOString().slice(0, 10));
 
@@ -32,7 +37,7 @@ const methodOptions = computed(() => [
 ]);
 
 watch(type, () => {
-  amount.value = null;
+  amount.value = "";
   if (type.value !== "expense") {
     method.value = "cash";
   }
@@ -45,7 +50,7 @@ async function loadExisting() {
     const movement = await getMovement(props.movementId);
     type.value = movement.type;
     method.value = movement.method ?? "cash";
-    amount.value = movement.amount_cents / 100;
+    amount.value = String(movement.amount_cents / 100);
     description.value = movement.description;
     date.value = movement.date;
   } catch (error) {
@@ -56,7 +61,8 @@ async function loadExisting() {
 }
 
 async function handleSubmit() {
-  if (amount.value === null || !description.value) return;
+  const amountValue = Number(amount.value);
+  if (!amount.value || Number.isNaN(amountValue) || !description.value) return;
 
   saving.value = true;
   errorMessage.value = "";
@@ -64,7 +70,7 @@ async function handleSubmit() {
     const payload = {
       type: type.value,
       method: type.value === "expense" ? method.value : null,
-      amount_cents: euroToCents(amount.value),
+      amount_cents: euroToCents(amountValue),
       description: description.value,
       date: date.value,
     };
@@ -96,45 +102,38 @@ onMounted(() => {
       {{ isEdit ? t("finance.form.editTitle") : t("finance.form.newTitle") }}
     </h1>
 
-    <div class="mt-6 max-w-md space-y-4">
-      <SelectButton v-model="type" :options="typeOptions" option-label="label" option-value="value" />
+    <Card class="mt-6 max-w-xl space-y-5 p-6">
+      <SegmentedControl v-model="type" :options="typeOptions" />
 
-      <SelectButton
-        v-if="type === 'expense'"
-        v-model="method"
-        :options="methodOptions"
-        option-label="label"
-        option-value="value"
-      />
+      <SegmentedControl v-if="type === 'expense'" v-model="method" :options="methodOptions" />
 
-      <div>
-        <label class="mb-1 block text-sm text-slate-600">{{ t("finance.fields.amount") }}</label>
-        <InputNumber
+      <FormField :label="t('finance.fields.amount')">
+        <FormInput
           v-model="amount"
-          mode="currency"
-          currency="EUR"
-          locale="es-ES"
+          type="number"
+          step="0.01"
           :min="type === 'adjustment' ? undefined : 0"
-          class="w-full"
         />
-      </div>
+      </FormField>
 
-      <div>
-        <label class="mb-1 block text-sm text-slate-600">{{ t("finance.fields.description") }}</label>
-        <InputText v-model="description" class="w-full" />
-      </div>
+      <FormField :label="t('finance.fields.description')">
+        <FormInput v-model="description" type="text" />
+      </FormField>
 
-      <div>
-        <label class="mb-1 block text-sm text-slate-600">{{ t("finance.fields.date") }}</label>
-        <input v-model="date" type="date" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
-      </div>
+      <FormField :label="t('finance.fields.date')">
+        <FormInput v-model="date" type="date" />
+      </FormField>
 
       <p v-if="errorMessage" class="text-sm text-red-600">{{ errorMessage }}</p>
 
       <div class="flex gap-2">
-        <Button :label="t('finance.form.save')" :loading="saving" @click="handleSubmit" />
-        <Button :label="t('finance.form.cancel')" severity="secondary" text @click="router.back()" />
+        <AppButton :disabled="saving" @click="handleSubmit">
+          {{ saving ? "…" : t("finance.form.save") }}
+        </AppButton>
+        <AppButton variant="secondary" @click="router.back()">
+          {{ t("finance.form.cancel") }}
+        </AppButton>
       </div>
-    </div>
+    </Card>
   </div>
 </template>

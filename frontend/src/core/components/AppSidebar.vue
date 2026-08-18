@@ -7,59 +7,52 @@ import { usePermissionsStore } from "~/core/stores/permissions";
 const authStore = useAuthStore();
 const permissionsStore = usePermissionsStore();
 const { t } = useI18n();
-const route = useRoute();
 const sidebar = useSidebar();
 const { collapsed, mobileOpen } = sidebar;
-const expandedGroups = ref<Record<string, boolean>>({});
 
 sidebar.restoreFromStorage();
 
-function toggleGroup(key: string) {
-  expandedGroups.value[key] = !expandedGroups.value[key];
+/** On mobile this just closes the drawer (unchanged mobile behavior). On
+ * desktop this single button both expands a collapsed sidebar and collapses
+ * an expanded one — it's the only way to expand it. */
+function handleLogoClick() {
+  if (mobileOpen.value) {
+    sidebar.closeMobile();
+    return;
+  }
+  if (collapsed.value) {
+    sidebar.expand();
+  } else {
+    sidebar.collapse();
+  }
 }
 
-function isGroupExpanded(item: { to: string; children?: { to: string }[] }): boolean {
-  const isActive = route.path === item.to || Boolean(item.children?.some((child) => route.path.startsWith(child.to)));
-  return isActive || Boolean(expandedGroups.value[item.to]);
-}
-
-/** Clicking anywhere on the collapsed rail expands it (desktop only — on
- * mobile the rail is off-screen while closed, so this can only fire when the
- * mobile drawer is already open, where it must not touch desktop state). */
-function handleAsideClick() {
+/** Clicking empty space in the desktop sidebar (i.e. not a link or button)
+ * toggles it — collapses when expanded, expands when collapsed — matching
+ * the w-resize/e-resize cursor shown over that same empty space. Clicking a
+ * menu item itself just navigates. */
+function handleAsideBackgroundClick(event: MouseEvent) {
   if (mobileOpen.value) return;
-  sidebar.expand();
+  const target = event.target as HTMLElement;
+  if (target.closest("a, button")) return;
+  if (collapsed.value) {
+    sidebar.expand();
+  } else {
+    sidebar.collapse();
+  }
 }
 
 const menuItems = computed(() => [
   { label: t("sidebar.home"), icon: "pi pi-home", to: "/home", permissions: [] as string[] },
   { label: t("sidebar.finance"), icon: "pi pi-wallet", to: "/finance", permissions: ["CASHBOX_BASIC"] },
-  { label: t("sidebar.calendar"), icon: "pi pi-calendar", to: "/calendar", permissions: [] as string[] },
-  { label: t("sidebar.schedule"), icon: "pi pi-clock", to: "/schedule", permissions: [] as string[] },
-  {
-    label: t("sidebar.settings"),
-    icon: "pi pi-cog",
-    to: "/settings",
-    permissions: ["SYSTEM_ADMIN"],
-    children: [
-      { label: t("sidebar.users"), to: "/settings/users", permissions: ["SYSTEM_ADMIN"] },
-      { label: t("sidebar.reset"), to: "/settings/reset", permissions: ["SYSTEM_ADMIN"] },
-    ],
-  },
+  { label: t("sidebar.settings"), icon: "pi pi-cog", to: "/settings", permissions: ["SYSTEM_ADMIN"] },
 ]);
 
 function isVisible(item: { permissions: string[] }): boolean {
   return item.permissions.length === 0 || item.permissions.some((code) => permissionsStore.has(code));
 }
 
-const visibleItems = computed(() =>
-  menuItems.value
-    .filter(isVisible)
-    .map((item) => ({
-      ...item,
-      children: item.children?.filter(isVisible),
-    })),
-);
+const visibleItems = computed(() => menuItems.value.filter(isVisible));
 
 async function handleLogout() {
   await authStore.logout();
@@ -85,88 +78,56 @@ async function handleLogout() {
   />
 
   <aside
-    class="fixed left-0 top-0 z-40 flex h-svh w-[85%] max-w-xs -translate-x-full flex-col border-r border-slate-200 bg-white transition-transform duration-200 md:relative md:z-auto md:w-16 md:translate-x-0 md:transition-all"
-    :class="[mobileOpen ? 'translate-x-0' : '-translate-x-full', collapsed ? 'md:w-16' : 'md:w-64']"
-    @click="handleAsideClick"
+    class="fixed left-0 top-0 z-40 flex h-svh w-[85%] max-w-xs -translate-x-full flex-col bg-white transition-transform duration-200 md:relative md:z-auto md:translate-x-0 md:transition-all"
+    :class="[
+      mobileOpen ? 'translate-x-0' : '-translate-x-full',
+      collapsed ? 'md:w-[52px]' : 'md:w-64',
+      !mobileOpen && collapsed ? 'md:cursor-e-resize' : '',
+      !mobileOpen && !collapsed ? 'md:cursor-w-resize' : '',
+    ]"
+    @click="handleAsideBackgroundClick"
   >
-    <button
-      type="button"
-      :aria-label="collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')"
-      class="absolute -right-3 top-1/2 hidden h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow hover:bg-slate-50 md:flex"
-      @click.stop="sidebar.toggleCollapsed()"
-    >
-      <i :class="collapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'" class="text-[10px]" />
-    </button>
-
-    <div class="flex items-center gap-1 px-3 py-4">
+    <div class="flex items-center gap-1 px-3 py-4" :class="collapsed && !mobileOpen ? 'md:justify-center md:px-1.5' : ''">
       <button
         type="button"
-        :aria-label="t('sidebar.collapseMenu')"
-        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 md:hidden"
-        @click="sidebar.closeMobile()"
+        v-tooltip.right="!mobileOpen ? (collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')) : undefined"
+        :aria-label="collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')"
+        class="flex shrink-0 cursor-pointer items-center gap-2 rounded-md hover:bg-slate-100"
+        :class="collapsed && !mobileOpen ? 'md:h-10 md:w-10 md:justify-center md:cursor-e-resize' : 'flex-1 py-1 md:cursor-w-resize'"
+        @click="handleLogoClick"
       >
-        <i class="pi pi-times text-lg" />
-      </button>
-
-      <button
-        type="button"
-        v-tooltip.right="collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')"
-        class="flex flex-1 items-center gap-2 rounded-md py-1 hover:bg-slate-100"
-        :class="collapsed && !mobileOpen ? 'md:justify-center' : ''"
-        @click.stop="sidebar.handleHeaderToggle()"
-      >
-        <span class="flex h-9 w-9 shrink-0 items-center justify-center">
+        <span class="flex h-8 w-8 shrink-0 items-center justify-center">
           <img :src="'/img/favicon.svg'" alt="ElosuE!" class="h-9 w-9" />
         </span>
         <span v-if="!collapsed || mobileOpen" class="truncate text-lg font-semibold">
           <span style="color: #15803d">Elosu</span><span style="color: #dc2626">E!</span>
         </span>
+        <i v-if="!collapsed" class="pi pi-chevron-left ml-auto hidden shrink-0 text-xs text-slate-600 md:block" />
+        <i class="pi pi-times ml-auto shrink-0 text-lg text-slate-600 md:hidden" />
       </button>
     </div>
 
-    <nav class="flex-1 space-y-1 overflow-y-auto px-2">
-      <template v-for="item in visibleItems" :key="item.to">
-        <div class="flex items-center">
-          <NuxtLink
-            :to="item.to"
-            v-tooltip.right="collapsed && !mobileOpen ? item.label : undefined"
-            class="flex flex-1 items-center gap-3 rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-slate-100"
-            active-class="bg-slate-100 text-slate-900 font-medium"
-            :class="collapsed && !mobileOpen ? 'md:justify-center' : ''"
-          >
-            <i :class="item.icon" class="text-lg shrink-0" />
-            <span v-if="!collapsed || mobileOpen" class="truncate">{{ item.label }}</span>
-          </NuxtLink>
-          <button
-            v-if="(!collapsed || mobileOpen) && item.children?.length"
-            type="button"
-            class="mr-1 shrink-0 rounded-md p-2 text-slate-400 hover:bg-slate-100"
-            @click="toggleGroup(item.to)"
-          >
-            <i :class="isGroupExpanded(item) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" class="text-xs" />
-          </button>
-        </div>
-
-        <div v-if="(!collapsed || mobileOpen) && item.children?.length && isGroupExpanded(item)" class="ml-6 space-y-1">
-          <NuxtLink
-            v-for="child in item.children"
-            :key="child.to"
-            :to="child.to"
-            class="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100"
-            active-class="bg-slate-100 text-slate-900 font-medium"
-          >
-            <span class="truncate">{{ child.label }}</span>
-          </NuxtLink>
-        </div>
-      </template>
+    <nav class="flex-1 space-y-1 overflow-y-auto px-2" :class="collapsed && !mobileOpen ? 'md:px-1.5' : ''">
+      <NuxtLink
+        v-for="item in visibleItems"
+        :key="item.to"
+        :to="item.to"
+        v-tooltip.right="collapsed && !mobileOpen ? item.label : undefined"
+        class="flex cursor-pointer items-center gap-3 rounded-md text-sm text-slate-600 hover:bg-slate-100"
+        active-class="bg-slate-100 text-slate-900 font-medium"
+        :class="collapsed && !mobileOpen ? 'md:h-10 md:w-10 md:justify-center md:gap-0 md:px-0' : 'px-3 py-2'"
+      >
+        <i :class="item.icon" class="text-lg shrink-0" />
+        <span v-if="!collapsed || mobileOpen" class="truncate">{{ item.label }}</span>
+      </NuxtLink>
     </nav>
 
-    <div class="border-t border-slate-200 p-2">
+    <div class="p-2" :class="collapsed && !mobileOpen ? 'md:px-1.5' : ''">
       <button
         type="button"
         v-tooltip.right="collapsed && !mobileOpen ? t('sidebar.logout') : undefined"
-        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-slate-100"
-        :class="collapsed && !mobileOpen ? 'md:justify-center' : ''"
+        class="flex cursor-pointer items-center gap-3 rounded-md text-sm text-slate-600 hover:bg-slate-100"
+        :class="collapsed && !mobileOpen ? 'md:h-10 md:w-10 md:justify-center md:gap-0' : 'w-full px-3 py-2'"
         @click="handleLogout"
       >
         <i class="pi pi-sign-out text-lg shrink-0" />
@@ -174,7 +135,7 @@ async function handleLogout() {
       </button>
 
       <div class="mt-2 flex justify-center">
-        <GithubLink size="h-4 w-4" />
+        <GithubLink size="h-4 w-4" class="cursor-pointer" />
       </div>
     </div>
   </aside>
