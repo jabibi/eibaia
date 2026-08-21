@@ -68,7 +68,9 @@
       "blue": "Azul",
       "indigo": "Índigo",
       "purple": "Morado",
-      "pink": "Rosa"
+      "pink": "Rosa",
+      "gray": "Gris",
+      "lightgray": "Gris claro"
     },
     "statuses": {
       "draft": "Borrador",

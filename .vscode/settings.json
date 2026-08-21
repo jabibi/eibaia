@@ -1,0 +1,16 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/functions/venv/bin/python",
+  "python.analysis.extraPaths": ["${workspaceFolder}/functions"],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.exclude": [
+    "**/venv",
+    "**/node_modules",
+    "**/__pycache__"
+  ],
+  "files.exclude": {
+    "**/__pycache__": true
+  },
+  "search.exclude": {
+    "**/functions/venv": true
+  }
+}

@@ -7,7 +7,20 @@ MovementType = Literal["expense", "income"]
 PaymentMethod = Literal["cash", "card"]
 MovementStatus = Literal["draft", "confirmed"]
 LabelColor = Literal[
-    "red", "orange", "amber", "yellow", "lime", "green", "teal", "cyan", "blue", "indigo", "purple", "pink"
+    "red",
+    "orange",
+    "amber",
+    "yellow",
+    "lime",
+    "green",
+    "teal",
+    "cyan",
+    "blue",
+    "indigo",
+    "purple",
+    "pink",
+    "gray",
+    "lightgray",
 ]
 
 
