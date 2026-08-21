@@ -29,6 +29,14 @@ Componentes disponibles:
 - `Button.vue` — botón con `variant="primary"` (por defecto) / `"secondary"` / `"danger"`, más
   `icon` (nombre de icono Iconify, ej. `"lucide:log-out"`, ver sección de iconos más abajo) y
   `loading` (spinner + disabled) opcionales.
+- `ColorPicker.vue` — cuadrícula de 12 swatches circulares (`v-model` de tipo `LabelColor`, ver
+  `frontend/src/core/ui/labelColors.ts`) para elegir un color entre un set fijo predefinido. Usado
+  para el color de las etiquetas de movimientos (`pages/finance/labels.vue`).
+- `ColorSelect.vue` — `<select>` nativo pero con cada `<option>` teñido por su propio color
+  (`options: { value, label, color }[]`) y un punto de color en el propio control cuando está
+  cerrado. Usado para elegir la etiqueta de un movimiento en `MovementForm.vue`. Deliberadamente
+  nativo (no un listbox/combobox custom) para mantener accesibilidad de teclado y el picker móvil
+  del sistema — mismo criterio que el resto de la librería (ver sección de PrimeVue más abajo).
 
   ⚠️ **Ojo con el nombre:** `@primevue/nuxt-module` registra globalmente un componente distinto
   también llamado `Button` (el de PrimeVue). Como ya no usamos ningún componente de PrimeVue en
@@ -81,6 +89,40 @@ perdido esas piezas, no que haya que instalar `vue-tsc` suelto con `npx` (eso tr
 de `typescript` incompatible con la que ya usa el resto del árbol — mejor fijarlo como
 devDependency, deduplicado con la versión que ya resuelven `nuxt`/`vue`/`pinia`, y comprobarlo
 con `npm ls typescript`).
+
+## Comprobar tipos en Python (Pyright)
+
+El backend (`functions/`) no tiene ningún linter/type-checker instalado como dependencia — ni
+`mypy` ni `pyright` están en `requirements.txt`, y no hay que añadirlos ahí. Se ejecuta al vuelo
+vía `npx` (usa el Node del propio repo, no hace falta instalar nada globalmente), apuntando al
+intérprete del `venv/` para que resuelva `firebase_admin`/`fastapi`/`pydantic` igual que en
+tiempo de ejecución:
+
+```bash
+cd functions
+npx --yes pyright --pythonpath venv/bin/python app main.py scripts
+```
+
+Esto es exactamente lo que hace Pylance por debajo (es el mismo motor), así que sirve como
+sustituto en CLI de "revisar con Pylance".
+
+**Ruido conocido, no son bugs reales** — a día de hoy la pasada limpia da ~14 errores que son
+huecos de los *stubs* de `firebase_admin`/`firebase_functions`, no del código de este repo:
+`firestore.SERVER_TIMESTAMP` / `Increment` / `FieldFilter` / `Query` ("not a known attribute of
+module") y `firebase_functions.https_fn.Request`/`Response` ("not exported from module") — todos
+existen y funcionan en tiempo de ejecución, Pyright solo no los ve porque esos paquetes no
+publican tipos completos. Si al ejecutar Pyright aparecen *más* errores de estos que antes, no
+es señal de alarma por sí sola — compara contra esta lista antes de reportarlo como regresión.
+
+Un patrón que sí era un bug real y ya está corregido: `doc.to_dict()` de Firestore tipa como
+`dict | None` (devuelve `None` si el snapshot es de un documento que no existe), y varios sitios
+lo usaban sin comprobarlo. Está blindado en `app/core/firebase.py` con `snapshot_data(doc)`
+— lanza un `ValueError` claro en vez de dejar que reviente más adelante con un `AttributeError`
+opaco. Usa siempre `snapshot_data(doc)` en vez de `doc.to_dict()` a pelo cuando ya sepas que el
+documento existe (tras un `.exists`, un resultado de `.stream()`, o justo después de escribirlo).
+
+Ejecútalo tras cambios en `functions/app/**/*.py` con lógica no trivial (igual que
+`npm run typecheck` en el frontend) — no hace falta para scripts sueltos en `scripts/`.
 
 ## SEO/Open Graph: tiene que vivir en `nuxt.config.ts`, no en `app.vue`
 

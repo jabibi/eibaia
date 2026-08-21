@@ -1,14 +1,16 @@
 import { apiFetch } from "~/core/api/http";
+import type { LabelColor } from "~/core/ui/labelColors";
 
-export type MovementType = "expense" | "income" | "adjustment";
+export type MovementType = "expense" | "income";
 export type PaymentMethod = "cash" | "card";
 export type MovementStatus = "draft" | "confirmed";
-export type MovementScope = "cash" | "card";
 
 export interface Movement {
   id: string;
   type: MovementType;
   method: PaymentMethod | null;
+  cashbox_id: string | null;
+  label_id: string | null;
   amount_cents: number;
   description: string;
   date: string;
@@ -23,6 +25,8 @@ export interface Movement {
 export interface MovementInput {
   type: MovementType;
   method?: PaymentMethod | null;
+  cashbox_id?: string | null;
+  label_id?: string | null;
   amount_cents: number;
   description: string;
   date: string;
@@ -47,11 +51,56 @@ export interface FinanceSummary {
   pending_drafts_count: number;
 }
 
+export interface Cashbox {
+  id: string;
+  name: string;
+  total_amount_cents: number;
+  last_update: string | null;
+}
+
+interface CashboxListResponse {
+  cashboxes: Cashbox[];
+}
+
 export function getSummary() {
   return apiFetch<FinanceSummary>("/finance/summary");
 }
 
-export function listMovements(pageToken?: string | null, status?: MovementStatus, scope?: MovementScope) {
+export function listCashboxes() {
+  return apiFetch<CashboxListResponse>("/finance/cashboxes");
+}
+
+export function createCashbox(payload: { name: string }) {
+  return apiFetch<Cashbox>("/finance/cashboxes", { method: "POST", body: payload });
+}
+
+export interface Label {
+  id: string;
+  name: string;
+  color: LabelColor;
+}
+
+interface LabelListResponse {
+  labels: Label[];
+}
+
+export function listLabels() {
+  return apiFetch<LabelListResponse>("/finance/labels");
+}
+
+export function createLabel(payload: { name: string; color: LabelColor }) {
+  return apiFetch<Label>("/finance/labels", { method: "POST", body: payload });
+}
+
+export function updateLabel(id: string, payload: { name: string; color: LabelColor }) {
+  return apiFetch<Label>(`/finance/labels/${id}`, { method: "PATCH", body: payload });
+}
+
+export function deleteLabel(id: string) {
+  return apiFetch<void>(`/finance/labels/${id}`, { method: "DELETE" });
+}
+
+export function listMovements(pageToken?: string | null, status?: MovementStatus, scope?: PaymentMethod) {
   return apiFetch<MovementListResponse>("/finance/movements", {
     query: { page_token: pageToken ?? undefined, status, scope },
   });

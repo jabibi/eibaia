@@ -1,6 +1,6 @@
 from firebase_admin import auth as firebase_auth
 
-from app.core.firebase import get_db
+from app.core.firebase import get_db, snapshot_data
 
 from .schemas import UserOut, UserStatus
 
@@ -61,4 +61,6 @@ def get_permissions_for(role_id: str | None) -> list[str]:
     if role_id is None:
         return []
     doc = get_db().collection("user_roles").document(role_id).get()
-    return list(doc.to_dict().get("group_ids", [])) if doc.exists else []
+    if not doc.exists:
+        return []
+    return list(snapshot_data(doc).get("group_ids", []))

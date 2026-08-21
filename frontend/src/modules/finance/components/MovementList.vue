@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deleteMovement, updateMovementStatus, type Movement } from "~/modules/finance/api";
+import { deleteMovement, updateMovementStatus, type Label, type Movement } from "~/modules/finance/api";
 import { formatCurrency } from "~/core/utils/currency";
 import { useAuthStore } from "~/core/stores/auth";
 import { usePermissionsStore } from "~/core/stores/permissions";
@@ -7,15 +7,36 @@ import Card from "~/core/components/ui/Card.vue";
 import StatusBadge from "~/core/components/ui/StatusBadge.vue";
 import TableIconAction from "~/core/components/ui/TableIconAction.vue";
 import { tableCellClass, tableHeaderCellClass, tableRowClass } from "~/core/ui/tableClasses";
+import { LABEL_COLOR_CLASSES } from "~/core/ui/labelColors";
 
 const props = withDefaults(
-  defineProps<{ movements: Movement[]; loading?: boolean; showActions?: boolean; emptyMessage?: string }>(),
+  defineProps<{
+    movements: Movement[];
+    loading?: boolean;
+    showActions?: boolean;
+    emptyMessage?: string;
+    labels?: Label[];
+  }>(),
   {
     loading: false,
     showActions: false,
     emptyMessage: undefined,
+    labels: () => [],
   },
 );
+
+const labelById = computed(() => new Map(props.labels.map((label) => [label.id, label])));
+
+function labelFor(movement: Movement): Label | null {
+  if (!movement.label_id) return null;
+  return labelById.value.get(movement.label_id) ?? null;
+}
+
+function typeLine(movement: Movement): string {
+  const parts = [t(`finance.types.${movement.type}`)];
+  if (movement.method) parts.push(t(`finance.methods.${movement.method}`));
+  return parts.join(" · ");
+}
 
 const emit = defineEmits<{ (e: "refresh"): void }>();
 
@@ -79,6 +100,7 @@ async function handleConfirm(movement: Movement) {
             <th :class="tableHeaderCellClass">{{ t("finance.fields.date") }}</th>
             <th :class="tableHeaderCellClass">{{ t("finance.fields.description") }}</th>
             <th :class="tableHeaderCellClass">{{ t("finance.fields.type") }}</th>
+            <th :class="tableHeaderCellClass">{{ t("finance.fields.label") }}</th>
             <th :class="tableHeaderCellClass">{{ t("finance.fields.amount") }}</th>
             <th :class="tableHeaderCellClass">{{ t("finance.fields.status") }}</th>
             <th v-if="showActions" :class="tableHeaderCellClass">{{ t("finance.fields.actions") }}</th>
@@ -86,21 +108,28 @@ async function handleConfirm(movement: Movement) {
         </thead>
         <tbody>
           <tr v-if="loading">
-            <td :colspan="showActions ? 6 : 5" class="px-4 py-6 text-center text-slate-500">
+            <td :colspan="showActions ? 7 : 6" class="px-4 py-6 text-center text-slate-500">
               {{ t("finance.loading") }}
             </td>
           </tr>
           <tr v-else-if="movements.length === 0">
-            <td :colspan="showActions ? 6 : 5" class="px-4 py-6 text-center text-slate-500">
+            <td :colspan="showActions ? 7 : 6" class="px-4 py-6 text-center text-slate-500">
               {{ props.emptyMessage ?? t("finance.noMovements") }}
             </td>
           </tr>
           <tr v-for="movement in movements" :key="movement.id" :class="tableRowClass">
             <td :class="tableCellClass">{{ movement.date }}</td>
             <td :class="tableCellClass">{{ movement.description }}</td>
+            <td :class="tableCellClass">{{ typeLine(movement) }}</td>
             <td :class="tableCellClass">
-              {{ t(`finance.types.${movement.type}`) }}
-              <span v-if="movement.method">· {{ t(`finance.methods.${movement.method}`) }}</span>
+              <span
+                v-if="labelFor(movement)"
+                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                :class="[LABEL_COLOR_CLASSES[labelFor(movement)!.color].chipBg, LABEL_COLOR_CLASSES[labelFor(movement)!.color].text]"
+              >
+                {{ labelFor(movement)!.name }}
+              </span>
+              <span v-else class="text-slate-400">—</span>
             </td>
             <td :class="tableCellClass">
               <span

@@ -1,8 +1,9 @@
 from firebase_admin import auth as firebase_auth
 
 from app.core.firebase import get_db
+from app.modules.finance.services import seed_defaults as seed_finance_defaults
+from app.modules.roles.services import seed_defaults as seed_roles_defaults
 
-_RESET_COLLECTIONS = ["finance_movements"]
 _MAX_BATCH_DELETE = 1000
 
 
@@ -22,7 +23,28 @@ def _delete_all_users() -> None:
         firebase_auth.delete_users(uids[i : i + _MAX_BATCH_DELETE])
 
 
+def _delete_all_collections() -> None:
+    """Wipes every top-level Firestore collection, whatever it's called — this
+    introspects the live database instead of relying on a hardcoded/registered
+    list, so it can never drift out of sync when a collection is renamed or a
+    new one is added (as happened before: this list once said
+    "finance_movements" long after that collection had been renamed, and never
+    even mentioned "cashbox")."""
+    db = get_db()
+    for collection_ref in db.collections():
+        _delete_all_documents(collection_ref.id)
+
+
+def seed_defaults() -> None:
+    """Basic data the app needs to be usable right after a factory reset (or
+    on a brand new project with an empty database). Add a new module's own
+    seed_defaults() call here as new bootstrap data is needed — this is the
+    single place that wires a module into the post-reset setup."""
+    seed_roles_defaults()  # required first: nobody could be granted any permission without it
+    seed_finance_defaults()
+
+
 def factory_reset() -> None:
-    for collection_name in _RESET_COLLECTIONS:
-        _delete_all_documents(collection_name)
+    _delete_all_collections()
     _delete_all_users()
+    seed_defaults()

@@ -3,15 +3,19 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-MovementType = Literal["expense", "income", "adjustment"]
+MovementType = Literal["expense", "income"]
 PaymentMethod = Literal["cash", "card"]
 MovementStatus = Literal["draft", "confirmed"]
-MovementScope = Literal["cash", "card"]
+LabelColor = Literal[
+    "red", "orange", "amber", "yellow", "lime", "green", "teal", "cyan", "blue", "indigo", "purple", "pink"
+]
 
 
 class MovementIn(BaseModel):
     type: MovementType
     method: PaymentMethod | None = None
+    cashbox_id: str | None = None
+    label_id: str | None = None
     amount_cents: int
     description: str
     date: Date
@@ -20,6 +24,8 @@ class MovementIn(BaseModel):
 class MovementUpdateIn(BaseModel):
     type: MovementType | None = None
     method: PaymentMethod | None = None
+    cashbox_id: str | None = None
+    label_id: str | None = None
     amount_cents: int | None = None
     description: str | None = None
     date: Date | None = None
@@ -33,6 +39,8 @@ class MovementOut(BaseModel):
     id: str
     type: MovementType
     method: PaymentMethod | None
+    cashbox_id: str | None
+    label_id: str | None
     amount_cents: int
     description: str
     date: Date
@@ -59,3 +67,33 @@ class FinanceSummaryOut(BaseModel):
     cash_expenses_month: MonthlyStatOut
     card_expenses_month: MonthlyStatOut
     pending_drafts_count: int
+
+
+class CashboxIn(BaseModel):
+    name: str
+
+
+class CashboxOut(BaseModel):
+    id: str
+    name: str
+    total_amount_cents: int
+    last_update: str | None
+
+
+class CashboxListOut(BaseModel):
+    cashboxes: list[CashboxOut]
+
+
+class LabelIn(BaseModel):
+    name: str
+    color: LabelColor
+
+
+class LabelOut(BaseModel):
+    id: str
+    name: str
+    color: LabelColor
+
+
+class LabelListOut(BaseModel):
+    labels: list[LabelOut]

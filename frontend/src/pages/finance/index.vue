@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getSummary, type FinanceSummary } from "~/modules/finance/api";
+import { getSummary, listLabels, type FinanceSummary } from "~/modules/finance/api";
 import { formatCurrency } from "~/core/utils/currency";
 import { usePermissionsStore } from "~/core/stores/permissions";
 import KpiCard from "~/core/components/ui/KpiCard.vue";
@@ -10,6 +10,7 @@ const permissionsStore = usePermissionsStore();
 useHead({ title: t("finance.title") });
 
 const summary = ref<FinanceSummary | null>(null);
+const labelCount = ref<number | null>(null);
 const loading = ref(true);
 const errorMessage = ref("");
 
@@ -18,6 +19,10 @@ async function load() {
   errorMessage.value = "";
   try {
     summary.value = await getSummary();
+    if (permissionsStore.has("CASHBOX_MANAGE")) {
+      const { labels } = await listLabels();
+      labelCount.value = labels.length;
+    }
   } catch (error) {
     errorMessage.value = t("finance.loadError");
   } finally {
@@ -47,7 +52,7 @@ onMounted(load);
         </p>
       </KpiCard>
 
-      <KpiCard to="/finance/transactions?scope=cash">
+      <KpiCard to="/finance/transactions?filter=cash">
         <p class="text-sm text-slate-500">{{ t("finance.kpi.cashMonth") }}</p>
         <p class="mt-2 text-2xl font-semibold text-slate-800">
           {{ loading ? "…" : formatCurrency(summary?.cash_expenses_month.total_cents ?? 0) }}
@@ -57,7 +62,7 @@ onMounted(load);
         </p>
       </KpiCard>
 
-      <KpiCard to="/finance/transactions?scope=card">
+      <KpiCard to="/finance/transactions?filter=card">
         <p class="text-sm text-slate-500">{{ t("finance.kpi.cardMonth") }}</p>
         <p class="mt-2 text-2xl font-semibold text-slate-800">
           {{ loading ? "…" : formatCurrency(summary?.card_expenses_month.total_cents ?? 0) }}
@@ -71,7 +76,7 @@ onMounted(load);
         </p>
       </KpiCard>
 
-      <KpiCard v-if="permissionsStore.has('CASHBOX_MANAGE')" to="/finance/review" variant="warning">
+      <KpiCard v-if="permissionsStore.has('CASHBOX_MANAGE')" to="/finance/transactions?filter=review" variant="warning">
         <p class="text-sm text-slate-500">{{ t("finance.kpi.drafts") }}</p>
         <p
           class="mt-2 text-3xl font-bold"
@@ -80,6 +85,14 @@ onMounted(load);
           {{ loading ? "…" : (summary?.pending_drafts_count ?? 0) }}
         </p>
         <p class="mt-1 text-xs text-slate-500">{{ t("finance.kpi.draftsHint") }}</p>
+      </KpiCard>
+
+      <KpiCard v-if="permissionsStore.has('CASHBOX_MANAGE')" to="/finance/labels">
+        <p class="text-sm text-slate-500">{{ t("finance.kpi.labels") }}</p>
+        <p class="mt-2 text-3xl font-bold text-slate-800">
+          {{ loading ? "…" : (labelCount ?? 0) }}
+        </p>
+        <p class="mt-1 text-xs text-slate-500">{{ t("finance.kpi.labelsHint") }}</p>
       </KpiCard>
     </div>
   </div>

@@ -1,8 +1,19 @@
 <script setup lang="ts">
-import { createMovement, getMovement, updateMovement, type MovementType, type PaymentMethod } from "~/modules/finance/api";
+import {
+  createMovement,
+  getMovement,
+  listCashboxes,
+  listLabels,
+  updateMovement,
+  type Cashbox,
+  type Label,
+  type MovementType,
+  type PaymentMethod,
+} from "~/modules/finance/api";
 import { euroToCents } from "~/core/utils/currency";
 import Button from "~/core/components/ui/Button.vue";
 import Card from "~/core/components/ui/Card.vue";
+import ColorSelect from "~/core/components/ui/ColorSelect.vue";
 import FormField from "~/core/components/ui/FormField.vue";
 import FormInput from "~/core/components/ui/FormInput.vue";
 import SegmentedControl from "~/core/components/ui/SegmentedControl.vue";
@@ -19,6 +30,10 @@ const errorMessage = ref("");
 
 const type = ref<MovementType>("expense");
 const method = ref<PaymentMethod>("cash");
+const cashboxes = ref<Cashbox[]>([]);
+const cashboxId = ref("");
+const labels = ref<Label[]>([]);
+const labelId = ref("");
 const amount = ref("");
 const description = ref("");
 const date = ref(new Date().toISOString().slice(0, 10));
@@ -30,7 +45,6 @@ useHead({ title: computed(() => (isEdit.value ? t("finance.form.editTitle") : t(
 const typeOptions = computed(() => [
   { label: t("finance.types.expense"), value: "expense" as MovementType },
   { label: t("finance.types.income"), value: "income" as MovementType },
-  { label: t("finance.types.adjustment"), value: "adjustment" as MovementType },
 ]);
 
 const methodOptions = computed(() => [
@@ -40,10 +54,13 @@ const methodOptions = computed(() => [
 
 watch(type, () => {
   amount.value = "";
-  if (type.value !== "expense") {
-    method.value = "cash";
-  }
 });
+
+const selectedCashbox = computed(() => cashboxes.value.find((cashbox) => cashbox.id === cashboxId.value) ?? null);
+
+const labelOptions = computed(() =>
+  labels.value.map((label) => ({ value: label.id, label: label.name, color: label.color })),
+);
 
 async function loadExisting() {
   if (!props.movementId) return;
@@ -52,6 +69,8 @@ async function loadExisting() {
     const movement = await getMovement(props.movementId);
     type.value = movement.type;
     method.value = movement.method ?? "cash";
+    cashboxId.value = movement.cashbox_id ?? "";
+    labelId.value = movement.label_id ?? "";
     amount.value = String(movement.amount_cents / 100);
     description.value = movement.description;
     date.value = movement.date;
@@ -62,16 +81,36 @@ async function loadExisting() {
   }
 }
 
+async function loadCashboxes() {
+  const { cashboxes: list } = await listCashboxes();
+  cashboxes.value = list;
+  const [first] = list;
+  if (!props.movementId && !cashboxId.value && first) {
+    cashboxId.value = first.id;
+  }
+}
+
+async function loadLabels() {
+  const { labels: list } = await listLabels();
+  labels.value = list;
+  const [first] = list;
+  if (!props.movementId && !labelId.value && first) {
+    labelId.value = first.id;
+  }
+}
+
 async function handleSubmit() {
   const amountValue = Number(amount.value);
-  if (!amount.value || Number.isNaN(amountValue) || !description.value) return;
+  if (!amount.value || Number.isNaN(amountValue) || !description.value || !labelId.value) return;
 
   saving.value = true;
   errorMessage.value = "";
   try {
     const payload = {
       type: type.value,
-      method: type.value === "expense" ? method.value : null,
+      method: method.value,
+      cashbox_id: method.value === "cash" ? cashboxId.value || null : null,
+      label_id: labelId.value,
       amount_cents: euroToCents(amountValue),
       description: description.value,
       date: date.value,
@@ -94,6 +133,8 @@ onMounted(() => {
   if (!props.movementId && route.query.type === "card") {
     method.value = "card";
   }
+  loadCashboxes();
+  loadLabels();
   loadExisting();
 });
 </script>
@@ -104,18 +145,25 @@ onMounted(() => {
       {{ isEdit ? t("finance.form.editTitle") : t("finance.form.newTitle") }}
     </h1>
 
-    <Card class="mt-6 max-w-xl space-y-5 p-6">
+    <Card class="relative mt-6 max-w-xl space-y-5 p-6">
+      <span
+        v-if="method === 'cash' && selectedCashbox"
+        class="absolute -right-2 -top-2 flex items-center gap-1 rounded-full bg-indigo-600 px-3 py-1 text-xs font-medium text-white shadow-sm"
+      >
+        <Icon name="lucide:vault" />
+        {{ selectedCashbox.name }}
+      </span>
+
       <SegmentedControl v-model="type" :options="typeOptions" />
 
-      <SegmentedControl v-if="type === 'expense'" v-model="method" :options="methodOptions" />
+      <SegmentedControl v-model="method" :options="methodOptions" />
+
+      <FormField :label="t('finance.fields.label')">
+        <ColorSelect v-model="labelId" :options="labelOptions" />
+      </FormField>
 
       <FormField :label="t('finance.fields.amount')">
-        <FormInput
-          v-model="amount"
-          type="number"
-          step="0.01"
-          :min="type === 'adjustment' ? undefined : 0"
-        />
+        <FormInput v-model="amount" type="number" step="0.01" :min="0" />
       </FormField>
 
       <FormField :label="t('finance.fields.description')">

@@ -44,16 +44,31 @@
       "movementsCount": "{count} movimientos",
       "cardNote": "No afecta al efectivo de la caja",
       "drafts": "Pendientes de confirmar",
-      "draftsHint": "Ir a revisión"
+      "draftsHint": "Ir a revisión",
+      "labels": "Etiquetas",
+      "labelsHint": "Gestionar categorías de movimientos"
     },
     "types": {
       "expense": "Gasto",
-      "income": "Ingreso",
-      "adjustment": "Ajuste"
+      "income": "Ingreso"
     },
     "methods": {
       "cash": "Efectivo",
       "card": "Tarjeta"
+    },
+    "colors": {
+      "red": "Rojo",
+      "orange": "Naranja",
+      "amber": "Ámbar",
+      "yellow": "Amarillo",
+      "lime": "Lima",
+      "green": "Verde",
+      "teal": "Verde azulado",
+      "cyan": "Cian",
+      "blue": "Azul",
+      "indigo": "Índigo",
+      "purple": "Morado",
+      "pink": "Rosa"
     },
     "statuses": {
       "draft": "Borrador",
@@ -62,6 +77,7 @@
     "fields": {
       "type": "Tipo",
       "method": "Método de pago",
+      "label": "Etiqueta",
       "amount": "Importe",
       "description": "Concepto",
       "date": "Fecha",
@@ -81,12 +97,17 @@
       "titleCash": "Movimientos de efectivo",
       "titleCard": "Movimientos de tarjeta",
       "loadError": "No se ha podido cargar el listado de movimientos.",
-      "loadMore": "Cargar más"
+      "loadMore": "Cargar más",
+      "filters": {
+        "all": "Todos",
+        "cash": "Efectivo",
+        "card": "Tarjeta",
+        "review": "Revisión"
+      }
     },
     "review": {
       "title": "Revisión",
-      "empty": "No hay movimientos pendientes de revisión.",
-      "loadError": "No se ha podido cargar el listado de revisión."
+      "empty": "No hay movimientos pendientes de revisión."
     },
     "actions": {
       "edit": "Editar",
@@ -95,6 +116,22 @@
       "confirmDelete": "¿Seguro que quieres eliminar «{description}»? Esta acción no se puede deshacer.",
       "deleteError": "No se ha podido eliminar el movimiento.",
       "confirmError": "No se ha podido confirmar el movimiento."
+    },
+    "labels": {
+      "title": "Etiquetas de movimientos",
+      "name": "Nombre",
+      "color": "Color",
+      "add": "Añadir",
+      "edit": "Editar etiqueta",
+      "save": "Guardar etiqueta",
+      "cancel": "Cancelar edición",
+      "delete": "Eliminar etiqueta",
+      "actions": "Acciones",
+      "empty": "Todavía no hay etiquetas.",
+      "loadError": "No se han podido cargar las etiquetas.",
+      "saveError": "No se ha podido guardar la etiqueta.",
+      "deleteError": "No se ha podido eliminar la etiqueta.",
+      "confirmDelete": "¿Seguro que quieres eliminar la etiqueta «{name}»? Esta acción no se puede deshacer."
     }
   },
   "users": {
@@ -131,11 +168,11 @@
     "cards": {
       "users": "Usuarios",
       "reset": "Restablecer aplicación",
-      "resetHint": "Elimina todos los movimientos y usuarios registrados"
+      "resetHint": "Elimina toda la base de datos y todos los usuarios registrados"
     },
     "reset": {
       "title": "Restablecer aplicación",
-      "warning": "Esta acción restablece la aplicación a su estado de fábrica: se eliminarán TODOS los movimientos de la Caja Fuerte y TODOS los usuarios registrados (la tabla de usuarios completa), incluida tu propia cuenta y la sesión actual. Esta acción no se puede deshacer. Tras restablecer, tendrás que volver a iniciar sesión y se te asignará de nuevo el rol de administrador como primer usuario.",
+      "warning": "Esta acción restablece la aplicación a su estado de fábrica: se eliminará TODA la base de datos y TODOS los usuarios registrados (la tabla de usuarios completa), incluida tu propia cuenta y la sesión actual. Esta acción no se puede deshacer. Tras restablecer, tendrás que volver a iniciar sesión y se te asignará de nuevo el rol de administrador como primer usuario.",
       "confirmWord": "RESTABLECER",
       "confirmLabel": "Escribe {word} para confirmar",
       "submit": "Restablecer aplicación",

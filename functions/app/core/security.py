@@ -12,7 +12,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth as firebase_auth
 
 from app.core import firebase as _firebase_init  # noqa: F401  (ensures the Admin SDK is initialized)
-from app.core.firebase import get_db
+from app.core.firebase import get_db, snapshot_data
 
 _bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -59,7 +59,7 @@ def check_permission(user: CurrentUser, group_code: str) -> bool:
     doc = get_db().collection("user_roles").document(user.role_id).get()
     if not doc.exists:
         return False
-    return group_code in (doc.to_dict().get("group_ids") or [])
+    return group_code in (snapshot_data(doc).get("group_ids") or [])
 
 
 def require_permission(*group_codes: str):
