@@ -5,10 +5,12 @@
     "title": "ElosuE! - Gestión del hogar"
   },
   "login": {
+    "title": "Iniciar sesión",
     "loginWithGoogle": "Iniciar sesión con Google",
     "loginError": "No se ha podido iniciar sesión. Inténtalo de nuevo."
   },
   "pending": {
+    "title": "Cuenta pendiente",
     "message": "Tu cuenta está pendiente de aprobación por un administrador. En cuanto se te asigne un rol podrás acceder a la aplicación.",
     "logout": "Cerrar sesión"
   },

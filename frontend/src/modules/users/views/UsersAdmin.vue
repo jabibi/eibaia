@@ -16,6 +16,8 @@ import { tableCellClass, tableHeaderCellClass, tableRowClass } from "~/core/ui/t
 
 const { t } = useI18n();
 
+useHead({ title: t("users.title") });
+
 const users = ref<UserItem[]>([]);
 const roles = ref<UserRole[]>([]);
 const loading = ref(true);
@@ -98,10 +100,10 @@ onMounted(() => {
           </thead>
           <tbody>
             <tr v-if="loading">
-              <td colspan="5" class="px-4 py-6 text-center text-slate-400">{{ t("users.loading") }}</td>
+              <td colspan="5" class="px-4 py-6 text-center text-slate-500">{{ t("users.loading") }}</td>
             </tr>
             <tr v-else-if="users.length === 0">
-              <td colspan="5" class="px-4 py-6 text-center text-slate-400">{{ t("users.empty") }}</td>
+              <td colspan="5" class="px-4 py-6 text-center text-slate-500">{{ t("users.empty") }}</td>
             </tr>
             <tr v-for="user in users" :key="user.uid" :class="tableRowClass">
               <td :class="tableCellClass">
@@ -109,7 +111,7 @@ onMounted(() => {
                   <img
                     v-if="user.photo_url"
                     :src="user.photo_url"
-                    :alt="user.display_name ?? undefined"
+                    :alt="user.display_name ?? user.email ?? ''"
                     class="h-8 w-8 rounded-full"
                   />
                   <span>{{ user.display_name ?? "—" }}</span>
@@ -144,7 +146,7 @@ onMounted(() => {
                   <button
                     v-if="status === 'inactive'"
                     type="button"
-                    class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                    class="rounded text-sm font-medium text-indigo-600 hover:text-indigo-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                     @click="handleActiveChange(user, true)"
                   >
                     {{ t("users.actions.reactivate") }}

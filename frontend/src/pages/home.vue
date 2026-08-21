@@ -3,6 +3,8 @@ import { useAuthStore } from "~/core/stores/auth";
 
 const authStore = useAuthStore();
 const { t } = useI18n();
+
+useHead({ title: t("sidebar.home") });
 </script>
 
 <template>

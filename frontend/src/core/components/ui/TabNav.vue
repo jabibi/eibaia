@@ -10,7 +10,8 @@ defineEmits<{ (e: "update:modelValue", value: string): void }>();
         v-for="option in options"
         :key="option.value"
         type="button"
-        class="border-b-2 px-1 py-3 text-sm transition"
+        :aria-current="modelValue === option.value ? 'page' : undefined"
+        class="border-b-2 px-1 py-3 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         :class="
           modelValue === option.value
             ? 'border-indigo-600 font-medium text-indigo-600'

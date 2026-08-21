@@ -18,8 +18,9 @@ defineEmits<{ click: [] }>();
   <NuxtLink
     v-if="to"
     :to="to"
+    :aria-label="iconOnly ? label : undefined"
     v-tooltip.right="tooltip"
-    class="flex h-10 cursor-pointer items-center gap-3 rounded-md text-sm text-slate-600"
+    class="flex h-10 cursor-pointer items-center gap-3 rounded-md text-sm text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
     :class="[
       variant === 'danger' ? 'hover:bg-red-50 hover:text-red-600' : 'hover:bg-slate-100',
       iconOnly ? 'md:w-10 md:justify-center md:gap-0 md:px-0' : 'w-full px-2',
@@ -33,8 +34,9 @@ defineEmits<{ click: [] }>();
   <button
     v-else
     type="button"
+    :aria-label="iconOnly ? label : undefined"
     v-tooltip.right="tooltip"
-    class="flex h-10 cursor-pointer items-center gap-3 rounded-md text-sm text-slate-600"
+    class="flex h-10 cursor-pointer items-center gap-3 rounded-md text-sm text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
     :class="[
       variant === 'danger' ? 'hover:bg-red-50 hover:text-red-600' : 'hover:bg-slate-100',
       iconOnly ? 'md:w-10 md:justify-center md:gap-0 md:px-0' : 'w-full px-2',

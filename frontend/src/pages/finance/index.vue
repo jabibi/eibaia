@@ -2,9 +2,12 @@
 import { getSummary, type FinanceSummary } from "~/modules/finance/api";
 import { formatCurrency } from "~/core/utils/currency";
 import { usePermissionsStore } from "~/core/stores/permissions";
+import KpiCard from "~/core/components/ui/KpiCard.vue";
 
 const { t } = useI18n();
 const permissionsStore = usePermissionsStore();
+
+useHead({ title: t("finance.title") });
 
 const summary = ref<FinanceSummary | null>(null);
 const loading = ref(true);
@@ -32,10 +35,7 @@ onMounted(load);
     <p v-if="errorMessage" class="mt-2 text-sm text-red-600">{{ errorMessage }}</p>
 
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <NuxtLink
-        to="/finance/new"
-        class="group relative rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
-      >
+      <KpiCard to="/finance/new">
         <span
           class="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 transition group-hover:bg-emerald-100"
         >
@@ -45,43 +45,33 @@ onMounted(load);
         <p class="mt-2 text-3xl font-bold text-slate-800">
           {{ loading ? "…" : formatCurrency(summary?.balance_cents ?? 0) }}
         </p>
-      </NuxtLink>
+      </KpiCard>
 
-      <NuxtLink
-        to="/finance/transactions?scope=cash"
-        class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
-      >
+      <KpiCard to="/finance/transactions?scope=cash">
         <p class="text-sm text-slate-500">{{ t("finance.kpi.cashMonth") }}</p>
         <p class="mt-2 text-2xl font-semibold text-slate-800">
           {{ loading ? "…" : formatCurrency(summary?.cash_expenses_month.total_cents ?? 0) }}
         </p>
-        <p class="mt-1 text-xs text-slate-400">
+        <p class="mt-1 text-xs text-slate-500">
           {{ t("finance.kpi.movementsCount", { count: summary?.cash_expenses_month.count ?? 0 }) }}
         </p>
-      </NuxtLink>
+      </KpiCard>
 
-      <NuxtLink
-        to="/finance/transactions?scope=card"
-        class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
-      >
+      <KpiCard to="/finance/transactions?scope=card">
         <p class="text-sm text-slate-500">{{ t("finance.kpi.cardMonth") }}</p>
         <p class="mt-2 text-2xl font-semibold text-slate-800">
           {{ loading ? "…" : formatCurrency(summary?.card_expenses_month.total_cents ?? 0) }}
         </p>
-        <p class="mt-1 text-xs text-slate-400">
+        <p class="mt-1 text-xs text-slate-500">
           {{ t("finance.kpi.movementsCount", { count: summary?.card_expenses_month.count ?? 0 }) }}
         </p>
-        <p class="mt-2 flex items-center gap-1 text-xs text-slate-400">
+        <p class="mt-2 flex items-center gap-1 text-xs text-slate-500">
           <Icon name="lucide:info" />
           {{ t("finance.kpi.cardNote") }}
         </p>
-      </NuxtLink>
+      </KpiCard>
 
-      <NuxtLink
-        v-if="permissionsStore.has('CASHBOX_MANAGE')"
-        to="/finance/review"
-        class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:border-amber-300 hover:shadow-md"
-      >
+      <KpiCard v-if="permissionsStore.has('CASHBOX_MANAGE')" to="/finance/review" variant="warning">
         <p class="text-sm text-slate-500">{{ t("finance.kpi.drafts") }}</p>
         <p
           class="mt-2 text-3xl font-bold"
@@ -89,8 +79,8 @@ onMounted(load);
         >
           {{ loading ? "…" : (summary?.pending_drafts_count ?? 0) }}
         </p>
-        <p class="mt-1 text-xs text-slate-400">{{ t("finance.kpi.draftsHint") }}</p>
-      </NuxtLink>
+        <p class="mt-1 text-xs text-slate-500">{{ t("finance.kpi.draftsHint") }}</p>
+      </KpiCard>
     </div>
   </div>
 </template>

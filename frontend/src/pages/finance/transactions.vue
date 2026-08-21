@@ -12,6 +12,8 @@ const pageTitle = computed(() =>
 );
 const addLink = computed(() => (scope.value === "card" ? "/finance/new?type=card" : "/finance/new"));
 
+useHead({ title: pageTitle });
+
 const loadedMovements = ref<Movement[]>([]);
 const nextPageToken = ref<string | null>(null);
 const loading = ref(true);
@@ -53,7 +55,7 @@ onMounted(loadFirstPage);
   <div class="relative">
     <NuxtLink
       :to="addLink"
-      class="fixed right-6 top-6 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg hover:bg-emerald-700"
+      class="fixed right-6 top-6 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500"
       :aria-label="t('finance.addMovement')"
     >
       <Icon name="lucide:plus" class="text-xl" />

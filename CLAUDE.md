@@ -19,6 +19,13 @@ Componentes disponibles:
 - `TabNav.vue` — pestañas de borde inferior (ej. filtros Activos/Nuevos/Inactivos).
 - `ToggleSwitch.vue` — interruptor compacto accesible.
 - `StatusBadge.vue` — badge de estado, `variant="neutral"` (por defecto) / `"success"` / `"warning"`.
+- `KpiCard.vue` — tarjeta-enlace de KPI (borde + sombra + hover + foco), `variant="default"`
+  (por defecto, hover verde) / `"warning"` (hover ámbar) / `"danger"` (borde y foco rojos). Solo
+  envuelve el "cascarón" — el contenido (título, valor, hint) va por slot porque varía mucho
+  entre tarjetas.
+- `TableIconAction.vue` — botón/enlace de solo icono para filas de tabla (editar/confirmar/
+  eliminar), con `title`+`aria-label` automáticos a partir de `label` y `tone="neutral"`
+  (por defecto) / `"success"` / `"danger"`.
 - `Button.vue` — botón con `variant="primary"` (por defecto) / `"secondary"` / `"danger"`, más
   `icon` (nombre de icono Iconify, ej. `"lucide:log-out"`, ver sección de iconos más abajo) y
   `loading` (spinner + disabled) opcionales.
@@ -74,6 +81,24 @@ perdido esas piezas, no que haya que instalar `vue-tsc` suelto con `npx` (eso tr
 de `typescript` incompatible con la que ya usa el resto del árbol — mejor fijarlo como
 devDependency, deduplicado con la versión que ya resuelven `nuxt`/`vue`/`pinia`, y comprobarlo
 con `npm ls typescript`).
+
+## SEO/Open Graph: tiene que vivir en `nuxt.config.ts`, no en `app.vue`
+
+Con `ssr: false`, `nuxt generate` prerrenderiza cada ruta pero **no** ejecuta el árbol de
+componentes Vue para generar contenido — solo copia el shell SPA (confirmado: el aviso
+"HTML content not prerendered because ssr: false was set" que suelta el build es literal).
+Esto significa que un `useSeoMeta`/`useHead` llamado desde un componente (p. ej. `app.vue`)
+**no aparece en el HTML estático** que se sirve — solo se aplica tras la hidratación en el
+cliente. Para un usuario normal esto da igual (el JS carga enseguida), pero WhatsApp/Facebook/
+Twitter no ejecutan JS al generar la tarjeta de previsualización de un enlace: verían la página
+sin ninguna etiqueta `og:*`.
+
+Por eso las etiquetas Open Graph/Twitter/canonical de `frontend/nuxt.config.ts` están en
+`app.head.meta`/`app.head.link` (config de build, sí se hornea en el HTML) y no en un
+`useSeoMeta()` dentro de `app.vue`. El título de pestaña por página (`useHead({ title: ... })`
+en cada página) sí puede ir en un componente porque solo afecta al `document.title` en el
+navegador del usuario, no a un crawler sin JS — verificado comparando el HTML generado
+(`frontend/.output/public/index.html`) antes y después de mover el bloque OG.
 
 Ejecuta `npm run typecheck` tras cambios en `.ts`/`.vue` con lógica no trivial (no hace falta
 para cambios puramente de estilos/Tailwind).

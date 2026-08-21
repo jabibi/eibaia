@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { getUsersSummary, type UsersSummary } from "~/modules/users/api";
+import KpiCard from "~/core/components/ui/KpiCard.vue";
 
 const { t } = useI18n();
+
+useHead({ title: t("settings.title") });
 
 const summary = ref<UsersSummary | null>(null);
 const loading = ref(true);
@@ -29,34 +32,28 @@ onMounted(load);
     <p v-if="errorMessage" class="mt-2 text-sm text-red-600">{{ errorMessage }}</p>
 
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <NuxtLink
-        to="/settings/users"
-        class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
-      >
+      <KpiCard to="/settings/users">
         <p class="text-sm text-slate-500">{{ t("settings.cards.users") }}</p>
         <div class="mt-3 flex items-center gap-6">
           <div>
             <p class="text-2xl font-bold text-slate-800">{{ loading ? "…" : summary?.active ?? 0 }}</p>
-            <p class="text-xs text-slate-400">{{ t("users.filters.active") }}</p>
+            <p class="text-xs text-slate-500">{{ t("users.filters.active") }}</p>
           </div>
           <div>
             <p class="text-2xl font-bold text-emerald-600">{{ loading ? "…" : summary?.new ?? 0 }}</p>
-            <p class="text-xs text-slate-400">{{ t("users.filters.new") }}</p>
+            <p class="text-xs text-slate-500">{{ t("users.filters.new") }}</p>
           </div>
           <div>
-            <p class="text-2xl font-bold text-slate-400">{{ loading ? "…" : summary?.inactive ?? 0 }}</p>
-            <p class="text-xs text-slate-400">{{ t("users.filters.inactive") }}</p>
+            <p class="text-2xl font-bold text-slate-500">{{ loading ? "…" : summary?.inactive ?? 0 }}</p>
+            <p class="text-xs text-slate-500">{{ t("users.filters.inactive") }}</p>
           </div>
         </div>
-      </NuxtLink>
+      </KpiCard>
 
-      <NuxtLink
-        to="/settings/reset"
-        class="rounded-lg border border-red-200 bg-white p-6 shadow-sm transition hover:border-red-300 hover:shadow-md"
-      >
+      <KpiCard to="/settings/reset" variant="danger">
         <p class="text-sm text-slate-500">{{ t("settings.cards.reset") }}</p>
         <p class="mt-3 text-sm text-red-600">{{ t("settings.cards.resetHint") }}</p>
-      </NuxtLink>
+      </KpiCard>
     </div>
   </div>
 </template>

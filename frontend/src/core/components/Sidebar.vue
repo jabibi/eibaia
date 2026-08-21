@@ -72,7 +72,8 @@ async function handleLogout() {
     v-show="!mobileOpen"
     type="button"
     :aria-label="t('sidebar.expandMenu')"
-    class="fixed left-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-md bg-white text-slate-600 shadow ring-1 ring-slate-200 md:hidden"
+    :aria-expanded="mobileOpen"
+    class="fixed left-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-md bg-white text-slate-600 shadow ring-1 ring-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 md:hidden"
     @click="sidebar.openMobile()"
   >
     <Icon name="lucide:menu" class="text-lg" />
@@ -99,7 +100,8 @@ async function handleLogout() {
         type="button"
         v-tooltip.right="!mobileOpen ? (collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')) : undefined"
         :aria-label="collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')"
-        class="flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-md hover:bg-slate-100"
+        :aria-expanded="!collapsed"
+        class="flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-md hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         :class="isIconOnly ? 'md:w-10 md:justify-center md:cursor-e-resize' : 'flex-1 px-2 md:cursor-w-resize'"
         @click="handleLogoClick"
       >

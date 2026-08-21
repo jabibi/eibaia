@@ -12,6 +12,8 @@ if (!permissionsStore.has("SYSTEM_ADMIN")) {
   await navigateTo("/home");
 }
 
+useHead({ title: t("settings.reset.title") });
+
 const confirmWord = computed(() => t("settings.reset.confirmWord"));
 
 const confirmText = ref("");

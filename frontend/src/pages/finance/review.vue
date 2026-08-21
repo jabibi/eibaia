@@ -10,6 +10,8 @@ if (!permissionsStore.has("CASHBOX_MANAGE")) {
   await navigateTo("/home");
 }
 
+useHead({ title: t("finance.review.title") });
+
 const drafts = ref<Movement[]>([]);
 const loading = ref(true);
 const errorMessage = ref("");

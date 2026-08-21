@@ -5,6 +5,7 @@ import { useAuthStore } from "~/core/stores/auth";
 import { usePermissionsStore } from "~/core/stores/permissions";
 import Card from "~/core/components/ui/Card.vue";
 import StatusBadge from "~/core/components/ui/StatusBadge.vue";
+import TableIconAction from "~/core/components/ui/TableIconAction.vue";
 import { tableCellClass, tableHeaderCellClass, tableRowClass } from "~/core/ui/tableClasses";
 
 const props = withDefaults(
@@ -85,12 +86,12 @@ async function handleConfirm(movement: Movement) {
         </thead>
         <tbody>
           <tr v-if="loading">
-            <td :colspan="showActions ? 6 : 5" class="px-4 py-6 text-center text-slate-400">
+            <td :colspan="showActions ? 6 : 5" class="px-4 py-6 text-center text-slate-500">
               {{ t("finance.loading") }}
             </td>
           </tr>
           <tr v-else-if="movements.length === 0">
-            <td :colspan="showActions ? 6 : 5" class="px-4 py-6 text-center text-slate-400">
+            <td :colspan="showActions ? 6 : 5" class="px-4 py-6 text-center text-slate-500">
               {{ props.emptyMessage ?? t("finance.noMovements") }}
             </td>
           </tr>
@@ -122,32 +123,26 @@ async function handleConfirm(movement: Movement) {
             </td>
             <td v-if="showActions" :class="tableCellClass">
               <div class="flex items-center gap-3">
-                <NuxtLink
+                <TableIconAction
                   v-if="canEdit(movement)"
                   :to="`/finance/${movement.id}`"
-                  :title="t('finance.actions.edit')"
-                  class="text-slate-500 hover:text-emerald-700"
-                >
-                  <Icon name="lucide:pencil" />
-                </NuxtLink>
-                <button
+                  icon="lucide:pencil"
+                  :label="t('finance.actions.edit')"
+                />
+                <TableIconAction
                   v-if="canConfirm(movement)"
-                  type="button"
-                  :title="t('finance.actions.confirmMovement')"
-                  class="text-emerald-600 hover:text-emerald-800"
+                  icon="lucide:circle-check-big"
+                  :label="t('finance.actions.confirmMovement')"
+                  tone="success"
                   @click="handleConfirm(movement)"
-                >
-                  <Icon name="lucide:circle-check-big" />
-                </button>
-                <button
+                />
+                <TableIconAction
                   v-if="canDelete(movement)"
-                  type="button"
-                  :title="t('finance.actions.delete')"
-                  class="text-red-500 hover:text-red-700"
+                  icon="lucide:x"
+                  :label="t('finance.actions.delete')"
+                  tone="danger"
                   @click="handleDelete(movement)"
-                >
-                  <Icon name="lucide:x" />
-                </button>
+                />
               </div>
             </td>
           </tr>

@@ -37,7 +37,7 @@ const roleLabel = computed(() => {
         v-if="authStore.user?.photoURL"
         v-tooltip.right="iconOnly ? authStore.user?.email : undefined"
         :src="authStore.user.photoURL"
-        :alt="authStore.user.displayName ?? undefined"
+        :alt="authStore.user.displayName ?? authStore.user.email ?? ''"
         class="h-9 w-9 shrink-0 rounded-full object-cover"
       />
       <Icon

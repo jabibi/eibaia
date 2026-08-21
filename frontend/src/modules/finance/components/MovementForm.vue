@@ -25,6 +25,8 @@ const date = ref(new Date().toISOString().slice(0, 10));
 
 const isEdit = computed(() => !!props.movementId);
 
+useHead({ title: computed(() => (isEdit.value ? t("finance.form.editTitle") : t("finance.form.newTitle"))) });
+
 const typeOptions = computed(() => [
   { label: t("finance.types.expense"), value: "expense" as MovementType },
   { label: t("finance.types.income"), value: "income" as MovementType },
