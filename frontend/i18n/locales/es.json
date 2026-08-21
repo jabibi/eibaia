@@ -18,7 +18,12 @@
     "settings": "Configuración",
     "collapseMenu": "Cerrar barra lateral",
     "expandMenu": "Abrir barra lateral",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "roles": {
+      "admin": "Administrador",
+      "manager": "Manager",
+      "employee": "Empleado"
+    }
   },
   "home": {
     "greeting": "Hola, {name}",
@@ -28,6 +33,7 @@
     "title": "Caja Fuerte",
     "noMovements": "Todavía no hay movimientos.",
     "addMovement": "Añadir movimiento",
+    "loading": "Cargando…",
     "loadError": "No se ha podido cargar la información de la caja fuerte.",
     "kpi": {
       "balance": "Saldo actual",
@@ -128,6 +134,7 @@
     "reset": {
       "title": "Restablecer aplicación",
       "warning": "Esta acción restablece la aplicación a su estado de fábrica: se eliminarán TODOS los movimientos de la Caja Fuerte y TODOS los usuarios registrados (la tabla de usuarios completa), incluida tu propia cuenta y la sesión actual. Esta acción no se puede deshacer. Tras restablecer, tendrás que volver a iniciar sesión y se te asignará de nuevo el rol de administrador como primer usuario.",
+      "confirmWord": "RESTABLECER",
       "confirmLabel": "Escribe {word} para confirmar",
       "submit": "Restablecer aplicación",
       "error": "No se ha podido restablecer la aplicación."

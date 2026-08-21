@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { listMovements, type Movement } from "~/modules/finance/api";
 import MovementList from "~/modules/finance/components/MovementList.vue";
+import Button from "~/core/components/ui/Button.vue";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -65,7 +66,7 @@ onMounted(loadFirstPage);
     <MovementList :movements="loadedMovements" :loading="loading" show-actions @refresh="loadFirstPage" />
 
     <div v-if="nextPageToken" class="mt-4 flex justify-center">
-      <Button :label="t('finance.transactions.loadMore')" text @click="loadMore" />
+      <Button variant="secondary" @click="loadMore">{{ t("finance.transactions.loadMore") }}</Button>
     </div>
   </div>
 </template>

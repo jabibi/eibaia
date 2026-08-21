@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import AppLogo from "~/core/components/AppLogo.vue";
+import Logo from "~/core/components/Logo.vue";
+import Button from "~/core/components/ui/Button.vue";
 import GithubLink from "~/core/components/GithubLink.vue";
 import { useAuthStore } from "~/core/stores/auth";
 
@@ -26,16 +27,13 @@ async function handleLogin() {
 
 <template>
   <div class="relative flex min-h-svh flex-col items-center justify-center gap-8 bg-slate-50 px-4">
-    <GithubLink class="fixed right-4 top-4" size="h-6 w-6" />
+    <GithubLink class="fixed right-4 top-4" size="text-xl" />
 
-    <AppLogo />
+    <Logo />
 
-    <Button
-      :label="t('login.loginWithGoogle')"
-      icon="pi pi-google"
-      :loading="loading"
-      @click="handleLogin"
-    />
+    <Button icon="pi pi-google" :loading="loading" @click="handleLogin">
+      {{ t("login.loginWithGoogle") }}
+    </Button>
 
     <p v-if="errorMessage" class="text-sm text-red-600">{{ errorMessage }}</p>
   </div>

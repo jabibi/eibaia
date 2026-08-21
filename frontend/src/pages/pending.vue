@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import AppLogo from "~/core/components/AppLogo.vue";
+import Logo from "~/core/components/Logo.vue";
+import Button from "~/core/components/ui/Button.vue";
 import GithubLink from "~/core/components/GithubLink.vue";
 import { useAuthStore } from "~/core/stores/auth";
 
@@ -16,12 +17,14 @@ async function handleLogout() {
 
 <template>
   <div class="relative flex min-h-svh flex-col items-center justify-center gap-8 bg-slate-50 px-4">
-    <GithubLink class="fixed right-4 top-4" size="h-6 w-6" />
+    <GithubLink class="fixed right-4 top-4" size="text-xl" />
 
-    <AppLogo />
+    <Logo />
 
     <p class="max-w-sm text-center text-slate-600">{{ t("pending.message") }}</p>
 
-    <Button :label="t('pending.logout')" icon="pi pi-sign-out" severity="secondary" @click="handleLogout" />
+    <Button variant="danger" icon="pi pi-sign-out" @click="handleLogout">
+      {{ t("pending.logout") }}
+    </Button>
   </div>
 </template>

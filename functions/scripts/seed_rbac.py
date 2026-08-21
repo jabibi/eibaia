@@ -41,14 +41,14 @@ USER_ROLES = {
         "description": "Gestión de la caja fuerte y revisión de movimientos",
         "group_ids": ["CASHBOX_BASIC", "CASHBOX_MANAGE"],
     },
-    "empleado": {
+    "employee": {
         "name": "Empleado",
         "description": "Operación básica de la caja fuerte",
         "group_ids": ["CASHBOX_BASIC"],
     },
 }
 
-ROLE_CLAIM_MAP = {"admin": "admin", "manager": "manager", "user": "empleado"}
+ROLE_CLAIM_MAP = {"admin": "admin", "manager": "manager", "user": "employee"}
 
 
 def seed_permission_groups(db) -> None:

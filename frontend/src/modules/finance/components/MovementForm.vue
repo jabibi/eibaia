@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { createMovement, getMovement, updateMovement, type MovementType, type PaymentMethod } from "~/modules/finance/api";
 import { euroToCents } from "~/core/utils/currency";
-import AppButton from "~/core/components/ui/AppButton.vue";
+import Button from "~/core/components/ui/Button.vue";
 import Card from "~/core/components/ui/Card.vue";
 import FormField from "~/core/components/ui/FormField.vue";
 import FormInput from "~/core/components/ui/FormInput.vue";
@@ -127,12 +127,12 @@ onMounted(() => {
       <p v-if="errorMessage" class="text-sm text-red-600">{{ errorMessage }}</p>
 
       <div class="flex gap-2">
-        <AppButton :disabled="saving" @click="handleSubmit">
+        <Button :disabled="saving" @click="handleSubmit">
           {{ saving ? "…" : t("finance.form.save") }}
-        </AppButton>
-        <AppButton variant="secondary" @click="router.back()">
+        </Button>
+        <Button variant="secondary" @click="router.back()">
           {{ t("finance.form.cancel") }}
-        </AppButton>
+        </Button>
       </div>
     </Card>
   </div>

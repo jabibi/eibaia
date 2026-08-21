@@ -1,16 +1,23 @@
 <script setup lang="ts">
 import GithubLink from "~/core/components/GithubLink.vue";
+import SidebarNavItem from "~/core/components/SidebarNavItem.vue";
+import SidebarUserCard from "~/core/components/SidebarUserCard.vue";
 import { useSidebar } from "~/core/composables/useSidebar";
 import { useAuthStore } from "~/core/stores/auth";
 import { usePermissionsStore } from "~/core/stores/permissions";
 
 const authStore = useAuthStore();
 const permissionsStore = usePermissionsStore();
+const appConfig = useAppConfig();
 const { t } = useI18n();
 const sidebar = useSidebar();
 const { collapsed, mobileOpen } = sidebar;
 
 sidebar.restoreFromStorage();
+
+/** Icons collapse to bare squares on desktop only — the mobile drawer always
+ * shows full labels regardless of the `collapsed` preference. */
+const isIconOnly = computed(() => collapsed.value && !mobileOpen.value);
 
 /** On mobile this just closes the drawer (unchanged mobile behavior). On
  * desktop this single button both expands a collapsed sidebar and collapses
@@ -87,13 +94,13 @@ async function handleLogout() {
     ]"
     @click="handleAsideBackgroundClick"
   >
-    <div class="flex items-center gap-1 px-3 py-4" :class="collapsed && !mobileOpen ? 'md:justify-center md:px-1.5' : ''">
+    <div class="flex items-center gap-1 px-2 py-2" :class="isIconOnly ? 'md:justify-center md:px-1.5' : ''">
       <button
         type="button"
         v-tooltip.right="!mobileOpen ? (collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')) : undefined"
         :aria-label="collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')"
         class="flex shrink-0 cursor-pointer items-center gap-2 rounded-md hover:bg-slate-100"
-        :class="collapsed && !mobileOpen ? 'md:h-10 md:w-10 md:justify-center md:cursor-e-resize' : 'flex-1 py-1 md:cursor-w-resize'"
+        :class="isIconOnly ? 'md:h-10 md:w-10 md:justify-center md:cursor-e-resize' : 'flex-1 py-1 md:cursor-w-resize'"
         @click="handleLogoClick"
       >
         <span class="flex h-8 w-8 shrink-0 items-center justify-center">
@@ -107,35 +114,34 @@ async function handleLogout() {
       </button>
     </div>
 
-    <nav class="flex-1 space-y-1 overflow-y-auto px-2" :class="collapsed && !mobileOpen ? 'md:px-1.5' : ''">
-      <NuxtLink
+    <nav class="flex-1 space-y-1 overflow-y-auto px-2" :class="isIconOnly ? 'md:px-1.5' : ''">
+      <SidebarNavItem
         v-for="item in visibleItems"
         :key="item.to"
         :to="item.to"
-        v-tooltip.right="collapsed && !mobileOpen ? item.label : undefined"
-        class="flex cursor-pointer items-center gap-3 rounded-md text-sm text-slate-600 hover:bg-slate-100"
-        active-class="bg-slate-100 text-slate-900 font-medium"
-        :class="collapsed && !mobileOpen ? 'md:h-10 md:w-10 md:justify-center md:gap-0 md:px-0' : 'px-3 py-2'"
-      >
-        <i :class="item.icon" class="text-lg shrink-0" />
-        <span v-if="!collapsed || mobileOpen" class="truncate">{{ item.label }}</span>
-      </NuxtLink>
+        :icon="item.icon"
+        :label="item.label"
+        :icon-only="isIconOnly"
+        :tooltip="isIconOnly ? item.label : undefined"
+        @click="sidebar.closeMobile()"
+      />
     </nav>
 
-    <div class="p-2" :class="collapsed && !mobileOpen ? 'md:px-1.5' : ''">
-      <button
-        type="button"
-        v-tooltip.right="collapsed && !mobileOpen ? t('sidebar.logout') : undefined"
-        class="flex cursor-pointer items-center gap-3 rounded-md text-sm text-slate-600 hover:bg-slate-100"
-        :class="collapsed && !mobileOpen ? 'md:h-10 md:w-10 md:justify-center md:gap-0' : 'w-full px-3 py-2'"
+    <div class="p-2" :class="isIconOnly ? 'md:px-1.5' : ''">
+      <SidebarUserCard :icon-only="isIconOnly" />
+
+      <SidebarNavItem
+        icon="pi pi-sign-out"
+        :label="t('sidebar.logout')"
+        :icon-only="isIconOnly"
+        :tooltip="isIconOnly ? t('sidebar.logout') : undefined"
+        variant="danger"
         @click="handleLogout"
-      >
-        <i class="pi pi-sign-out text-lg shrink-0" />
-        <span v-if="!collapsed || mobileOpen">{{ t("sidebar.logout") }}</span>
-      </button>
+      />
 
       <div class="mt-2 flex justify-center">
-        <GithubLink size="h-4 w-4" class="cursor-pointer" />
+        <GithubLink v-if="!isIconOnly" size="text-sm">{{ t("app.name") }} v{{ appConfig.version }}</GithubLink>
+        <GithubLink v-else size="text-base" />
       </div>
     </div>
   </aside>

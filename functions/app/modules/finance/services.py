@@ -143,9 +143,9 @@ def list_movements(
     db = get_db()
     query = db.collection(COLLECTION)
     if status is not None:
-        query = query.where("status", "==", status)
+        query = query.where(filter=firestore.FieldFilter("status", "==", status))
     if scope is not None:
-        query = query.where("affects_cash", "==", scope == "cash")
+        query = query.where(filter=firestore.FieldFilter("affects_cash", "==", scope == "cash"))
     query = query.order_by("created_at", direction=firestore.Query.DESCENDING)
 
     if page_token:
