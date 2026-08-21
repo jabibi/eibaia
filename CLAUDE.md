@@ -20,12 +20,13 @@ Componentes disponibles:
 - `ToggleSwitch.vue` — interruptor compacto accesible.
 - `StatusBadge.vue` — badge de estado, `variant="neutral"` (por defecto) / `"success"` / `"warning"`.
 - `Button.vue` — botón con `variant="primary"` (por defecto) / `"secondary"` / `"danger"`, más
-  `icon` (clase de PrimeIcons) y `loading` (spinner + disabled) opcionales.
+  `icon` (nombre de icono Iconify, ej. `"lucide:log-out"`, ver sección de iconos más abajo) y
+  `loading` (spinner + disabled) opcionales.
 
-  ⚠️ **Ojo con el nombre:** `nuxt-primevue` registra globalmente un componente distinto también
-  llamado `Button` (el de PrimeVue). Como ya no usamos ningún componente de PrimeVue en plantillas
-  (ver más abajo), no debería aparecer por accidente — pero si algún día se reintroduce un
-  `<Button>` de PrimeVue en algún sitio, importa el nuestro explícitamente
+  ⚠️ **Ojo con el nombre:** `@primevue/nuxt-module` registra globalmente un componente distinto
+  también llamado `Button` (el de PrimeVue). Como ya no usamos ningún componente de PrimeVue en
+  plantillas (ver más abajo), no debería aparecer por accidente — pero si algún día se
+  reintroduce un `<Button>` de PrimeVue en algún sitio, importa el nuestro explícitamente
   (`import Button from "~/core/components/ui/Button.vue"`) en ese archivo: el import local
   siempre gana sobre el registro global dentro de esa SFC. Nunca lo invoques vía
   `<component :is="'Button'">` (string dinámico) — ahí sí se resolvería contra el registro
@@ -79,20 +80,93 @@ para cambios puramente de estilos/Tailwind).
 
 ## Por qué no usamos componentes de PrimeVue para esto
 
-`nuxt-primevue` envuelve sus estilos en `@layer primevue`, pero el preflight/reset de
-Tailwind de este proyecto no vive en una capa nombrada equivalente — así que el reset de
-Tailwind gana siempre sobre PrimeVue (padding, border-width, etc. de `.p-button`,
-`.p-inputtext`, `.p-dropdown`... quedan a 0, independientemente del orden de los `css:` en
-`nuxt.config.ts`). Para UI nueva es más simple y fiable usar elementos nativos + Tailwind vía
-la librería de arriba, evitando este problema de raíz en vez de parchearlo caso a caso.
+Históricamente `nuxt-primevue` envolvía sus estilos en `@layer primevue`, pero el
+preflight/reset de Tailwind de este proyecto no vivía en una capa nombrada equivalente — así
+que el reset de Tailwind ganaba siempre sobre PrimeVue (padding, border-width, etc. de
+`.p-button`, `.p-inputtext`, `.p-dropdown`... quedaban a 0). Para UI nueva es más simple y
+fiable usar elementos nativos + Tailwind vía la librería de arriba, evitando este problema de
+raíz en vez de parchearlo caso a caso.
 
 Ya no queda ningún `<Button>`/`<DataTable>`/`<Column>`/`<Tag>`/`<Dropdown>`/`<SelectButton>` de
 PrimeVue en ninguna plantilla — todos migrados a `ui/Button.vue`, `ui/StatusBadge.vue` y tablas
 nativas con `tableClasses.ts` (`frontend/src/assets/css/main.css` ya no tiene ningún parche
-`!important` de PrimeVue, quedó limpio). El módulo `nuxt-primevue` se mantiene igualmente
-instalado y activo solo por sus **directivas** (`v-tooltip` en el sidebar, `ripple: true` en
-`nuxt.config.ts`) — esas no chocan con el preflight de Tailwind del mismo modo que los
-componentes, así que no necesitan parche. Si en el futuro se vuelve a introducir un componente
-de PrimeVue en una plantilla, recuerda que su nombre puede colisionar con el de un componente
-propio (ver aviso sobre `Button.vue` arriba) y que probablemente reaparezca la necesidad de un
-parche `!important` en `main.css` para ese componente en concreto.
+`!important` de PrimeVue, quedó limpio). El módulo se mantiene instalado (ahora
+`@primevue/nuxt-module`, ver siguiente sección) solo por sus **directivas** (`v-tooltip` en el
+sidebar, `ripple: true` en `nuxt.config.ts`) — esas no chocan con Tailwind del mismo modo que
+los componentes, así que no necesitan parche. Si en el futuro se vuelve a introducir un
+componente de PrimeVue en una plantilla, recuerda que su nombre puede colisionar con el de un
+componente propio (ver aviso sobre `Button.vue` arriba) y que probablemente reaparezca la
+necesidad de un parche `!important` en `main.css` para ese componente en concreto.
+
+## PrimeVue: fijado a la v4 (`@primevue/nuxt-module`), no a la v5
+
+`nuxt-primevue` (el módulo original) está deprecado — el propio npm lo marca: "Please use
+`@primevue/nuxt-module` instead". Ese es el módulo que usamos ahora. **Pero la "última
+versión" de `primevue`/`@primevue/nuxt-module` es la v5, y la v5 metió un gate de licencia
+comercial obligatorio**: su `@primevue/core` depende de `@primeui/license-manager` y, si no hay
+clave configurada, pinta un banner rojo "Invalid PrimeUI License" en pantalla — pase lo que
+pase, aunque solo uses `v-tooltip` como aquí. La v4 (`primevue@^4.5.5` +
+`@primevue/nuxt-module@^4.5.5`) no tiene ese gate.
+
+El mismo cuidado aplica a `@primeuix/themes` (paquete del preset de tema, `Aura` en
+`nuxt.config.ts`): su línea `^3.x` depende de una versión de `@primeuix/styled` que también
+tira de `@primeui/license-manager` — por eso está fijado a `^2.0.3`, la última línea sin esa
+dependencia. Si alguna vez se sube `primevue` a v5+, hazlo con los ojos abiertos (o consigue una
+licencia en primeui.store) — y sube `@primeuix/themes` a la par, no por separado, o el banner
+puede reaparecer aunque `primevue` esté en v4.
+
+## Iconos: Nuxt Icon + Iconify (Lucide), no PrimeIcons
+
+`primeicons` fue sustituido por `@nuxt/icon` (componente `<Icon name="...">`, auto-importado)
+con los sets `@iconify-json/lucide` (prefijo `lucide:`, el set por defecto para iconos
+genéricos) y `@iconify-json/logos` (prefijo `logos:`, solo para logos de marca reales — hoy
+únicamente `logos:google-icon` en el botón de login; `lucide:github` sí existe y se prefiere
+sobre `logos:github` porque es monocromo y respeta `currentColor`, o sea que el hover
+`text-slate-400 → hover:text-slate-700` del enlace de GitHub sigue funcionando).
+
+Antes de usar un nombre de icono, comprueba que existe en el set instalado en vez de adivinar
+(los nombres de Lucide han cambiado entre versiones — p. ej. el canónico es `circle-check-big`,
+no `check-circle`; `house`, no `home`):
+
+```bash
+node -e "console.log('circle-check-big' in require('@iconify-json/lucide/icons.json').icons)"
+```
+
+**⚠️ Nuxt Icon usa modo `css` por defecto** (renderiza `<span class="iconify i-lucide:x">` con
+`mask-image`, no SVG inline), y esa CSS se inyecta **sin `@layer`**. Con Tailwind v4 (que sí
+envuelve sus propias utilidades en `@layer utilities`), una regla sin capa siempre gana sobre
+una regla en capa — así que sin configurar esto, algo tan básico como `md:hidden` en un
+`<Icon>` deja de funcionar (el icono se queda visible siempre, en cualquier breakpoint). Esto
+ya está resuelto en `frontend/src/app.config.ts`:
+
+```ts
+export default defineAppConfig({
+  icon: { mode: "css", cssLayer: "base" },
+});
+```
+
+Eso mete la CSS de los iconos en `@layer base`, que Tailwind sitúa por debajo de `utilities` —
+así cualquier utilidad de Tailwind (incluidas las responsive) puede seguir sobreescribiéndola.
+Si algún día un icono no responde a una clase de Tailwind (tamaño, `hidden`, color...), esto es
+lo primero a revisar.
+
+## Tailwind CSS v4: plugin de Vite directo, sin `@nuxtjs/tailwindcss`
+
+`@nuxtjs/tailwindcss` fija `tailwindcss: ~3.4.17` como dependencia dura y solo da soporte
+experimental a v4 (avisa por consola si detecta v4 instalado). Con Tailwind v4 se usa en su
+lugar el plugin oficial `@tailwindcss/vite` directamente en `nuxt.config.ts`
+(`vite: { plugins: [tailwindcss()] }`), sin módulo Nuxt de por medio. Ya no hay
+`tailwind.config.ts` (v4 detecta el contenido automáticamente y la personalización de tema se
+hace con `@theme` en CSS si algún día hace falta) ni directivas `@tailwind base/components/utilities`
+— `frontend/src/assets/css/main.css` es solo `@import "tailwindcss";`.
+
+## Nuxt 4: `public/` ya no es relativo a `srcDir`
+
+Este proyecto fija `srcDir: "src/"`, así que en Nuxt 3 la carpeta de assets estáticos vivía en
+`frontend/src/public/`. En Nuxt 4 el directorio `public` (igual que `server/`) se resuelve
+siempre relativo a la raíz del proyecto (`rootDir`), **no** a `srcDir` — es un cambio de
+convención explícito de la v4 (separar lo que es "app", dentro de `srcDir`, de lo que es
+infraestructura de proyecto). Por eso la carpeta se movió a `frontend/public/` (fuera de
+`src/`). Si algún asset estático (favicon, imágenes de `public/img/...`) empieza a devolver el
+HTML de fallback de la SPA en vez del propio fichero, es señal de que algo volvió a vivir bajo
+`src/public/` por error.

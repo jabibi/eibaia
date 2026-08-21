@@ -56,7 +56,7 @@ onMounted(loadFirstPage);
       class="fixed right-6 top-6 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg hover:bg-emerald-700"
       :aria-label="t('finance.addMovement')"
     >
-      <i class="pi pi-plus text-xl" />
+      <Icon name="lucide:plus" class="text-xl" />
     </NuxtLink>
 
     <h1 class="text-2xl font-semibold text-slate-800">{{ pageTitle }}</h1>

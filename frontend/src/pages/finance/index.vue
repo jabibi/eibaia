@@ -39,7 +39,7 @@ onMounted(load);
         <span
           class="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 transition group-hover:bg-emerald-100"
         >
-          <i class="pi pi-plus" />
+          <Icon name="lucide:plus" />
         </span>
         <p class="text-sm text-slate-500">{{ t("finance.kpi.balance") }}</p>
         <p class="mt-2 text-3xl font-bold text-slate-800">
@@ -72,7 +72,7 @@ onMounted(load);
           {{ t("finance.kpi.movementsCount", { count: summary?.card_expenses_month.count ?? 0 }) }}
         </p>
         <p class="mt-2 flex items-center gap-1 text-xs text-slate-400">
-          <i class="pi pi-info-circle" />
+          <Icon name="lucide:info" />
           {{ t("finance.kpi.cardNote") }}
         </p>
       </NuxtLink>

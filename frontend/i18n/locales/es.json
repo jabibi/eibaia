@@ -99,7 +99,7 @@
     "title": "Gestión de usuarios",
     "filters": {
       "active": "Activos",
-      "new": "Usuarios nuevos",
+      "new": "Nuevos",
       "inactive": "Inactivos"
     },
     "status": {

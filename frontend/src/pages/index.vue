@@ -31,7 +31,7 @@ async function handleLogin() {
 
     <Logo />
 
-    <Button icon="pi pi-google" :loading="loading" @click="handleLogin">
+    <Button icon="logos:google-icon" :loading="loading" @click="handleLogin">
       {{ t("login.loginWithGoogle") }}
     </Button>
 

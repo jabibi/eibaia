@@ -22,8 +22,8 @@ withDefaults(
       'bg-red-600 text-white shadow-sm hover:bg-red-700': variant === 'danger',
     }"
   >
-    <i v-if="loading" class="pi pi-spinner pi-spin" />
-    <i v-else-if="icon" :class="icon" />
+    <Icon v-if="loading" name="lucide:loader-circle" class="animate-spin" />
+    <Icon v-else-if="icon" :name="icon" />
     <slot />
   </button>
 </template>

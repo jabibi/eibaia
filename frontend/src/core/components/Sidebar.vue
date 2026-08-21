@@ -50,9 +50,9 @@ function handleAsideBackgroundClick(event: MouseEvent) {
 }
 
 const menuItems = computed(() => [
-  { label: t("sidebar.home"), icon: "pi pi-home", to: "/home", permissions: [] as string[] },
-  { label: t("sidebar.finance"), icon: "pi pi-wallet", to: "/finance", permissions: ["CASHBOX_BASIC"] },
-  { label: t("sidebar.settings"), icon: "pi pi-cog", to: "/settings", permissions: ["SYSTEM_ADMIN"] },
+  { label: t("sidebar.home"), icon: "lucide:house", to: "/home", permissions: [] as string[] },
+  { label: t("sidebar.finance"), icon: "lucide:wallet", to: "/finance", permissions: ["CASHBOX_BASIC"] },
+  { label: t("sidebar.settings"), icon: "lucide:settings", to: "/settings", permissions: ["SYSTEM_ADMIN"] },
 ]);
 
 function isVisible(item: { permissions: string[] }): boolean {
@@ -75,7 +75,7 @@ async function handleLogout() {
     class="fixed left-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-md bg-white text-slate-600 shadow ring-1 ring-slate-200 md:hidden"
     @click="sidebar.openMobile()"
   >
-    <i class="pi pi-bars text-lg" />
+    <Icon name="lucide:menu" class="text-lg" />
   </button>
 
   <div
@@ -99,18 +99,22 @@ async function handleLogout() {
         type="button"
         v-tooltip.right="!mobileOpen ? (collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')) : undefined"
         :aria-label="collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')"
-        class="flex shrink-0 cursor-pointer items-center gap-2 rounded-md hover:bg-slate-100"
-        :class="isIconOnly ? 'md:h-10 md:w-10 md:justify-center md:cursor-e-resize' : 'flex-1 py-1 md:cursor-w-resize'"
+        class="flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-md hover:bg-slate-100"
+        :class="isIconOnly ? 'md:w-10 md:justify-center md:cursor-e-resize' : 'flex-1 px-2 md:cursor-w-resize'"
         @click="handleLogoClick"
       >
-        <span class="flex h-8 w-8 shrink-0 items-center justify-center">
-          <img :src="'/img/favicon.svg'" alt="ElosuE!" class="h-9 w-9" />
+        <span class="flex shrink-0 items-center justify-center" :class="isIconOnly ? 'h-8 w-8' : 'size-[18px]'">
+          <img :src="'/img/favicon.svg'" alt="ElosuE!" :class="isIconOnly ? '' : 'size-[18px]'" />
         </span>
         <span v-if="!collapsed || mobileOpen" class="truncate text-lg font-semibold">
           <span style="color: #15803d">Elosu</span><span style="color: #dc2626">E!</span>
         </span>
-        <i v-if="!collapsed" class="pi pi-chevron-left ml-auto hidden shrink-0 text-xs text-slate-600 md:block" />
-        <i class="pi pi-times ml-auto shrink-0 text-lg text-slate-600 md:hidden" />
+        <Icon
+          v-if="!collapsed"
+          name="lucide:chevron-left"
+          class="ml-auto hidden shrink-0 text-xs text-slate-600 md:block"
+        />
+        <Icon name="lucide:x" class="ml-auto shrink-0 text-lg text-slate-600 md:hidden" />
       </button>
     </div>
 
@@ -131,7 +135,7 @@ async function handleLogout() {
       <SidebarUserCard :icon-only="isIconOnly" />
 
       <SidebarNavItem
-        icon="pi pi-sign-out"
+        icon="lucide:log-out"
         :label="t('sidebar.logout')"
         :icon-only="isIconOnly"
         :tooltip="isIconOnly ? t('sidebar.logout') : undefined"

@@ -23,7 +23,7 @@ async function handleLogout() {
 
     <p class="max-w-sm text-center text-slate-600">{{ t("pending.message") }}</p>
 
-    <Button variant="danger" icon="pi pi-sign-out" @click="handleLogout">
+    <Button variant="danger" icon="lucide:log-out" @click="handleLogout">
       {{ t("pending.logout") }}
     </Button>
   </div>

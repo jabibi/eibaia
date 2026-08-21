@@ -1,23 +1,24 @@
+import tailwindcss from "@tailwindcss/vite";
+import Aura from "@primeuix/themes/aura";
+
 export default defineNuxtConfig({
   compatibilityDate: "2026-08-21",
   telemetry: false,
   srcDir: "src/",
   devtools: { enabled: true },
   ssr: false,
-  modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "nuxt-primevue", "@nuxtjs/i18n"],
+  modules: ["@pinia/nuxt", "@primevue/nuxt-module", "@nuxtjs/i18n", "@nuxt/icon"],
+  vite: {
+    plugins: [tailwindcss()],
+  },
   i18n: {
     locales: [{ code: "es", name: "Español", file: "es.json" }],
     defaultLocale: "es",
     strategy: "no_prefix",
   },
-  css: [
-    "primevue/resources/themes/lara-light-indigo/theme.css",
-    "primevue/resources/primevue.min.css",
-    "primeicons/primeicons.css",
-    "~/assets/css/main.css",
-  ],
+  css: ["~/assets/css/main.css"],
   primevue: {
-    options: { ripple: true },
+    options: { ripple: true, theme: { preset: Aura } },
   },
   runtimeConfig: {
     public: {

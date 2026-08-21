@@ -22,7 +22,7 @@ def list_users(page_token: str | None = None, max_results: int = 100, status: Us
     users = [_to_user_out(u) for u in page.users]
 
     if status == "active":
-        users = [u for u in users if not u.disabled]
+        users = [u for u in users if not u.disabled and u.role_id is not None]
     elif status == "inactive":
         users = [u for u in users if u.disabled]
     elif status == "new":

@@ -11,16 +11,20 @@
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.6.0",
-    "@pinia/nuxt": "^0.5.5",
+    "@pinia/nuxt": "^1.0.2",
+    "@primeuix/themes": "^2.0.3",
+    "@primevue/nuxt-module": "^4.5.5",
     "firebase": "^10.14.0",
-    "nuxt-primevue": "^3.0.0",
-    "pinia": "^2.2.4",
-    "primeicons": "^7.0.0",
-    "primevue": "^3.53.1"
+    "pinia": "^4.0.3",
+    "primevue": "^4.5.5"
   },
   "devDependencies": {
-    "@nuxtjs/tailwindcss": "^6.12.2",
-    "nuxt": "^3.13.2",
+    "@iconify-json/logos": "^1.2.13",
+    "@iconify-json/lucide": "^1.2.124",
+    "@nuxt/icon": "^2.5.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "nuxt": "^4.5.2",
+    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "vue-tsc": "^3.3.10"
   }

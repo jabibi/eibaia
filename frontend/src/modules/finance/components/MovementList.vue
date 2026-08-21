@@ -128,7 +128,7 @@ async function handleConfirm(movement: Movement) {
                   :title="t('finance.actions.edit')"
                   class="text-slate-500 hover:text-emerald-700"
                 >
-                  <i class="pi pi-pencil" />
+                  <Icon name="lucide:pencil" />
                 </NuxtLink>
                 <button
                   v-if="canConfirm(movement)"
@@ -137,7 +137,7 @@ async function handleConfirm(movement: Movement) {
                   class="text-emerald-600 hover:text-emerald-800"
                   @click="handleConfirm(movement)"
                 >
-                  <i class="pi pi-check-circle" />
+                  <Icon name="lucide:circle-check-big" />
                 </button>
                 <button
                   v-if="canDelete(movement)"
@@ -146,7 +146,7 @@ async function handleConfirm(movement: Movement) {
                   class="text-red-500 hover:text-red-700"
                   @click="handleDelete(movement)"
                 >
-                  <i class="pi pi-times" />
+                  <Icon name="lucide:x" />
                 </button>
               </div>
             </td>

@@ -27,7 +27,7 @@ defineEmits<{ click: [] }>();
     active-class="bg-slate-100 text-slate-900 font-medium"
     @click="$emit('click')"
   >
-    <i :class="icon" class="text-lg shrink-0" />
+    <Icon :name="icon" class="text-lg shrink-0" />
     <span v-if="!iconOnly" class="truncate">{{ label }}</span>
   </NuxtLink>
   <button
@@ -41,7 +41,7 @@ defineEmits<{ click: [] }>();
     ]"
     @click="$emit('click')"
   >
-    <i :class="icon" class="text-lg shrink-0" />
+    <Icon :name="icon" class="text-lg shrink-0" />
     <span v-if="!iconOnly" class="truncate">{{ label }}</span>
   </button>
 </template>
