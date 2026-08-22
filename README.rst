@@ -12,7 +12,7 @@ Stack
 -----
 
 - **Frontend**: Nuxt 4 (modo SPA, ``ssr: false``), Pinia, Tailwind CSS v4,
-  PrimeVue (solo directivas), Nuxt Icon, ``@nuxtjs/i18n``.
+  Nuxt Icon, ``@nuxtjs/i18n``.
 - **Backend**: FastAPI sobre Cloud Functions v2 (Python), Firebase Admin SDK,
   Firestore en modo nativo.
 - **Auth**: Firebase Authentication (Google) con roles vía *custom claims*.
@@ -32,13 +32,11 @@ Frontend (``frontend/package.json``):
 - **Tailwind CSS** (v4, vía ``@tailwindcss/vite``) — utilidades CSS; toda la
   UI propia (``core/components/ui/``) se construye con clases de Tailwind
   sobre elementos nativos, sin librería de componentes visuales.
-- **PrimeVue** (``@primevue/nuxt-module``, fijado a v4.x) — ya no se usa
-  ningún componente suyo; se mantiene solo por la directiva ``v-tooltip``
-  (tooltips del sidebar) y ``v-ripple``. Fijado a v4 a propósito: la v5
-  introduce un gate de licencia comercial (ver ``CLAUDE.md``).
-- **Nuxt Icon** (+ ``@iconify-json/lucide``, ``@iconify-json/logos``) —
-  iconos vía el componente ``<Icon name="lucide:...">``; sustituyó a
-  PrimeIcons. ``logos:`` solo se usa para el logo de Google en el login.
+- **Nuxt Icon** (+ ``@iconify-json/lucide``, ``@iconify-json/logos``,
+  ``@iconify-json/simple-icons``) — iconos vía el componente
+  ``<Icon name="lucide:...">``; sustituyó a PrimeIcons. ``logos:`` solo se
+  usa para el logo de Google en el login; ``simple-icons:`` para logos de
+  marca monocromos que deben respetar ``currentColor`` (p. ej. GitHub).
 - **@nuxtjs/i18n** — internacionalización; la interfaz vive en inglés a
   nivel de código, los textos visibles se sirven en español desde
   ``frontend/i18n/locales/es.json`` (ver sección i18n más abajo).

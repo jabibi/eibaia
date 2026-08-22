@@ -1,5 +1,4 @@
 import tailwindcss from "@tailwindcss/vite";
-import Aura from "@primeuix/themes/aura";
 
 // `ssr: false` means only build-time config (this file) makes it into the
 // static HTML that `nuxt generate` writes to disk — `useSeoMeta`/`useHead`
@@ -17,7 +16,7 @@ export default defineNuxtConfig({
   srcDir: "src/",
   devtools: { enabled: true },
   ssr: false,
-  modules: ["@pinia/nuxt", "@primevue/nuxt-module", "@nuxtjs/i18n", "@nuxt/icon"],
+  modules: ["@pinia/nuxt", "@nuxtjs/i18n", "@nuxt/icon"],
   vite: {
     plugins: [tailwindcss()],
   },
@@ -27,9 +26,6 @@ export default defineNuxtConfig({
     strategy: "no_prefix",
   },
   css: ["~/assets/css/main.css"],
-  primevue: {
-    options: { ripple: true, theme: { preset: Aura } },
-  },
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || "/api",

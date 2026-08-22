@@ -36,17 +36,7 @@ Componentes disponibles:
   (`options: { value, label, color }[]`) y un punto de color en el propio control cuando está
   cerrado. Usado para elegir la etiqueta de un movimiento en `MovementForm.vue`. Deliberadamente
   nativo (no un listbox/combobox custom) para mantener accesibilidad de teclado y el picker móvil
-  del sistema — mismo criterio que el resto de la librería (ver sección de PrimeVue más abajo).
-
-  ⚠️ **Ojo con el nombre:** `@primevue/nuxt-module` registra globalmente un componente distinto
-  también llamado `Button` (el de PrimeVue). Como ya no usamos ningún componente de PrimeVue en
-  plantillas (ver más abajo), no debería aparecer por accidente — pero si algún día se
-  reintroduce un `<Button>` de PrimeVue en algún sitio, importa el nuestro explícitamente
-  (`import Button from "~/core/components/ui/Button.vue"`) en ese archivo: el import local
-  siempre gana sobre el registro global dentro de esa SFC. Nunca lo invoques vía
-  `<component :is="'Button'">` (string dinámico) — ahí sí se resolvería contra el registro
-  global y podría coger el de PrimeVue en vez del nuestro (es la misma causa raíz del bug del
-  botón de logout que salía azul: ver historial de este archivo).
+  del sistema — mismo criterio que el resto de la librería (ver sección sobre PrimeVue más abajo).
 
 Constantes de estilo para tablas nativas en `frontend/src/core/ui/tableClasses.ts`:
 `tableHeaderCellClass`, `tableRowClass`, `tableCellClass`. No hay un componente `<Table>`
@@ -145,51 +135,50 @@ navegador del usuario, no a un crawler sin JS — verificado comparando el HTML 
 Ejecuta `npm run typecheck` tras cambios en `.ts`/`.vue` con lógica no trivial (no hace falta
 para cambios puramente de estilos/Tailwind).
 
-## Por qué no usamos componentes de PrimeVue para esto
+## PrimeVue: eliminado por completo
+
+El proyecto usó `primevue`/`@primevue/nuxt-module` durante un tiempo, pero solo por dos
+**directivas** (`v-tooltip` en el sidebar, `ripple: true` en `nuxt.config.ts`) — ningún
+componente visual de PrimeVue se usaba ya en ninguna plantilla (ver el porqué histórico más
+abajo). Se ha desinstalado del todo (`primevue`, `@primevue/nuxt-module`, `@primeuix/themes`,
+incluida la entrada en `modules` y el bloque `primevue: {...}` de `nuxt.config.ts`).
+
+- `v-tooltip.right="expr"` → atributo nativo `:title="expr"`. Ojo con tipos: si `expr` puede
+  ser `string | null` (p. ej. `authStore.user?.email`, que Firebase tipa como `string | null`),
+  hace falta `?? undefined` — `:title` solo acepta `string | undefined`, no `null`. El
+  `aria-label` de cada elemento, que ya existía por separado (necesario porque el sidebar
+  colapsado en icon-only depende de él para el nombre accesible), no cambia — sigue siendo la
+  fuente real para lectores de pantalla; `title` es solo el tooltip visual al pasar el ratón.
+- `ripple: true` no se usaba en ninguna plantilla (`grep -rn "v-ripple" frontend/src` no daba
+  ningún resultado antes de quitarlo), así que no hizo falta ningún reemplazo visual.
+
+### Por qué no se usaban ya sus componentes
 
 Históricamente `nuxt-primevue` envolvía sus estilos en `@layer primevue`, pero el
 preflight/reset de Tailwind de este proyecto no vivía en una capa nombrada equivalente — así
 que el reset de Tailwind ganaba siempre sobre PrimeVue (padding, border-width, etc. de
-`.p-button`, `.p-inputtext`, `.p-dropdown`... quedaban a 0). Para UI nueva es más simple y
-fiable usar elementos nativos + Tailwind vía la librería de arriba, evitando este problema de
-raíz en vez de parchearlo caso a caso.
+`.p-button`, `.p-inputtext`, `.p-dropdown`... quedaban a 0). Por eso toda la UI ya usaba
+elementos nativos + Tailwind vía la librería de componentes de arriba antes incluso de
+desinstalar el paquete — `frontend/src/assets/css/main.css` nunca necesitó ningún parche
+`!important` de PrimeVue.
 
-Ya no queda ningún `<Button>`/`<DataTable>`/`<Column>`/`<Tag>`/`<Dropdown>`/`<SelectButton>` de
-PrimeVue en ninguna plantilla — todos migrados a `ui/Button.vue`, `ui/StatusBadge.vue` y tablas
-nativas con `tableClasses.ts` (`frontend/src/assets/css/main.css` ya no tiene ningún parche
-`!important` de PrimeVue, quedó limpio). El módulo se mantiene instalado (ahora
-`@primevue/nuxt-module`, ver siguiente sección) solo por sus **directivas** (`v-tooltip` en el
-sidebar, `ripple: true` en `nuxt.config.ts`) — esas no chocan con Tailwind del mismo modo que
-los componentes, así que no necesitan parche. Si en el futuro se vuelve a introducir un
-componente de PrimeVue en una plantilla, recuerda que su nombre puede colisionar con el de un
-componente propio (ver aviso sobre `Button.vue` arriba) y que probablemente reaparezca la
-necesidad de un parche `!important` en `main.css` para ese componente en concreto.
-
-## PrimeVue: fijado a la v4 (`@primevue/nuxt-module`), no a la v5
-
-`nuxt-primevue` (el módulo original) está deprecado — el propio npm lo marca: "Please use
-`@primevue/nuxt-module` instead". Ese es el módulo que usamos ahora. **Pero la "última
-versión" de `primevue`/`@primevue/nuxt-module` es la v5, y la v5 metió un gate de licencia
-comercial obligatorio**: su `@primevue/core` depende de `@primeui/license-manager` y, si no hay
-clave configurada, pinta un banner rojo "Invalid PrimeUI License" en pantalla — pase lo que
-pase, aunque solo uses `v-tooltip` como aquí. La v4 (`primevue@^4.5.5` +
-`@primevue/nuxt-module@^4.5.5`) no tiene ese gate.
-
-El mismo cuidado aplica a `@primeuix/themes` (paquete del preset de tema, `Aura` en
-`nuxt.config.ts`): su línea `^3.x` depende de una versión de `@primeuix/styled` que también
-tira de `@primeui/license-manager` — por eso está fijado a `^2.0.3`, la última línea sin esa
-dependencia. Si alguna vez se sube `primevue` a v5+, hazlo con los ojos abiertos (o consigue una
-licencia en primeui.store) — y sube `@primeuix/themes` a la par, no por separado, o el banner
-puede reaparecer aunque `primevue` esté en v4.
+Si alguna vez se reintroduce PrimeVue (o cualquier librería de componentes) para algo
+concreto: ten en cuenta que un componente propio (p. ej. `Button.vue`) puede colisionar de
+nombre con un registro global de esa librería (el import local gana dentro de una SFC, pero
+`<component :is="'Button'">` con string dinámico sí resolvería contra el registro global); y
+que la v5 de `primevue`/`@primeuix/themes` mete un gate de licencia comercial obligatorio
+(`@primeui/license-manager`) que pinta un banner rojo "Invalid PrimeUI License" en pantalla si
+no hay clave configurada, pase lo que pase — la v4 no lo tenía.
 
 ## Iconos: Nuxt Icon + Iconify (Lucide), no PrimeIcons
 
 `primeicons` fue sustituido por `@nuxt/icon` (componente `<Icon name="...">`, auto-importado)
 con los sets `@iconify-json/lucide` (prefijo `lucide:`, el set por defecto para iconos
-genéricos) y `@iconify-json/logos` (prefijo `logos:`, solo para logos de marca reales — hoy
-únicamente `logos:google-icon` en el botón de login; `lucide:github` sí existe y se prefiere
-sobre `logos:github` porque es monocromo y respeta `currentColor`, o sea que el hover
-`text-slate-400 → hover:text-slate-700` del enlace de GitHub sigue funcionando).
+genéricos), `@iconify-json/logos` (prefijo `logos:`, solo para logos de marca reales con color
+fijo — hoy únicamente `logos:google-icon` en el botón de login) y `@iconify-json/simple-icons`
+(prefijo `simple-icons:`, logos de marca monocromos que respetan `currentColor` — usado en
+`simple-icons:github` en vez de `logos:github`, precisamente para que el hover
+`text-slate-400 → hover:text-slate-700` del enlace de GitHub siga funcionando).
 
 Antes de usar un nombre de icono, comprueba que existe en el set instalado en vez de adivinar
 (los nombres de Lucide han cambiado entre versiones — p. ej. el canónico es `circle-check-big`,

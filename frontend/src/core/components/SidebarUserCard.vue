@@ -35,7 +35,7 @@ const roleLabel = computed(() => {
     <div class="flex items-center gap-2 py-1">
       <img
         v-if="authStore.user?.photoURL"
-        v-tooltip.right="iconOnly ? authStore.user?.email : undefined"
+        :title="iconOnly ? authStore.user?.email ?? undefined : undefined"
         :src="authStore.user.photoURL"
         :alt="authStore.user.displayName ?? authStore.user.email ?? ''"
         class="h-9 w-9 shrink-0 rounded-full object-cover"
@@ -43,7 +43,7 @@ const roleLabel = computed(() => {
       <Icon
         v-else
         name="lucide:user"
-        v-tooltip.right="iconOnly ? authStore.user?.email : undefined"
+        :title="iconOnly ? authStore.user?.email ?? undefined : undefined"
         class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500"
       />
 

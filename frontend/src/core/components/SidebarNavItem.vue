@@ -19,7 +19,7 @@ defineEmits<{ click: [] }>();
     v-if="to"
     :to="to"
     :aria-label="iconOnly ? label : undefined"
-    v-tooltip.right="tooltip"
+    :title="tooltip"
     class="flex h-10 cursor-pointer items-center gap-3 rounded-md text-sm text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
     :class="[
       variant === 'danger' ? 'hover:bg-red-50 hover:text-red-600' : 'hover:bg-slate-100',
@@ -35,7 +35,7 @@ defineEmits<{ click: [] }>();
     v-else
     type="button"
     :aria-label="iconOnly ? label : undefined"
-    v-tooltip.right="tooltip"
+    :title="tooltip"
     class="flex h-10 cursor-pointer items-center gap-3 rounded-md text-sm text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
     :class="[
       variant === 'danger' ? 'hover:bg-red-50 hover:text-red-600' : 'hover:bg-slate-100',

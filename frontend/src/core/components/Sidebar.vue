@@ -98,7 +98,7 @@ async function handleLogout() {
     <div class="flex items-center gap-1 px-2 py-2" :class="isIconOnly ? 'md:justify-center md:px-1.5' : ''">
       <button
         type="button"
-        v-tooltip.right="!mobileOpen ? (collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')) : undefined"
+        :title="!mobileOpen ? (collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')) : undefined"
         :aria-label="collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')"
         :aria-expanded="!collapsed"
         class="flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-md hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
