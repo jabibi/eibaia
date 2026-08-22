@@ -80,6 +80,18 @@ de `typescript` incompatible con la que ya usa el resto del árbol — mejor fij
 devDependency, deduplicado con la versión que ya resuelven `nuxt`/`vue`/`pinia`, y comprobarlo
 con `npm ls typescript`).
 
+**`typescript` está tope en la v6.x a propósito — no subir a v7 todavía.** TypeScript 7
+reestructuró el mapa de `exports` de su `package.json` y quitó el subpath `./lib/tsc` que
+`vue-tsc` usa internamente para localizar el compilador. Con `typescript@7.0.2` instalado,
+`npm run typecheck` no da un error de tipos — **explota el propio proceso** con
+`Error [ERR_PACKAGE_PATH_NOT_EXPORTED]: Package subpath './lib/tsc' is not defined by "exports"`
+antes de analizar una sola línea (probado en la práctica: `npm install typescript@latest` con
+`vue-tsc@3.3.11`, que era su última versión disponible en ese momento). No es un problema de
+código de este repo, es que `vue-tsc` aún no soporta el nuevo `exports` de TS7. Antes de volver
+a intentar esta subida, comprueba que ya existe una versión de `vue-tsc` que arregle esto
+(changelog/issues de `vue-tsc` en GitHub) — si no, `npm install typescript@latest` fallará en
+seco igual que ahora y hay que revertir a `typescript@^6` (`npm install typescript@^6`).
+
 ## Comprobar tipos en Python (Pyright)
 
 El backend (`functions/`) no tiene ningún linter/type-checker instalado como dependencia — ni

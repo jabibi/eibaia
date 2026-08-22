@@ -12,18 +12,18 @@
   "dependencies": {
     "@nuxtjs/i18n": "^10.6.0",
     "@pinia/nuxt": "^1.0.2",
-    "firebase": "^10.14.0",
+    "firebase": "^12.18.0",
     "pinia": "^4.0.3"
   },
   "devDependencies": {
     "@iconify-json/logos": "^1.2.13",
-    "@iconify-json/lucide": "^1.2.124",
+    "@iconify-json/lucide": "^1.2.125",
     "@iconify-json/simple-icons": "^1.2.93",
     "@nuxt/icon": "^2.5.0",
     "@tailwindcss/vite": "^4.3.3",
     "nuxt": "^4.5.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
-    "vue-tsc": "^3.3.10"
+    "vue-tsc": "^3.3.11"
   }
 }
