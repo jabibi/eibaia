@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as XLSX from "xlsx";
+import { Workbook } from "exceljs";
 import {
   getReport,
   listLabels,
@@ -55,7 +55,7 @@ function movementLabelName(movement: Movement): string {
 function typeLine(movement: Movement): string {
   const parts = [t(`finance.types.${movement.type}`)];
   if (movement.method) parts.push(t(`finance.methods.${movement.method}`));
-  return parts.join(" · ");
+  return parts.join(" ");
 }
 
 function displayCents(movement: Movement): number {
@@ -123,58 +123,102 @@ function escapeHtml(value: string): string {
 }
 
 const CURRENCY_FORMAT = '#,##0.00" €"';
+const HEADER_BG = "FF0F766E";
+const HEADER_TEXT = "FFFFFFFF";
+const FILTERS_TEXT = "FF64748B";
+const TABLE_HEADER_BG = "FFF1F5F9";
+const NEGATIVE_TEXT = "FFDC2626";
+const POSITIVE_TEXT = "FF059669";
+const AUTO_FIT_MIN_WIDTH = 10;
+const AUTO_FIT_START_ROW = 4; // skips the merged title/filters banner rows (1-2)
 
-function exportExcel() {
-  const sheetRows: (string | number)[][] = [
-    [t("finance.reports.export.docTitle")],
-    [
-      [
-        t("finance.reports.export.periodLabel", { from: dateFrom.value, to: dateTo.value }),
-        `${t("finance.reports.filters.type")}: ${scopeLabel.value}`,
-        `${t("finance.reports.filters.label")}: ${labelFilterLabel.value}`,
-      ].join(" | "),
-    ],
-    [],
-    [t("finance.reports.summary.income"), t("finance.reports.summary.expense"), t("finance.reports.summary.net")],
-    [totals.value.income_cents / 100, -totals.value.expense_cents / 100, totals.value.net_cents / 100],
-    [],
-    [
-      t("finance.fields.date"),
-      t("finance.fields.description"),
-      t("finance.fields.type"),
-      t("finance.fields.label"),
-      t("finance.fields.amount"),
-    ],
+async function exportExcel() {
+  const workbook = new Workbook();
+  const sheet = workbook.addWorksheet(t("finance.reports.export.sheetName"));
+
+  sheet.mergeCells("A1:E1");
+  const titleCell = sheet.getCell("A1");
+  titleCell.value = t("finance.reports.export.docTitle").toUpperCase();
+  titleCell.font = { name: "Arial", size: 14, bold: true, color: { argb: HEADER_TEXT } };
+  titleCell.alignment = { horizontal: "center", vertical: "middle" };
+  titleCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: HEADER_BG } };
+
+  sheet.mergeCells("A2:E2");
+  const filtersCell = sheet.getCell("A2");
+  filtersCell.value = [
+    t("finance.reports.export.periodLabel", { from: dateFrom.value, to: dateTo.value }),
+    `${t("finance.reports.filters.type")}: ${scopeLabel.value}`,
+    `${t("finance.reports.filters.label")}: ${labelFilterLabel.value}`,
+  ].join(" | ");
+  filtersCell.font = { italic: true, size: 10, color: { argb: FILTERS_TEXT } };
+
+  sheet.mergeCells("A4:B4");
+  sheet.getCell("A4").value = t("finance.reports.export.summaryTitle").toUpperCase();
+  sheet.getCell("A4").font = { bold: true };
+
+  sheet.getCell("A5").value = `${t("finance.reports.summary.income")}:`;
+  sheet.getCell("D5").value = `${t("finance.reports.summary.net")}:`;
+  sheet.getCell("A6").value = `${t("finance.reports.summary.expense")}:`;
+
+  const kpiCells = [
+    { ref: "B5", value: totals.value.income_cents / 100 },
+    { ref: "E5", value: totals.value.net_cents / 100 },
+    { ref: "B6", value: -totals.value.expense_cents / 100 },
   ];
-
-  const tableHeaderRow = sheetRows.length - 1;
-  movements.value.forEach((movement) => {
-    sheetRows.push([
-      movement.date,
-      movement.description,
-      typeLine(movement),
-      movementLabelName(movement),
-      displayCents(movement) / 100,
-    ]);
+  kpiCells.forEach(({ ref, value }) => {
+    const cell = sheet.getCell(ref);
+    cell.value = value;
+    cell.numFmt = CURRENCY_FORMAT;
+    cell.font = { bold: true };
+    cell.alignment = { horizontal: "right" };
   });
 
-  const sheet = XLSX.utils.aoa_to_sheet(sheetRows);
-  sheet["!cols"] = [{ wch: 12 }, { wch: 35 }, { wch: 20 }, { wch: 15 }, { wch: 12 }];
-
-  // KPI row (income/expense/net) and every movement's amount column: numeric cells,
-  // formatted as currency so the sheet reads like the on-screen totals while staying
-  // real numbers the user can SUM/reference in a formula.
-  ["A5", "B5", "C5"].forEach((ref) => {
-    if (sheet[ref]) sheet[ref].z = CURRENCY_FORMAT;
+  const headerRowNumber = 8;
+  const headerRow = sheet.getRow(headerRowNumber);
+  headerRow.values = [
+    t("finance.fields.date"),
+    t("finance.fields.description"),
+    t("finance.fields.type"),
+    t("finance.fields.label"),
+    t("finance.fields.amount"),
+  ];
+  headerRow.eachCell((cell) => {
+    cell.font = { bold: true };
+    cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: TABLE_HEADER_BG } };
+    cell.border = { bottom: { style: "thin" } };
   });
-  movements.value.forEach((_movement, index) => {
-    const ref = XLSX.utils.encode_cell({ r: tableHeaderRow + 1 + index, c: 4 });
-    if (sheet[ref]) sheet[ref].z = CURRENCY_FORMAT;
+
+  movements.value.forEach((movement, index) => {
+    const row = sheet.getRow(headerRowNumber + 1 + index);
+    const amount = displayCents(movement) / 100;
+    row.values = [movement.date, movement.description, typeLine(movement), movementLabelName(movement), amount];
+    const amountCell = row.getCell(5);
+    amountCell.numFmt = CURRENCY_FORMAT;
+    amountCell.font = { color: { argb: amount < 0 ? NEGATIVE_TEXT : POSITIVE_TEXT } };
   });
 
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, sheet, t("finance.reports.export.sheetName"));
-  XLSX.writeFile(workbook, `ElosuE_Informe_${dateFrom.value}_${dateTo.value}.xlsx`);
+  // Auto-fit por contenido: se salta las filas 1-2 (banner fusionado A:E, cuyo texto
+  // completo vive en la columna A y no debe dictar su ancho) y mide el resto.
+  sheet.columns.forEach((column, columnIndex) => {
+    let maxLength = AUTO_FIT_MIN_WIDTH;
+    for (let rowNumber = AUTO_FIT_START_ROW; rowNumber <= sheet.rowCount; rowNumber++) {
+      const cellValue = sheet.getRow(rowNumber).getCell(columnIndex + 1).value;
+      const length = cellValue != null ? String(cellValue).length : 0;
+      if (length > maxLength) maxLength = length;
+    }
+    column.width = maxLength + 2;
+  });
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `ElosuE_Informe_${dateFrom.value}_${dateTo.value}.xlsx`;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 function exportPdf() {

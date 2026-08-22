@@ -72,9 +72,13 @@ async function loadExisting() {
     method.value = movement.method ?? "cash";
     cashboxId.value = movement.cashbox_id ?? "";
     labelId.value = movement.label_id ?? "";
-    amount.value = movement.amount_cents / 100;
     description.value = movement.description;
     date.value = movement.date;
+    // Setting `type` above schedules the watcher that clears `amount` (it exists to
+    // reset the field when the user manually toggles Gasto/Ingreso) — wait for it to
+    // flush before setting the real loaded amount, or it clobbers it back to null.
+    await nextTick();
+    amount.value = movement.amount_cents / 100;
   } catch (error) {
     errorMessage.value = t("finance.form.saveError");
   } finally {

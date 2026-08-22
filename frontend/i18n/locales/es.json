@@ -135,6 +135,7 @@
         "pdf": "Exportar PDF",
         "docTitle": "ElosuE! - Informe de Analítica",
         "periodLabel": "Periodo: {from} al {to}",
+        "summaryTitle": "Resumen del periodo",
         "sheetName": "Informe"
       },
       "empty": "No hay movimientos confirmados en el rango seleccionado.",

@@ -12,9 +12,12 @@
   "dependencies": {
     "@nuxtjs/i18n": "^10.6.0",
     "@pinia/nuxt": "^1.0.2",
+    "exceljs": "^4.4.0",
     "firebase": "^12.18.0",
-    "pinia": "^4.0.3",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+    "pinia": "^4.0.3"
+  },
+  "overrides": {
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@iconify-json/logos": "^1.2.13",

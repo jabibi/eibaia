@@ -35,7 +35,7 @@ function labelFor(movement: Movement): Label | null {
 function typeLine(movement: Movement): string {
   const parts = [t(`finance.types.${movement.type}`)];
   if (movement.method) parts.push(t(`finance.methods.${movement.method}`));
-  return parts.join(" · ");
+  return parts.join(" ");
 }
 
 const emit = defineEmits<{ (e: "refresh"): void }>();
