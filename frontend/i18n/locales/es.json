@@ -131,8 +131,11 @@
         "net": "Balance neto"
       },
       "export": {
-        "csv": "Exportar Excel",
-        "pdf": "Exportar PDF"
+        "excel": "Exportar Excel",
+        "pdf": "Exportar PDF",
+        "docTitle": "ElosuE! - Informe de Analítica",
+        "periodLabel": "Periodo: {from} al {to}",
+        "sheetName": "Informe"
       },
       "empty": "No hay movimientos confirmados en el rango seleccionado.",
       "loadError": "No se ha podido cargar el informe."

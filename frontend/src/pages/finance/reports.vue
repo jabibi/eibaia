@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import * as XLSX from "xlsx";
 import {
   getReport,
   listLabels,
@@ -61,6 +62,15 @@ function displayCents(movement: Movement): number {
   return movement.type === "expense" ? -movement.amount_cents : movement.amount_cents;
 }
 
+const scopeLabel = computed(() =>
+  scope.value ? t(`finance.methods.${scope.value}`) : t("finance.reports.filters.allTypes"),
+);
+
+const labelFilterLabel = computed(() => {
+  if (!labelId.value) return t("finance.reports.filters.allLabels");
+  return labelById.value.get(labelId.value)?.name ?? t("finance.reports.filters.allLabels");
+});
+
 async function loadLabels() {
   const response = await listLabels();
   labels.value = response.labels;
@@ -112,33 +122,59 @@ function escapeHtml(value: string): string {
     .replace(/'/g, "&#39;");
 }
 
-function exportCsv() {
-  const header = [
-    t("finance.fields.date"),
-    t("finance.fields.description"),
-    t("finance.fields.type"),
-    t("finance.fields.label"),
-    t("finance.fields.amount"),
+const CURRENCY_FORMAT = '#,##0.00" €"';
+
+function exportExcel() {
+  const sheetRows: (string | number)[][] = [
+    [t("finance.reports.export.docTitle")],
+    [
+      [
+        t("finance.reports.export.periodLabel", { from: dateFrom.value, to: dateTo.value }),
+        `${t("finance.reports.filters.type")}: ${scopeLabel.value}`,
+        `${t("finance.reports.filters.label")}: ${labelFilterLabel.value}`,
+      ].join(" | "),
+    ],
+    [],
+    [t("finance.reports.summary.income"), t("finance.reports.summary.expense"), t("finance.reports.summary.net")],
+    [totals.value.income_cents / 100, -totals.value.expense_cents / 100, totals.value.net_cents / 100],
+    [],
+    [
+      t("finance.fields.date"),
+      t("finance.fields.description"),
+      t("finance.fields.type"),
+      t("finance.fields.label"),
+      t("finance.fields.amount"),
+    ],
   ];
-  const rows = movements.value.map((movement) => [
-    movement.date,
-    movement.description,
-    typeLine(movement),
-    movementLabelName(movement),
-    (displayCents(movement) / 100).toFixed(2).replace(".", ","),
-  ]);
 
-  const csv = [header, ...rows]
-    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(";"))
-    .join("\r\n");
+  const tableHeaderRow = sheetRows.length - 1;
+  movements.value.forEach((movement) => {
+    sheetRows.push([
+      movement.date,
+      movement.description,
+      typeLine(movement),
+      movementLabelName(movement),
+      displayCents(movement) / 100,
+    ]);
+  });
 
-  const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `informe_${dateFrom.value}_${dateTo.value}.csv`;
-  link.click();
-  URL.revokeObjectURL(url);
+  const sheet = XLSX.utils.aoa_to_sheet(sheetRows);
+  sheet["!cols"] = [{ wch: 12 }, { wch: 35 }, { wch: 20 }, { wch: 15 }, { wch: 12 }];
+
+  // KPI row (income/expense/net) and every movement's amount column: numeric cells,
+  // formatted as currency so the sheet reads like the on-screen totals while staying
+  // real numbers the user can SUM/reference in a formula.
+  ["A5", "B5", "C5"].forEach((ref) => {
+    if (sheet[ref]) sheet[ref].z = CURRENCY_FORMAT;
+  });
+  movements.value.forEach((_movement, index) => {
+    const ref = XLSX.utils.encode_cell({ r: tableHeaderRow + 1 + index, c: 4 });
+    if (sheet[ref]) sheet[ref].z = CURRENCY_FORMAT;
+  });
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, sheet, t("finance.reports.export.sheetName"));
+  XLSX.writeFile(workbook, `ElosuE_Informe_${dateFrom.value}_${dateTo.value}.xlsx`);
 }
 
 function exportPdf() {
@@ -271,10 +307,10 @@ onMounted(() => {
         type="button"
         :disabled="movements.length === 0"
         class="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-        @click="exportCsv"
+        @click="exportExcel"
       >
         <Icon name="lucide:file-spreadsheet" class="text-emerald-600" />
-        {{ t("finance.reports.export.csv") }}
+        {{ t("finance.reports.export.excel") }}
       </button>
       <button
         type="button"
