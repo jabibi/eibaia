@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { LABEL_COLORS, LABEL_COLOR_CLASSES, type LabelColor } from "~/core/ui/labelColors";
 
-defineProps<{ modelValue: LabelColor }>();
+defineProps<{ modelValue: LabelColor; ariaLabel?: string }>();
 defineEmits<{ (e: "update:modelValue", value: LabelColor): void }>();
 
 const { t } = useI18n();
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-2" role="radiogroup">
+  <div class="flex flex-wrap gap-2" role="radiogroup" :aria-label="ariaLabel">
     <button
       v-for="color in LABEL_COLORS"
       :key="color"

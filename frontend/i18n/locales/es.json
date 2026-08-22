@@ -46,7 +46,9 @@
       "drafts": "Pendientes de confirmar",
       "draftsHint": "Ir a revisión",
       "labels": "Etiquetas",
-      "labelsHint": "Gestionar categorías de movimientos"
+      "labelsHint": "Gestionar categorías de movimientos",
+      "reports": "Informes y Analítica",
+      "reportsHint": "Generar y exportar informes"
     },
     "types": {
       "expense": "Gasto",
@@ -110,6 +112,30 @@
     "review": {
       "title": "Revisión",
       "empty": "No hay movimientos pendientes de revisión."
+    },
+    "reports": {
+      "title": "Informes y Analítica",
+      "filters": {
+        "dateFrom": "Desde",
+        "dateTo": "Hasta",
+        "lastMonth": "Último mes",
+        "currentMonth": "Mes actual",
+        "type": "Tipo",
+        "label": "Etiqueta",
+        "allTypes": "Todos",
+        "allLabels": "Todas"
+      },
+      "summary": {
+        "income": "Ingresos",
+        "expense": "Gastos",
+        "net": "Balance neto"
+      },
+      "export": {
+        "csv": "Exportar Excel",
+        "pdf": "Exportar PDF"
+      },
+      "empty": "No hay movimientos confirmados en el rango seleccionado.",
+      "loadError": "No se ha podido cargar el informe."
     },
     "actions": {
       "edit": "Editar",

@@ -18,6 +18,8 @@ from .schemas import (
     MovementType,
     PaymentMethod,
     MovementUpdateIn,
+    ReportOut,
+    ReportTotalsOut,
 )
 
 MOVEMENT_COLLECTION = "cashbox_movement"
@@ -295,4 +297,44 @@ def get_summary() -> FinanceSummaryOut:
         cash_expenses_month=MonthlyStatOut(total_cents=cash_total, count=cash_count),
         card_expenses_month=MonthlyStatOut(total_cents=card_total, count=card_count),
         pending_drafts_count=pending_drafts,
+    )
+
+
+def get_report(
+    date_from: date, date_to: date, scope: PaymentMethod | None, label_id: str | None
+) -> ReportOut:
+    if date_from > date_to:
+        raise ValueError("date_from must not be after date_to")
+
+    db = get_db()
+    query = (
+        db.collection(MOVEMENT_COLLECTION)
+        .where(filter=firestore.FieldFilter("status", "==", "confirmed"))
+        .where(filter=firestore.FieldFilter("date", ">=", date_from.isoformat()))
+        .where(filter=firestore.FieldFilter("date", "<=", date_to.isoformat()))
+        .order_by("date")
+    )
+
+    movements: list[MovementOut] = []
+    income_cents, expense_cents = 0, 0
+    for doc in query.stream():
+        data = snapshot_data(doc)
+        if scope is not None and data.get("method") != scope:
+            continue
+        if label_id is not None and data.get("label_id") != label_id:
+            continue
+
+        movements.append(doc_to_out(doc))
+        if data["type"] == "income":
+            income_cents += data["amount_cents"]
+        else:
+            expense_cents += data["amount_cents"]
+
+    return ReportOut(
+        movements=movements,
+        totals=ReportTotalsOut(
+            income_cents=income_cents,
+            expense_cents=expense_cents,
+            net_cents=income_cents - expense_cents,
+        ),
     )

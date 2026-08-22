@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { getSummary, listLabels, type FinanceSummary } from "~/modules/finance/api";
+import { getReport, getSummary, listLabels, type FinanceSummary } from "~/modules/finance/api";
 import { formatCurrency } from "~/core/utils/currency";
+import { currentMonthRange } from "~/core/utils/dateRange";
 import { usePermissionsStore } from "~/core/stores/permissions";
 import KpiCard from "~/core/components/ui/KpiCard.vue";
 
@@ -11,6 +12,7 @@ useHead({ title: t("finance.title") });
 
 const summary = ref<FinanceSummary | null>(null);
 const labelCount = ref<number | null>(null);
+const netBalanceMonth = ref<number | null>(null);
 const loading = ref(true);
 const errorMessage = ref("");
 
@@ -22,6 +24,10 @@ async function load() {
     if (permissionsStore.has("CASHBOX_MANAGE")) {
       const { labels } = await listLabels();
       labelCount.value = labels.length;
+
+      const { from, to } = currentMonthRange();
+      const report = await getReport({ date_from: from, date_to: to });
+      netBalanceMonth.value = report.totals.net_cents;
     }
   } catch (error) {
     errorMessage.value = t("finance.loadError");
@@ -93,6 +99,14 @@ onMounted(load);
           {{ loading ? "…" : (labelCount ?? 0) }}
         </p>
         <p class="mt-1 text-xs text-slate-500">{{ t("finance.kpi.labelsHint") }}</p>
+      </KpiCard>
+
+      <KpiCard v-if="permissionsStore.has('CASHBOX_MANAGE')" to="/finance/reports">
+        <p class="text-sm text-slate-500">{{ t("finance.kpi.reports") }}</p>
+        <p class="mt-2 text-2xl font-semibold text-slate-800">
+          {{ loading ? "…" : formatCurrency(netBalanceMonth ?? 0) }}
+        </p>
+        <p class="mt-1 text-xs text-slate-500">{{ t("finance.kpi.reportsHint") }}</p>
       </KpiCard>
     </div>
   </div>

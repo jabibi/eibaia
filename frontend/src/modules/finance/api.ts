@@ -66,6 +66,26 @@ export function getSummary() {
   return apiFetch<FinanceSummary>("/finance/summary");
 }
 
+export interface ReportTotals {
+  income_cents: number;
+  expense_cents: number;
+  net_cents: number;
+}
+
+export interface ReportResult {
+  movements: Movement[];
+  totals: ReportTotals;
+}
+
+export function getReport(params: {
+  date_from: string;
+  date_to: string;
+  scope?: PaymentMethod;
+  label_id?: string;
+}) {
+  return apiFetch<ReportResult>("/finance/reports", { query: params });
+}
+
 export function listCashboxes() {
   return apiFetch<CashboxListResponse>("/finance/cashboxes");
 }

@@ -1,3 +1,5 @@
+from datetime import date as Date
+
 from fastapi import APIRouter, Depends, HTTPException, status as http_status
 
 from app.core.firebase import snapshot_data
@@ -18,6 +20,7 @@ from .schemas import (
     MovementStatus,
     MovementUpdateIn,
     PaymentMethod,
+    ReportOut,
     StatusUpdateIn,
 )
 
@@ -52,6 +55,20 @@ def _can_mutate(user: CurrentUser, data: dict) -> bool:
 @router.get("/summary", response_model=FinanceSummaryOut)
 def read_summary(_user: CurrentUser = Depends(_BASIC)):
     return services.get_summary()
+
+
+@router.get("/reports", response_model=ReportOut)
+def get_report(
+    date_from: Date,
+    date_to: Date,
+    scope: PaymentMethod | None = None,
+    label_id: str | None = None,
+    _user: CurrentUser = Depends(_MANAGE),
+):
+    try:
+        return services.get_report(date_from, date_to, scope, label_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
 
 @router.get("/cashboxes", response_model=CashboxListOut)

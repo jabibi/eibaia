@@ -82,6 +82,17 @@ class FinanceSummaryOut(BaseModel):
     pending_drafts_count: int
 
 
+class ReportTotalsOut(BaseModel):
+    income_cents: int
+    expense_cents: int
+    net_cents: int
+
+
+class ReportOut(BaseModel):
+    movements: list[MovementOut]
+    totals: ReportTotalsOut
+
+
 class CashboxIn(BaseModel):
     name: str
 

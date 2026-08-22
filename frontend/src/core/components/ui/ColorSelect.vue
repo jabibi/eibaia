@@ -7,7 +7,7 @@ interface ColorSelectOption {
   color: LabelColor;
 }
 
-const props = defineProps<{ modelValue: string; options: ColorSelectOption[] }>();
+const props = defineProps<{ modelValue: string; options: ColorSelectOption[]; id?: string }>();
 defineEmits<{ (e: "update:modelValue", value: string): void }>();
 
 const selectedColor = computed(() => props.options.find((option) => option.value === props.modelValue)?.color ?? null);
@@ -21,6 +21,7 @@ const selectedColor = computed(() => props.options.find((option) => option.value
       :class="LABEL_COLOR_CLASSES[selectedColor].swatch"
     />
     <select
+      :id="id"
       :value="modelValue"
       class="w-full rounded-md border border-slate-300 bg-white py-1.5 pr-8 text-xs text-slate-700 shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 md:text-sm"
       :class="selectedColor ? 'pl-7' : 'pl-3'"

@@ -106,8 +106,8 @@ onMounted(load);
 
     <Card class="mt-6 max-w-xl space-y-4 p-6">
       <form class="flex items-end gap-2" @submit.prevent="handleCreate">
-        <FormField :label="t('finance.labels.name')" class="flex-1">
-          <FormInput v-model="newName" type="text" />
+        <FormField :label="t('finance.labels.name')" input-id="label-name" class="flex-1">
+          <FormInput id="label-name" v-model="newName" type="text" />
         </FormField>
         <Button type="submit" icon="lucide:plus" :loading="savingNew">
           {{ t("finance.labels.add") }}
@@ -115,7 +115,7 @@ onMounted(load);
       </form>
 
       <FormField :label="t('finance.labels.color')">
-        <ColorPicker v-model="newColor" />
+        <ColorPicker v-model="newColor" :aria-label="t('finance.labels.color')" />
       </FormField>
     </Card>
 
@@ -140,8 +140,8 @@ onMounted(load);
             <tr v-for="label in labels" :key="label.id" :class="tableRowClass">
               <td :class="tableCellClass">
                 <div v-if="editingId === label.id" class="flex items-center gap-3">
-                  <FormInput v-model="editingName" type="text" />
-                  <ColorPicker v-model="editingColor" />
+                  <FormInput v-model="editingName" type="text" :aria-label="t('finance.labels.name')" />
+                  <ColorPicker v-model="editingColor" :aria-label="t('finance.labels.color')" />
                 </div>
                 <div v-else class="flex items-center gap-2">
                   <span class="h-2.5 w-2.5 rounded-full" :class="LABEL_COLOR_CLASSES[label.color].swatch" />

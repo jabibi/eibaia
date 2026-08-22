@@ -14,6 +14,7 @@ import { euroToCents } from "~/core/utils/currency";
 import Button from "~/core/components/ui/Button.vue";
 import Card from "~/core/components/ui/Card.vue";
 import ColorSelect from "~/core/components/ui/ColorSelect.vue";
+import FormCurrencyInput from "~/core/components/ui/FormCurrencyInput.vue";
 import FormField from "~/core/components/ui/FormField.vue";
 import FormInput from "~/core/components/ui/FormInput.vue";
 import SegmentedControl from "~/core/components/ui/SegmentedControl.vue";
@@ -34,7 +35,7 @@ const cashboxes = ref<Cashbox[]>([]);
 const cashboxId = ref("");
 const labels = ref<Label[]>([]);
 const labelId = ref("");
-const amount = ref("");
+const amount = ref<number | null>(null);
 const description = ref("");
 const date = ref(new Date().toISOString().slice(0, 10));
 
@@ -53,7 +54,7 @@ const methodOptions = computed(() => [
 ]);
 
 watch(type, () => {
-  amount.value = "";
+  amount.value = null;
 });
 
 const selectedCashbox = computed(() => cashboxes.value.find((cashbox) => cashbox.id === cashboxId.value) ?? null);
@@ -71,7 +72,7 @@ async function loadExisting() {
     method.value = movement.method ?? "cash";
     cashboxId.value = movement.cashbox_id ?? "";
     labelId.value = movement.label_id ?? "";
-    amount.value = String(movement.amount_cents / 100);
+    amount.value = movement.amount_cents / 100;
     description.value = movement.description;
     date.value = movement.date;
   } catch (error) {
@@ -100,8 +101,8 @@ async function loadLabels() {
 }
 
 async function handleSubmit() {
-  const amountValue = Number(amount.value);
-  if (!amount.value || Number.isNaN(amountValue) || !description.value || !labelId.value) return;
+  const amountValue = amount.value;
+  if (amountValue === null || amountValue <= 0 || !description.value || !labelId.value) return;
 
   saving.value = true;
   errorMessage.value = "";
@@ -158,20 +159,20 @@ onMounted(() => {
 
       <SegmentedControl v-model="method" :options="methodOptions" />
 
-      <FormField :label="t('finance.fields.label')">
-        <ColorSelect v-model="labelId" :options="labelOptions" />
+      <FormField :label="t('finance.fields.label')" input-id="movement-label">
+        <ColorSelect id="movement-label" v-model="labelId" :options="labelOptions" />
       </FormField>
 
-      <FormField :label="t('finance.fields.amount')">
-        <FormInput v-model="amount" type="number" step="0.01" :min="0" />
+      <FormField :label="t('finance.fields.amount')" input-id="movement-amount">
+        <FormCurrencyInput id="movement-amount" v-model="amount" />
       </FormField>
 
-      <FormField :label="t('finance.fields.description')">
-        <FormInput v-model="description" type="text" />
+      <FormField :label="t('finance.fields.description')" input-id="movement-description">
+        <FormInput id="movement-description" v-model="description" type="text" />
       </FormField>
 
-      <FormField :label="t('finance.fields.date')">
-        <FormInput v-model="date" type="date" />
+      <FormField :label="t('finance.fields.date')" input-id="movement-date">
+        <FormInput id="movement-date" v-model="date" type="date" />
       </FormField>
 
       <p v-if="errorMessage" class="text-sm text-red-600">{{ errorMessage }}</p>
