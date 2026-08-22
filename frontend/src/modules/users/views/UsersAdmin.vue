@@ -151,7 +151,7 @@ onMounted(() => {
                   >
                     {{ t("users.actions.reactivate") }}
                   </button>
-                  <span v-else class="text-slate-300">—</span>
+                  <span v-else class="text-slate-400">—</span>
                 </div>
               </td>
             </tr>
