@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   srcDir: "src/",
   devtools: { enabled: true },
   ssr: false,
-  modules: ["@pinia/nuxt", "@nuxtjs/i18n", "@nuxt/icon"],
+  modules: ["@pinia/nuxt", "@nuxtjs/i18n", "@nuxt/icon", "@vite-pwa/nuxt"],
   vite: {
     plugins: [tailwindcss()],
   },
@@ -24,6 +24,50 @@ export default defineNuxtConfig({
     locales: [{ code: "es", name: "Español", file: "es.json" }],
     defaultLocale: "es",
     strategy: "no_prefix",
+  },
+  // registerType "autoUpdate" + skipWaiting/clientsClaim: en cuanto hay un
+  // deploy nuevo, el Service Worker lo activa de inmediato en cualquier
+  // pestaña abierta en vez de esperar a que el usuario las cierre todas —
+  // sin esto, un usuario con la PWA ya instalada podría quedarse atascado
+  // en una versión vieja indefinidamente. cleanupOutdatedCaches borra el
+  // caché de la versión anterior una vez el nuevo SW toma el control.
+  pwa: {
+    registerType: "autoUpdate",
+    manifest: {
+      name: "ElosuE!",
+      short_name: "ElosuE!",
+      description: SITE_DESCRIPTION,
+      start_url: "/",
+      scope: "/",
+      display: "standalone",
+      orientation: "portrait",
+      background_color: "#ffffff",
+      theme_color: "#15803d",
+      lang: "es",
+      icons: [
+        { src: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+        { src: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
+        { src: "/icons/icon-512x512-maskable.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      ],
+    },
+    workbox: {
+      navigateFallback: "/",
+      // Firebase Hosting reserva /__/** para sus propias páginas especiales (p. ej.
+      // /__/auth/handler, que el popup de signInWithPopup carga en nuestro propio
+      // dominio — authDomain es elosue.web.app — para completar el login con Google).
+      // Sin excluirlo, la NavigationRoute del Service Worker se lo roba y le sirve el
+      // SPA en su lugar: el popup de login "solo vuelve a abrir la web" y el login
+      // nunca se completa. Reproducido y confirmado en Android tras añadir la PWA.
+      navigateFallbackDenylist: [/^\/__\//],
+      globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+      cleanupOutdatedCaches: true,
+      skipWaiting: true,
+      clientsClaim: true,
+    },
+    client: {
+      installPrompt: true,
+      periodicSyncForUpdates: 3600,
+    },
   },
   css: ["~/assets/css/main.css"],
   runtimeConfig: {
@@ -46,6 +90,10 @@ export default defineNuxtConfig({
       titleTemplate: "%s · ElosuE!",
       link: [
         { rel: "icon", type: "image/svg+xml", href: "/img/favicon.svg" },
+        // @vite-pwa/nuxt inyecta este link en tiempo de ejecución (vía JS), pero con
+        // ssr:false ese HTML estático que escribe `nuxt generate` no lleva nada
+        // inyectado dinámicamente (mismo motivo que las etiquetas OG de más abajo) —
+        // se deja explícito aquí para que quede horneado en el build.
         { rel: "manifest", href: "/manifest.webmanifest" },
         { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
         { rel: "canonical", href: SITE_URL },

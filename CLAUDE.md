@@ -144,6 +144,56 @@ en cada página) sí puede ir en un componente porque solo afecta al `document.t
 navegador del usuario, no a un crawler sin JS — verificado comparando el HTML generado
 (`frontend/.output/public/index.html`) antes y después de mover el bloque OG.
 
+## PWA: el Service Worker no debe interceptar `/__/**` (rutas reservadas de Firebase Hosting)
+
+`navigateFallbackDenylist: [/^\/__\//]` en el `workbox` de `nuxt.config.ts` es obligatorio.
+Firebase Hosting reserva las rutas bajo `/__/` para sus propias páginas especiales — en
+concreto `/__/auth/handler`, que `signInWithPopup`/`signInWithRedirect` cargan dentro del popup
+de login en el propio `authDomain` (aquí `elosue.web.app`, el mismo dominio que la app) para
+completar el handshake con Google. Sin ese denylist, la `NavigationRoute` del Service Worker
+(`navigateFallback: "/"`) se apropia de esa petición como de cualquier otra navegación y le
+sirve el SPA (`index.html`) en vez de dejar que Firebase Hosting sirva la página real —
+síntoma en el navegador: el popup de "Iniciar sesión con Google" simplemente vuelve a abrir la
+propia web y el login nunca se completa. Bug real reproducido en Android justo después de
+añadir la PWA; confirmado leyendo el `sw.js` compilado (`registerRoute(new NavigationRoute(...))`
+sin `denylist` alguno antes del fix). Si se toca `workbox.navigateFallback` en el futuro,
+revisa que este denylist no se pierda.
+
+## PWA: `@vite-pwa/nuxt` con `registerType: "autoUpdate"` — no hace falta plugin de recarga
+
+El módulo está configurado en `nuxt.config.ts` (`pwa: {...}`) con `registerType: "autoUpdate"`
+y `workbox: { skipWaiting: true, clientsClaim: true, cleanupOutdatedCaches: true }`: en cuanto
+hay un deploy nuevo, el Service Worker toma el control de inmediato en cualquier pestaña
+abierta, sin esperar a que el usuario las cierre todas.
+
+**No hace falta ningún plugin cliente que escuche `$pwa.needRefresh` o
+`serviceWorker.controllerchange` para forzar un `reloadNuxtApp()` manual** — verificado leyendo
+el código fuente instalado (`node_modules/vite-plugin-pwa/dist/client/build/vue.js`): con
+`registerType: "autoUpdate"`, el propio script de registro de `vite-plugin-pwa` ya hace
+`window.location.reload()` automáticamente en el evento `activated` del Service Worker cuando
+`event.isUpdate` es `true`, sin que se le pase ningún callback `onNeedReload` desde
+`@vite-pwa/nuxt`. Además, `$pwa.needRefresh` (el ref que se necesitaría vigilar con un
+`watch()` para ese plugin) **solo se activa en `registerType: "prompt"`** — la rama de código
+que lo pone a `true` ni siquiera se ejecuta en modo `autoUpdate`. Si en el futuro se plantea
+añadir ese plugin, es una señal de que esto se ha vuelto a proponer sin comprobar el código
+fuente del paquete primero.
+
+Si algún día se cambia a `registerType: "prompt"` (para mostrar un aviso "hay una versión
+nueva" en vez de recargar en silencio), ahí sí hace falta un componente que vigile
+`$pwa.needRefresh`/`$pwa.offlineReady` y llame a `$pwa.updateServiceWorker()` — ese es el caso
+de uso real para el que existen esas propiedades.
+
+**Cabeceras de `firebase.json`: el orden importa, gana la última que matchea, no la más
+específica.** `firebase.json` tiene una regla `/**` con `Cache-Control: no-cache` y otra
+`/sw.js` con `no-cache, no-store, must-revalidate` (para que el propio Service Worker nunca
+quede cacheado). La regla `/sw.js` tiene que ir **después** de `/**` en el array — Firebase
+Hosting no elige la regla más específica cuando varias matchean la misma ruta, aplica todas en
+orden y, si dos fijan la misma cabecera, la última gana. Con `/sw.js` primero y `/**` después
+(el orden "lógico" a primera vista), `/**` pisaba silenciosamente el valor de `/sw.js` en
+producción — confirmado con `curl -I https://elosue.web.app/sw.js` antes y después de
+reordenarlas. Si se añade alguna regla de cabeceras nueva más específica que `/**`, tiene que
+ir después de esta en el array, no antes.
+
 Ejecuta `npm run typecheck` tras cambios en `.ts`/`.vue` con lógica no trivial (no hace falta
 para cambios puramente de estilos/Tailwind).
 
