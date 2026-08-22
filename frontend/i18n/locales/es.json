@@ -16,7 +16,7 @@
   },
   "sidebar": {
     "home": "Inicio",
-    "finance": "Caja Fuerte",
+    "finance": "Caja",
     "settings": "Configuración",
     "collapseMenu": "Cerrar barra lateral",
     "expandMenu": "Abrir barra lateral",
@@ -32,11 +32,11 @@
     "summary": "Resumen general del hogar (próximamente)."
   },
   "finance": {
-    "title": "Caja Fuerte",
+    "title": "Caja",
     "noMovements": "Todavía no hay movimientos.",
     "addMovement": "Añadir movimiento",
     "loading": "Cargando…",
-    "loadError": "No se ha podido cargar la información de la caja fuerte.",
+    "loadError": "No se ha podido cargar la información de la caja.",
     "kpi": {
       "balance": "Saldo actual",
       "cashMonth": "Gastos en efectivo (mes)",

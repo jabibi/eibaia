@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+/* App is light-mode only — no dark: variants are authored anywhere. Without
+   this, Chrome for Android (and other browsers with a forced/auto-dark
+   feature) repaints colors using its own heuristic, which mangles low-
+   contrast pairs like light chip backgrounds + mid-tone gray text (label
+   chips, table placeholders) into near-invisible text. */
+:root {
+  color-scheme: light;
+}

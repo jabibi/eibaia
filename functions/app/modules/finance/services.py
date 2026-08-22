@@ -24,7 +24,7 @@ MOVEMENT_COLLECTION = "cashbox_movement"
 CASHBOX_COLLECTION = "cashbox"
 LABEL_COLLECTION = "cashbox_movement_label"
 
-DEFAULT_CASHBOX_NAME = "Caja fuerte"
+DEFAULT_CASHBOX_NAME = "Caja"
 DEFAULT_LABEL_COLOR: LabelColor = "blue"
 
 
@@ -35,10 +35,8 @@ def validate_business_rules(
         raise ValueError("method is required")
     if amount_cents <= 0:
         raise ValueError("amount must be positive")
-    if method == "cash" and cashbox_id is None:
-        raise ValueError("cashbox_id is required for cash movements")
-    if method == "card" and cashbox_id is not None:
-        raise ValueError("cashbox_id is not applicable for card movements")
+    if cashbox_id is None:
+        raise ValueError("cashbox_id is required")
     if label_id is None:
         raise ValueError("label_id is required")
     if get_label(label_id) is None:
@@ -155,10 +153,9 @@ def _adjust_cashbox_total(db, cashbox_id: str, delta_cents: int) -> None:
 
 def create_movement(payload: MovementIn, uid: str, display_name: str | None) -> MovementOut:
     validate_business_rules(payload.method, payload.amount_cents, payload.cashbox_id, payload.label_id)
-    if payload.method == "cash":
-        assert payload.cashbox_id is not None  # guaranteed by validate_business_rules
-        if get_cashbox(payload.cashbox_id) is None:
-            raise ValueError("cashbox not found")
+    assert payload.cashbox_id is not None  # guaranteed by validate_business_rules
+    if get_cashbox(payload.cashbox_id) is None:
+        raise ValueError("cashbox not found")
 
     db = get_db()
     doc_ref = db.collection(MOVEMENT_COLLECTION).document()
@@ -178,7 +175,6 @@ def create_movement(payload: MovementIn, uid: str, display_name: str | None) -> 
         }
     )
     if payload.method == "cash":
-        assert payload.cashbox_id is not None
         _adjust_cashbox_total(db, payload.cashbox_id, _signed_amount(payload.type, payload.amount_cents))
     return doc_to_out(doc_ref.get())
 
@@ -194,7 +190,7 @@ def delete_movement(movement_id: str) -> None:
     doc_ref = db.collection(MOVEMENT_COLLECTION).document(movement_id)
     existing = snapshot_data(doc_ref.get())
     doc_ref.delete()
-    if existing.get("cashbox_id") is not None:
+    if existing.get("method") == "cash":
         _adjust_cashbox_total(db, existing["cashbox_id"], -_signed_amount(existing["type"], existing["amount_cents"]))
 
 
@@ -209,10 +205,9 @@ def update_movement(movement_id: str, payload: MovementUpdateIn) -> MovementOut:
     merged_cashbox_id = payload.cashbox_id if payload.cashbox_id is not None else existing.get("cashbox_id")
     merged_label_id = payload.label_id if payload.label_id is not None else existing.get("label_id")
     validate_business_rules(merged_method, merged_amount, merged_cashbox_id, merged_label_id)
-    if merged_method == "cash":
-        assert merged_cashbox_id is not None  # guaranteed by validate_business_rules
-        if get_cashbox(merged_cashbox_id) is None:
-            raise ValueError("cashbox not found")
+    assert merged_cashbox_id is not None  # guaranteed by validate_business_rules
+    if get_cashbox(merged_cashbox_id) is None:
+        raise ValueError("cashbox not found")
 
     updates = {
         "type": merged_type,
@@ -228,11 +223,9 @@ def update_movement(movement_id: str, payload: MovementUpdateIn) -> MovementOut:
 
     doc_ref.update(updates)
 
-    old_cashbox_id = existing.get("cashbox_id")
-    if old_cashbox_id is not None:
-        _adjust_cashbox_total(db, old_cashbox_id, -_signed_amount(existing["type"], existing["amount_cents"]))
+    if existing.get("method") == "cash":
+        _adjust_cashbox_total(db, existing["cashbox_id"], -_signed_amount(existing["type"], existing["amount_cents"]))
     if merged_method == "cash":
-        assert merged_cashbox_id is not None
         _adjust_cashbox_total(db, merged_cashbox_id, _signed_amount(merged_type, merged_amount))
 
     return doc_to_out(doc_ref.get())

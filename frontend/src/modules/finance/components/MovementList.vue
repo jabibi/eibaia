@@ -45,7 +45,7 @@ const authStore = useAuthStore();
 const permissionsStore = usePermissionsStore();
 
 /** Signed amount for display: expenses are always negative regardless of payment
- * method, even though card expenses don't move the cash safe balance. */
+ * method, even though card expenses don't move the cashbox's cash balance. */
 function displayCents(movement: Movement): number {
   return movement.type === "expense" ? -movement.amount_cents : movement.amount_cents;
 }

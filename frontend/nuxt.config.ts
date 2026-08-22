@@ -8,7 +8,7 @@ import Aura from "@primeuix/themes/aura";
 // Open Graph tags MUST live here, not in a component, or link previews break.
 const SITE_URL = "https://elosue.web.app";
 const SITE_TITLE = "ElosuE! - Gestión del Hogar";
-const SITE_DESCRIPTION = "Aplicación de gestión de caja fuerte, gastos y organización del hogar.";
+const SITE_DESCRIPTION = "Aplicación de gestión de caja, gastos y organización del hogar.";
 const OG_IMAGE = `${SITE_URL}/images/og-share.jpg`;
 
 export default defineNuxtConfig({
@@ -55,6 +55,7 @@ export default defineNuxtConfig({
         { rel: "canonical", href: SITE_URL },
       ],
       meta: [
+        { name: "color-scheme", content: "light" },
         { name: "theme-color", content: "#15803d" },
         { name: "apple-mobile-web-app-capable", content: "yes" },
         { name: "apple-mobile-web-app-status-bar-style", content: "default" },

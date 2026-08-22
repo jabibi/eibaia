@@ -67,7 +67,7 @@ automáticamente a ``admin``.
 Módulos
 -------
 
-- **Caja Fuerte**: resumen de saldo, listado paginado de movimientos
+- **Caja**: resumen de saldo, listado paginado de movimientos
   (gasto/ingreso/ajuste, efectivo/tarjeta) con flujo borrador → confirmado, y
   pantalla de revisión para que un manager consolide los movimientos.
 - **Calendario / Horarios**: próximamente.

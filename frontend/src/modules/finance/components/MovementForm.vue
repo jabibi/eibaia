@@ -109,7 +109,7 @@ async function handleSubmit() {
     const payload = {
       type: type.value,
       method: method.value,
-      cashbox_id: method.value === "cash" ? cashboxId.value || null : null,
+      cashbox_id: cashboxId.value || null,
       label_id: labelId.value,
       amount_cents: euroToCents(amountValue),
       description: description.value,
@@ -147,7 +147,7 @@ onMounted(() => {
 
     <Card class="relative mt-6 max-w-xl space-y-5 p-6">
       <span
-        v-if="method === 'cash' && selectedCashbox"
+        v-if="selectedCashbox"
         class="absolute -right-2 -top-2 flex items-center gap-1 rounded-full bg-indigo-600 px-3 py-1 text-xs font-medium text-white shadow-sm"
       >
         <Icon name="lucide:vault" />

@@ -34,12 +34,12 @@ USER_ROLES = {
     },
     "manager": {
         "name": "Manager",
-        "description": "Gestión de la caja fuerte y revisión de movimientos",
+        "description": "Gestión de la caja y revisión de movimientos",
         "group_ids": ["CASHBOX_BASIC", "CASHBOX_MANAGE"],
     },
     "employee": {
         "name": "Empleado",
-        "description": "Operación básica de la caja fuerte",
+        "description": "Operación básica de la caja",
         "group_ids": ["CASHBOX_BASIC"],
     },
 }
