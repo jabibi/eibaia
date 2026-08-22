@@ -2,6 +2,11 @@
 
 Consulta también `README.rst` para la descripción general del stack, roles/permisos y estructura del repo.
 
+## Commits: sin trailer `Co-Authored-By`
+
+No añadas la línea `Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>` (ni ninguna
+variante de trailer de coautoría de Claude) en los mensajes de commit de este repo.
+
 ## Librería de UI reutilizable (`frontend/src/core/components/ui/`)
 
 Antes de construir un formulario o tabla nuevos, revisa si ya hay un componente aquí que lo
