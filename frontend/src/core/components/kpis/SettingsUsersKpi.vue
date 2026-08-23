@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { UsersSummary } from "~/modules/users/api";
 
-defineProps<{ loading: boolean; summary?: UsersSummary | null }>();
+// `editing` no se usa aquí — solo se declara para que /home pueda pasarlo por igual a
+// todos los KPI (ver FinanceBalanceKpi.vue) sin que Vue avise de un atributo no declarado.
+defineProps<{ loading: boolean; summary?: UsersSummary | null; editing?: boolean }>();
 const { t } = useI18n();
 </script>
 

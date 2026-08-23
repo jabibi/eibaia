@@ -49,7 +49,7 @@ const resolvedKpis = computed<ResolvedKpi[]>(() =>
         to: kpi.to,
         variant: kpi.variant,
         component: entry.component,
-        props: { ...kpiProps.value[kpi.id], loading: loading.value },
+        props: { ...kpiProps.value[kpi.id], loading: loading.value, editing: isEditing.value },
       },
     ];
   }),

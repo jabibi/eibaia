@@ -2,15 +2,14 @@
 import {
   createMovement,
   getMovement,
-  listCashboxes,
   listCategories,
   updateMovement,
-  type Cashbox,
   type Category,
   type MovementType,
   type PaymentMethod,
 } from "~/modules/finance/api";
 import { euroToCents } from "~/core/utils/currency";
+import { useCashboxStore } from "~/core/stores/cashbox";
 import Button from "~/core/components/ui/Button.vue";
 import Card from "~/core/components/ui/Card.vue";
 import ColorSelect from "~/core/components/ui/ColorSelect.vue";
@@ -24,6 +23,7 @@ const props = defineProps<{ movementId?: string }>();
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
+const cashboxStore = useCashboxStore();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -31,8 +31,9 @@ const errorMessage = ref("");
 
 const type = ref<MovementType>("expense");
 const method = ref<PaymentMethod>("cash");
-const cashboxes = ref<Cashbox[]>([]);
-const cashboxId = ref("");
+// Se asume una única caja compartida por todos los movimientos (ver core/stores/cashbox.ts)
+// — no hay selector, solo se usa su id al guardar.
+const cashboxId = ref(cashboxStore.cashbox?.id ?? "");
 const categories = ref<Category[]>([]);
 const categoryId = ref("");
 const workerName = ref("");
@@ -58,8 +59,6 @@ watch(type, () => {
   amount.value = null;
 });
 
-const selectedCashbox = computed(() => cashboxes.value.find((cashbox) => cashbox.id === cashboxId.value) ?? null);
-
 const categoryOptions = computed(() =>
   categories.value.map((category) => ({ value: category.id, label: category.name, color: category.color })),
 );
@@ -71,7 +70,7 @@ async function loadExisting() {
     const movement = await getMovement(props.movementId);
     type.value = movement.type;
     method.value = movement.method ?? "cash";
-    cashboxId.value = movement.cashbox_id ?? "";
+    cashboxId.value = movement.cashbox_id ?? cashboxId.value;
     categoryId.value = movement.category_id ?? "";
     workerName.value = movement.worker_name ?? "";
     description.value = movement.description;
@@ -85,15 +84,6 @@ async function loadExisting() {
     errorMessage.value = t("finance.form.saveError");
   } finally {
     loading.value = false;
-  }
-}
-
-async function loadCashboxes() {
-  const { cashboxes: list } = await listCashboxes();
-  cashboxes.value = list;
-  const [first] = list;
-  if (!props.movementId && !cashboxId.value && first) {
-    cashboxId.value = first.id;
   }
 }
 
@@ -137,11 +127,14 @@ async function handleSubmit() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!props.movementId && route.query.type === "card") {
     method.value = "card";
   }
-  loadCashboxes();
+  if (!cashboxId.value) {
+    await cashboxStore.load();
+    cashboxId.value = cashboxStore.cashbox?.id ?? "";
+  }
   loadCategories();
   loadExisting();
 });
@@ -153,15 +146,7 @@ onMounted(() => {
       {{ isEdit ? t("finance.form.editTitle") : t("finance.form.newTitle") }}
     </h1>
 
-    <Card class="relative mt-6 max-w-xl space-y-5 p-6">
-      <span
-        v-if="selectedCashbox"
-        class="absolute -right-2 -top-2 flex items-center gap-1 rounded-full bg-indigo-600 px-3 py-1 text-xs font-medium text-white shadow-sm"
-      >
-        <Icon name="lucide:vault" />
-        {{ selectedCashbox.name }}
-      </span>
-
+    <Card class="mt-6 max-w-xl space-y-5 p-6">
       <div class="flex flex-wrap items-center gap-3">
         <SegmentedControl v-model="type" :options="typeOptions" />
         <SegmentedControl v-model="method" :options="methodOptions" />

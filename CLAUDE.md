@@ -7,6 +7,59 @@ Consulta también `README.rst` para la descripción general del stack, roles/per
 No añadas la línea `Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>` (ni ninguna
 variante de trailer de coautoría de Claude) en los mensajes de commit de este repo.
 
+## Caja única y ribbon de entorno (`ribbon_label`)
+
+Se asume una única caja (`cashbox`) compartida por todos los usuarios y movimientos —
+por eso el formulario de movimiento y el KPI de saldo ya no muestran ni piden su
+`name`. El registro se cachea en `localStorage` (`core/stores/cashbox.ts`,
+clave `elosue:cashbox-cache`) con una expiración de 1 día; se recarga en cada
+login/init si la caché ha caducado.
+
+La caja tiene un campo `ribbon_label` (`null` por defecto, sin efecto en la app). Si
+tiene texto, `core/components/RibbonBanner.vue` (montado en `app.vue`, visible en
+todas las páginas) dibuja una cinta diagonal fija en la esquina inferior derecha,
+semitransparente y no interactiva (`pointer-events: none`). Es un marcador de
+entorno, no un dato de la app: sirve para saber a simple vista si lo que tienes
+delante habla con la base de datos de producción (debe estar en `null`) o con
+otra (p. ej. `"TEST"`) — útil mientras solo existe un proyecto de Firebase
+compartido entre local y producción. Se fija a mano con
+`functions/scripts/set_cashbox_ribbon_label.py`, nunca desde la UI ni desde un
+valor por defecto en el código (para no arrastrarlo a producción sin querer).
+
+### Pendiente: separar base de datos de desarrollo y de producción
+
+Hoy `elosue` es el único proyecto de Firebase — lo usan tanto `npm run dev` en
+local como el sitio desplegado (`elosue.web.app`), literalmente la misma
+Firestore. El ribbon de arriba es un parche temporal para saber a simple vista
+cuál es cuál mientras esto sea así.
+
+**Cuando el usuario diga que toca pasar a producción**, hay que abordar la
+separación. Ya se investigó el mecanismo, sin implementarlo todavía:
+
+- El backend (`functions/app/core/firebase.py`) ya distingue solo:
+  - `functions/serviceAccountKey.json` (gitignored) → esas credenciales.
+  - Si no existe ese fichero → credenciales por defecto del entorno de Cloud
+    Functions (producción).
+
+  Es decir: crear un segundo proyecto de Firebase (p. ej. `elosue-dev`) y
+  guardar su clave de cuenta de servicio como `serviceAccountKey.json` ya
+  apunta el backend local a esa otra base de datos, sin tocar código.
+- El frontend (`plugins/firebase.client.ts` + `nuxt.config.ts`) lee su config
+  de Firebase (`apiKey`, `authDomain`, `projectId`...) de variables
+  `NUXT_PUBLIC_FIREBASE_*`. Para `npm run dev` habría que pasarle las de
+  `elosue-dev` en vez de las de `elosue`, igual que ya se hace con
+  `NUXT_PUBLIC_API_BASE` para el backend local (ver sección de abajo).
+- Recomendado: un segundo proyecto real de Firebase, no el emulador de
+  Firestore/Auth — el login es con Google real (`signInWithPopup` +
+  `GoogleAuthProvider`) y el emulador de Auth no lo reproduce fielmente (usa un
+  selector falso, no OAuth real). Un proyecto real se comporta idéntico a
+  producción; el coste es crearlo a mano en la consola (Firestore, Auth con
+  Google, dominios autorizados) y gestionar dos juegos de credenciales.
+- Una vez separado: `ribbon_label` se pone a `"TEST"` (o similar) solo en la
+  caja de `elosue-dev`, y se deja `null` en `elosue` — así el ribbon vuelve a
+  cumplir su función real de "esto es dev, no producción" en vez de aparecer
+  siempre en ambos.
+
 ## Librería de UI reutilizable (`frontend/src/core/components/ui/`)
 
 Antes de construir un formulario o tabla nuevos, revisa si ya hay un componente aquí que lo
@@ -272,6 +325,19 @@ Eso mete la CSS de los iconos en `@layer base`, que Tailwind sitúa por debajo d
 así cualquier utilidad de Tailwind (incluidas las responsive) puede seguir sobreescribiéndola.
 Si algún día un icono no responde a una clase de Tailwind (tamaño, `hidden`, color...), esto es
 lo primero a revisar.
+
+**Iconos incrustados en build time (`icon.clientBundle` en `nuxt.config.ts`) — obligatorio con
+`ssr:false`.** El modo por defecto de `@nuxt/icon` ("server bundle") asume un servidor Node en
+producción que sirva el paquete de iconos local; con `ssr:false` + hosting estático
+(`elosue.web.app` no tiene ningún servidor corriendo) eso no existe, así que sin este ajuste
+cada carga de página pedía en vivo los SVG a `api.iconify.design` (CDN público de terceros) —
+confirmado viendo las peticiones de red reales de la app desplegada. `nuxt.config.ts` lista en
+`icon.clientBundle.icons` cada nombre de icono usado en el código (sacado con
+`grep -rEo "(lucide|simple-icons|logos):[a-z0-9-]+"` sobre `frontend/src`), lo que los incrusta
+como `data:` URIs en el bundle de JS en vez de pedirlos por red — verificado generando el build
+(`npm run generate`) y sirviéndolo en local: cero peticiones a `api.iconify.design`. **Si se usa
+un icono nuevo en el código y no se añade a esa lista, sigue funcionando** (cae de vuelta al
+CDN en producción), pero deja de estar autocontenido — añádelo a la lista cuando pase.
 
 ## Tailwind CSS v4: plugin de Vite directo, sin `@nuxtjs/tailwindcss`
 

@@ -58,6 +58,7 @@ export interface Cashbox {
   name: string;
   total_amount_cents: number;
   last_update: string | null;
+  ribbon_label: string | null;
 }
 
 interface CashboxListResponse {

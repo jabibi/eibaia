@@ -81,6 +81,7 @@ def cashbox_doc_to_out(doc) -> CashboxOut:
         name=data["name"],
         total_amount_cents=data["total_amount_cents"],
         last_update=_isoformat(data.get("last_update")),
+        ribbon_label=data.get("ribbon_label"),
     )
 
 
@@ -95,6 +96,15 @@ def list_cashboxes() -> list[CashboxOut]:
     db = get_db()
     docs = db.collection(CASHBOX_COLLECTION).order_by("name").stream()
     return [cashbox_doc_to_out(doc) for doc in docs]
+
+
+def set_cashbox_ribbon_label(cashbox_id: str, ribbon_label: str | None) -> CashboxOut:
+    """Used only by scripts/set_cashbox_ribbon_label.py — no HTTP endpoint exposes this on
+    purpose, since it's an environment marker (e.g. "TEST") set by hand per Firestore
+    project, never something a user edits from the app."""
+    doc_ref = get_db().collection(CASHBOX_COLLECTION).document(cashbox_id)
+    doc_ref.update({"ribbon_label": ribbon_label})
+    return cashbox_doc_to_out(doc_ref.get())
 
 
 def get_cashbox(cashbox_id: str):

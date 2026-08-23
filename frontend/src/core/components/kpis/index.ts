@@ -22,13 +22,7 @@ export interface KpiEntry {
 export const KPI_COMPONENTS: Record<string, KpiEntry> = {
   finance_balance: {
     component: FinanceBalanceKpi,
-    loadProps: async () => {
-      const [summary, cashboxName] = await Promise.all([
-        kpiDataSources.financeSummary(),
-        kpiDataSources.primaryCashboxName(),
-      ]);
-      return { summary, cashboxName };
-    },
+    loadProps: async () => ({ summary: await kpiDataSources.financeSummary() }),
   },
   finance_cash_month: {
     component: FinanceCashMonthKpi,

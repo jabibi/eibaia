@@ -17,6 +17,40 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
   modules: ["@pinia/nuxt", "@nuxtjs/i18n", "@nuxt/icon", "@vite-pwa/nuxt"],
+  // Con ssr:false + hosting estático no hay servidor en producción que sirva el bundle
+  // local de iconos de @nuxt/icon — sin esto, cada carga de página pedía los SVG en vivo a
+  // api.iconify.design (confirmado viendo las peticiones de red en elosue.web.app), un CDN de
+  // terceros del que la app quedaba dependiendo en runtime. Listar aquí los iconos usados los
+  // incrusta en el bundle en build time — cero peticiones externas. Si se añade un icono
+  // nuevo en el código y no aparece aquí, seguirá funcionando (cae de vuelta al CDN), pero
+  // hay que añadirlo a esta lista para que también quede embebido.
+  icon: {
+    clientBundle: {
+      icons: [
+        "logos:google-icon",
+        "lucide:arrow-left",
+        "lucide:arrow-right",
+        "lucide:check",
+        "lucide:chevron-left",
+        "lucide:circle-check-big",
+        "lucide:file-spreadsheet",
+        "lucide:file-text",
+        "lucide:house",
+        "lucide:loader-circle",
+        "lucide:log-out",
+        "lucide:menu",
+        "lucide:pencil",
+        "lucide:plus",
+        "lucide:settings",
+        "lucide:star",
+        "lucide:trash-2",
+        "lucide:user",
+        "lucide:wallet",
+        "lucide:x",
+        "simple-icons:github",
+      ],
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },

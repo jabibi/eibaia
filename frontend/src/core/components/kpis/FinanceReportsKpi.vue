@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { formatCurrency } from "~/core/utils/currency";
 
-defineProps<{ loading: boolean; netCents?: number | null }>();
+// `editing` no se usa aquí — solo se declara para que /home pueda pasarlo por igual a
+// todos los KPI (ver FinanceBalanceKpi.vue) sin que Vue avise de un atributo no declarado.
+defineProps<{ loading: boolean; netCents?: number | null; editing?: boolean }>();
 const { t } = useI18n();
 </script>
 

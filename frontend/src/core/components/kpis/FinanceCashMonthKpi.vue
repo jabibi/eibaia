@@ -2,7 +2,9 @@
 import { formatCurrency } from "~/core/utils/currency";
 import type { FinanceSummary } from "~/modules/finance/api";
 
-defineProps<{ loading: boolean; summary?: FinanceSummary | null }>();
+// `editing` no se usa aquí — solo se declara para que /home pueda pasarlo por igual a
+// todos los KPI (ver FinanceBalanceKpi.vue) sin que Vue avise de un atributo no declarado.
+defineProps<{ loading: boolean; summary?: FinanceSummary | null; editing?: boolean }>();
 const { t } = useI18n();
 </script>
 

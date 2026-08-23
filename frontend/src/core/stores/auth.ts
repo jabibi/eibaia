@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import { usePermissionsStore } from "~/core/stores/permissions";
 import { useDashboardPreferencesStore } from "~/core/stores/dashboardPreferences";
+import { useCashboxStore } from "~/core/stores/cashbox";
 
 interface AuthState {
   user: User | null;
@@ -37,9 +38,11 @@ export const useAuthStore = defineStore("auth", {
           if (user) {
             await usePermissionsStore().load();
             await useDashboardPreferencesStore().load();
+            await useCashboxStore().load();
           } else {
             usePermissionsStore().clear();
             useDashboardPreferencesStore().clear();
+            useCashboxStore().clear();
           }
           this.ready = true;
           resolve();
@@ -54,6 +57,7 @@ export const useAuthStore = defineStore("auth", {
       this.roleId = await syncRoleId(user);
       await usePermissionsStore().load();
       await useDashboardPreferencesStore().load();
+      await useCashboxStore().load();
     },
 
     /**
@@ -75,6 +79,7 @@ export const useAuthStore = defineStore("auth", {
       await signOut($firebaseAuth);
       usePermissionsStore().clear();
       useDashboardPreferencesStore().clear();
+      useCashboxStore().clear();
       this.user = null;
       this.roleId = null;
     },

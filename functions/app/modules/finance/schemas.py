@@ -105,6 +105,7 @@ class CashboxOut(BaseModel):
     name: str
     total_amount_cents: int
     last_update: str | None
+    ribbon_label: str | None = None
 
 
 class CashboxListOut(BaseModel):
