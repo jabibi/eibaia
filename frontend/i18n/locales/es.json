@@ -51,7 +51,6 @@
       "cashMonth": "Gastos en efectivo (mes)",
       "cardMonth": "Gastos en tarjeta (mes)",
       "movementsCount": "{count} movimientos",
-      "cardNote": "No afecta al efectivo de la caja",
       "drafts": "Pendientes de confirmar",
       "draftsHint": "Ir a revisión",
       "labels": "Etiquetas",

@@ -32,7 +32,7 @@ const visibleKpis = computed(() =>
 interface ResolvedKpi {
   id: string;
   to: string;
-  variant?: "warning" | "danger";
+  variant?: "warning" | "danger" | "featured";
   component: Component;
   props: Record<string, unknown>;
 }

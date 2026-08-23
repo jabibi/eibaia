@@ -4,7 +4,7 @@ import { useDashboardPreferencesStore } from "~/core/stores/dashboardPreferences
 const props = withDefaults(
   defineProps<{
     to: string;
-    variant?: "default" | "warning" | "danger";
+    variant?: "default" | "warning" | "danger" | "featured";
     kpiId?: string;
     showStar?: boolean;
   }>(),
@@ -23,11 +23,12 @@ function toggleStar() {
 
 <template>
   <div
-    class="group relative rounded-lg border bg-white p-6 shadow-sm transition hover:shadow-md"
+    class="group relative rounded-lg border p-6 shadow-sm transition hover:shadow-md"
     :class="{
-      'border-slate-200 hover:border-emerald-300': variant === 'default',
-      'border-slate-200 hover:border-amber-300': variant === 'warning',
-      'border-red-200 hover:border-red-300': variant === 'danger',
+      'border-slate-200 bg-white hover:border-emerald-300': variant === 'default',
+      'border-slate-200 bg-white hover:border-amber-300': variant === 'warning',
+      'border-red-200 bg-red-50/30 hover:border-red-300': variant === 'danger',
+      'border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50 hover:shadow-md': variant === 'featured',
     }"
   >
     <NuxtLink

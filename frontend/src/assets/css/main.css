@@ -8,3 +8,13 @@
 :root {
   color-scheme: light;
 }
+
+/* Tailwind v4's preflight doesn't restore the browser's old default of
+   cursor: pointer on <button> (unlike <a>), so every native button in the
+   app showed the plain arrow cursor on hover. One rule here instead of a
+   `cursor-pointer` utility copy-pasted onto every button in the codebase. */
+@layer base {
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+}

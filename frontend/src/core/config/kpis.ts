@@ -3,12 +3,18 @@ export interface KpiDefinition {
   titleKey: string;
   module: string;
   to: string;
-  variant?: "warning" | "danger";
+  variant?: "warning" | "danger" | "featured";
   permission?: string;
 }
 
 export const KPI_REGISTRY: KpiDefinition[] = [
-  { id: "finance_balance", titleKey: "finance.kpi.balance", module: "finance", to: "/finance/new" },
+  {
+    id: "finance_balance",
+    titleKey: "finance.kpi.balance",
+    module: "finance",
+    to: "/finance/transactions",
+    variant: "featured",
+  },
   {
     id: "finance_cash_month",
     titleKey: "finance.kpi.cashMonth",

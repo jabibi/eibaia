@@ -7,15 +7,11 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <p class="text-sm text-slate-500">{{ t("finance.kpi.cardMonth") }}</p>
-  <p class="mt-2 text-2xl font-semibold text-slate-800">
+  <p class="text-xs font-medium text-slate-500">{{ t("finance.kpi.cardMonth") }}</p>
+  <p class="mt-2 text-2xl font-bold text-slate-900">
     {{ loading ? "…" : formatCurrency(summary?.card_expenses_month.total_cents ?? 0) }}
   </p>
   <p class="mt-1 text-xs text-slate-500">
     {{ t("finance.kpi.movementsCount", { count: summary?.card_expenses_month.count ?? 0 }) }}
-  </p>
-  <p class="mt-2 flex items-center gap-1 text-xs text-slate-500">
-    <Icon name="lucide:info" />
-    {{ t("finance.kpi.cardNote") }}
   </p>
 </template>

@@ -1,4 +1,4 @@
-import { getReport, getSummary, listLabels, type FinanceSummary } from "~/modules/finance/api";
+import { getReport, getSummary, listCashboxes, listLabels, type FinanceSummary } from "~/modules/finance/api";
 import { currentMonthRange } from "~/core/utils/dateRange";
 import { getUsersSummary, type UsersSummary } from "~/modules/users/api";
 
@@ -35,11 +35,24 @@ function loadUsersSummary(): Promise<UsersSummary> {
   return usersSummaryPromise;
 }
 
+// El saldo agregado suma todas las cajas (ver balance_cents en el backend), así que solo hay
+// un nombre "de la caja" que mostrar cuando existe exactamente una — con varias, mostrar el
+// nombre de una sola sería confuso, así que se omite (null) y el KPI simplemente no pinta esa
+// línea.
+let primaryCashboxNamePromise: Promise<string | null> | null = null;
+function loadPrimaryCashboxName(): Promise<string | null> {
+  primaryCashboxNamePromise ??= listCashboxes().then(({ cashboxes }) =>
+    cashboxes.length === 1 ? cashboxes[0]!.name : null,
+  );
+  return primaryCashboxNamePromise;
+}
+
 export const kpiDataSources = {
   financeSummary: loadFinanceSummary,
   labelCount: loadLabelCount,
   netBalanceMonth: loadNetBalanceMonth,
   usersSummary: loadUsersSummary,
+  primaryCashboxName: loadPrimaryCashboxName,
 };
 
 // Debe llamarse al empezar cada pase de carga nuevo (lo hace loadKpiProps automáticamente)
@@ -52,4 +65,5 @@ export function resetKpiDataCache() {
   labelCountPromise = null;
   netBalanceMonthPromise = null;
   usersSummaryPromise = null;
+  primaryCashboxNamePromise = null;
 }

@@ -46,7 +46,7 @@ onMounted(load);
     <p v-if="errorMessage" class="mt-2 text-sm text-red-600">{{ errorMessage }}</p>
 
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <KpiCard to="/finance/new" kpi-id="finance_balance">
+      <KpiCard to="/finance/transactions" variant="featured" kpi-id="finance_balance">
         <FinanceBalanceKpi :loading="loading" v-bind="kpiProps.finance_balance" />
       </KpiCard>
 
