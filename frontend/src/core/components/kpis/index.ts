@@ -3,7 +3,7 @@ import FinanceBalanceKpi from "./FinanceBalanceKpi.vue";
 import FinanceCashMonthKpi from "./FinanceCashMonthKpi.vue";
 import FinanceCardMonthKpi from "./FinanceCardMonthKpi.vue";
 import FinanceDraftsKpi from "./FinanceDraftsKpi.vue";
-import FinanceLabelsKpi from "./FinanceLabelsKpi.vue";
+import FinanceCategoriesKpi from "./FinanceCategoriesKpi.vue";
 import FinanceReportsKpi from "./FinanceReportsKpi.vue";
 import SettingsUsersKpi from "./SettingsUsersKpi.vue";
 import SettingsResetKpi from "./SettingsResetKpi.vue";
@@ -42,9 +42,9 @@ export const KPI_COMPONENTS: Record<string, KpiEntry> = {
     component: FinanceDraftsKpi,
     loadProps: async () => ({ summary: await kpiDataSources.financeSummary() }),
   },
-  finance_labels: {
-    component: FinanceLabelsKpi,
-    loadProps: async () => ({ count: await kpiDataSources.labelCount() }),
+  finance_categories: {
+    component: FinanceCategoriesKpi,
+    loadProps: async () => ({ count: await kpiDataSources.categoryCount() }),
   },
   finance_reports: {
     component: FinanceReportsKpi,
@@ -81,7 +81,7 @@ export {
   FinanceCashMonthKpi,
   FinanceCardMonthKpi,
   FinanceDraftsKpi,
-  FinanceLabelsKpi,
+  FinanceCategoriesKpi,
   FinanceReportsKpi,
   SettingsUsersKpi,
   SettingsResetKpi,

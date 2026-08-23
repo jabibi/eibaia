@@ -15,7 +15,7 @@ from app.core.firebase import get_db  # noqa: E402  (also initializes the Admin 
 from app.modules.finance import services  # noqa: E402
 from app.modules.finance.schemas import CashboxIn  # noqa: E402
 
-DEFAULT_NAME = "Caja principal"
+DEFAULT_NAME = "La caja"
 
 
 def main() -> None:

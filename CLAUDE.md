@@ -34,12 +34,12 @@ Componentes disponibles:
 - `Button.vue` — botón con `variant="primary"` (por defecto) / `"secondary"` / `"danger"`, más
   `icon` (nombre de icono Iconify, ej. `"lucide:log-out"`, ver sección de iconos más abajo) y
   `loading` (spinner + disabled) opcionales.
-- `ColorPicker.vue` — cuadrícula de 12 swatches circulares (`v-model` de tipo `LabelColor`, ver
-  `frontend/src/core/ui/labelColors.ts`) para elegir un color entre un set fijo predefinido. Usado
-  para el color de las etiquetas de movimientos (`pages/finance/labels.vue`).
+- `ColorPicker.vue` — cuadrícula de 12 swatches circulares (`v-model` de tipo `CategoryColor`, ver
+  `frontend/src/core/ui/categoryColors.ts`) para elegir un color entre un set fijo predefinido. Usado
+  para el color de las categorías de movimientos (`pages/finance/categories.vue`).
 - `ColorSelect.vue` — `<select>` nativo pero con cada `<option>` teñido por su propio color
   (`options: { value, label, color }[]`) y un punto de color en el propio control cuando está
-  cerrado. Usado para elegir la etiqueta de un movimiento en `MovementForm.vue`. Deliberadamente
+  cerrado. Usado para elegir la categoría de un movimiento en `MovementForm.vue`. Deliberadamente
   nativo (no un listbox/combobox custom) para mantener accesibilidad de teclado y el picker móvil
   del sistema — mismo criterio que el resto de la librería (ver sección sobre PrimeVue más abajo).
 

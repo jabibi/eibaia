@@ -1,4 +1,4 @@
-import { getReport, getSummary, listCashboxes, listLabels, type FinanceSummary } from "~/modules/finance/api";
+import { getReport, getSummary, listCashboxes, listCategories, type FinanceSummary } from "~/modules/finance/api";
 import { currentMonthRange } from "~/core/utils/dateRange";
 import { getUsersSummary, type UsersSummary } from "~/modules/users/api";
 
@@ -13,10 +13,10 @@ function loadFinanceSummary(): Promise<FinanceSummary> {
   return financeSummaryPromise;
 }
 
-let labelCountPromise: Promise<number> | null = null;
-function loadLabelCount(): Promise<number> {
-  labelCountPromise ??= listLabels().then((result) => result.labels.length);
-  return labelCountPromise;
+let categoryCountPromise: Promise<number> | null = null;
+function loadCategoryCount(): Promise<number> {
+  categoryCountPromise ??= listCategories().then((result) => result.categories.length);
+  return categoryCountPromise;
 }
 
 let netBalanceMonthPromise: Promise<number> | null = null;
@@ -49,7 +49,7 @@ function loadPrimaryCashboxName(): Promise<string | null> {
 
 export const kpiDataSources = {
   financeSummary: loadFinanceSummary,
-  labelCount: loadLabelCount,
+  categoryCount: loadCategoryCount,
   netBalanceMonth: loadNetBalanceMonth,
   usersSummary: loadUsersSummary,
   primaryCashboxName: loadPrimaryCashboxName,
@@ -62,7 +62,7 @@ export const kpiDataSources = {
 // convertirlo en una caché por pase en vez de módulo-global.
 export function resetKpiDataCache() {
   financeSummaryPromise = null;
-  labelCountPromise = null;
+  categoryCountPromise = null;
   netBalanceMonthPromise = null;
   usersSummaryPromise = null;
   primaryCashboxNamePromise = null;

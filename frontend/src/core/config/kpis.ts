@@ -36,10 +36,10 @@ export const KPI_REGISTRY: KpiDefinition[] = [
     permission: "CASHBOX_MANAGE",
   },
   {
-    id: "finance_labels",
-    titleKey: "finance.kpi.labels",
+    id: "finance_categories",
+    titleKey: "finance.kpi.categories",
     module: "finance",
-    to: "/finance/labels",
+    to: "/finance/categories",
     permission: "CASHBOX_MANAGE",
   },
   {

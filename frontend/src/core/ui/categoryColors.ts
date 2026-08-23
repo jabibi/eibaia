@@ -1,4 +1,4 @@
-interface LabelColorClasses {
+interface CategoryColorClasses {
   /** Solid dot/swatch, e.g. the color picker grid and the closed ColorSelect indicator. */
   swatch: string;
   /** Tinted text, for subtle highlights (chips, row accents). */
@@ -8,8 +8,8 @@ interface LabelColorClasses {
 }
 
 // Single source of truth for the fixed color palette: add a color by adding one entry here —
-// `LabelColor` and `LABEL_COLORS` are both derived from these keys, not listed separately.
-export const LABEL_COLOR_CLASSES = {
+// `CategoryColor` and `CATEGORY_COLORS` are both derived from these keys, not listed separately.
+export const CATEGORY_COLOR_CLASSES = {
   red: { swatch: "bg-red-500", text: "text-red-700", chipBg: "bg-red-50" },
   orange: { swatch: "bg-orange-500", text: "text-orange-700", chipBg: "bg-orange-50" },
   amber: { swatch: "bg-amber-500", text: "text-amber-700", chipBg: "bg-amber-50" },
@@ -24,10 +24,10 @@ export const LABEL_COLOR_CLASSES = {
   pink: { swatch: "bg-pink-500", text: "text-pink-700", chipBg: "bg-pink-50" },
   gray: { swatch: "bg-gray-500", text: "text-gray-700", chipBg: "bg-gray-100" },
   lightgray: { swatch: "bg-gray-300", text: "text-gray-600", chipBg: "bg-gray-50" },
-} satisfies Record<string, LabelColorClasses>;
+} satisfies Record<string, CategoryColorClasses>;
 
-export type LabelColor = keyof typeof LABEL_COLOR_CLASSES;
+export type CategoryColor = keyof typeof CATEGORY_COLOR_CLASSES;
 
-export const LABEL_COLORS = Object.keys(LABEL_COLOR_CLASSES) as LabelColor[];
+export const CATEGORY_COLORS = Object.keys(CATEGORY_COLOR_CLASSES) as CategoryColor[];
 
-export const DEFAULT_LABEL_COLOR: LabelColor = "blue";
+export const DEFAULT_CATEGORY_COLOR: CategoryColor = "blue";

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { LABEL_COLOR_CLASSES, type LabelColor } from "~/core/ui/labelColors";
+import { CATEGORY_COLOR_CLASSES, type CategoryColor } from "~/core/ui/categoryColors";
 
 interface ColorSelectOption {
   value: string;
   label: string;
-  color: LabelColor;
+  color: CategoryColor;
 }
 
 const props = defineProps<{ modelValue: string; options: ColorSelectOption[]; id?: string }>();
@@ -18,7 +18,7 @@ const selectedColor = computed(() => props.options.find((option) => option.value
     <span
       v-if="selectedColor"
       class="pointer-events-none absolute left-2.5 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full"
-      :class="LABEL_COLOR_CLASSES[selectedColor].swatch"
+      :class="CATEGORY_COLOR_CLASSES[selectedColor].swatch"
     />
     <select
       :id="id"
@@ -31,7 +31,7 @@ const selectedColor = computed(() => props.options.find((option) => option.value
         v-for="option in options"
         :key="option.value"
         :value="option.value"
-        :class="[LABEL_COLOR_CLASSES[option.color].chipBg, LABEL_COLOR_CLASSES[option.color].text]"
+        :class="[CATEGORY_COLOR_CLASSES[option.color].chipBg, CATEGORY_COLOR_CLASSES[option.color].text]"
       >
         {{ option.label }}
       </option>

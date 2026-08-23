@@ -3,10 +3,10 @@ import {
   createMovement,
   getMovement,
   listCashboxes,
-  listLabels,
+  listCategories,
   updateMovement,
   type Cashbox,
-  type Label,
+  type Category,
   type MovementType,
   type PaymentMethod,
 } from "~/modules/finance/api";
@@ -33,8 +33,9 @@ const type = ref<MovementType>("expense");
 const method = ref<PaymentMethod>("cash");
 const cashboxes = ref<Cashbox[]>([]);
 const cashboxId = ref("");
-const labels = ref<Label[]>([]);
-const labelId = ref("");
+const categories = ref<Category[]>([]);
+const categoryId = ref("");
+const workerName = ref("");
 const amount = ref<number | null>(null);
 const description = ref("");
 const date = ref(new Date().toISOString().slice(0, 10));
@@ -59,8 +60,8 @@ watch(type, () => {
 
 const selectedCashbox = computed(() => cashboxes.value.find((cashbox) => cashbox.id === cashboxId.value) ?? null);
 
-const labelOptions = computed(() =>
-  labels.value.map((label) => ({ value: label.id, label: label.name, color: label.color })),
+const categoryOptions = computed(() =>
+  categories.value.map((category) => ({ value: category.id, label: category.name, color: category.color })),
 );
 
 async function loadExisting() {
@@ -71,7 +72,8 @@ async function loadExisting() {
     type.value = movement.type;
     method.value = movement.method ?? "cash";
     cashboxId.value = movement.cashbox_id ?? "";
-    labelId.value = movement.label_id ?? "";
+    categoryId.value = movement.category_id ?? "";
+    workerName.value = movement.worker_name ?? "";
     description.value = movement.description;
     date.value = movement.date;
     // Setting `type` above schedules the watcher that clears `amount` (it exists to
@@ -95,18 +97,18 @@ async function loadCashboxes() {
   }
 }
 
-async function loadLabels() {
-  const { labels: list } = await listLabels();
-  labels.value = list;
+async function loadCategories() {
+  const { categories: list } = await listCategories();
+  categories.value = list;
   const [first] = list;
-  if (!props.movementId && !labelId.value && first) {
-    labelId.value = first.id;
+  if (!props.movementId && !categoryId.value && first) {
+    categoryId.value = first.id;
   }
 }
 
 async function handleSubmit() {
   const amountValue = amount.value;
-  if (amountValue === null || amountValue <= 0 || !description.value || !labelId.value) return;
+  if (amountValue === null || amountValue <= 0 || !description.value || !categoryId.value) return;
 
   saving.value = true;
   errorMessage.value = "";
@@ -115,7 +117,8 @@ async function handleSubmit() {
       type: type.value,
       method: method.value,
       cashbox_id: cashboxId.value || null,
-      label_id: labelId.value,
+      category_id: categoryId.value,
+      worker_name: workerName.value.trim() || null,
       amount_cents: euroToCents(amountValue),
       description: description.value,
       date: date.value,
@@ -139,7 +142,7 @@ onMounted(() => {
     method.value = "card";
   }
   loadCashboxes();
-  loadLabels();
+  loadCategories();
   loadExisting();
 });
 </script>
@@ -159,24 +162,29 @@ onMounted(() => {
         {{ selectedCashbox.name }}
       </span>
 
-      <SegmentedControl v-model="type" :options="typeOptions" />
+      <div class="flex flex-wrap items-center gap-3">
+        <SegmentedControl v-model="type" :options="typeOptions" />
+        <SegmentedControl v-model="method" :options="methodOptions" />
+      </div>
 
-      <SegmentedControl v-model="method" :options="methodOptions" />
-
-      <FormField :label="t('finance.fields.label')" input-id="movement-label">
-        <ColorSelect id="movement-label" v-model="labelId" :options="labelOptions" />
-      </FormField>
-
-      <FormField :label="t('finance.fields.amount')" input-id="movement-amount">
-        <FormCurrencyInput id="movement-amount" v-model="amount" />
+      <FormField :label="t('finance.fields.date')" input-id="movement-date">
+        <FormInput id="movement-date" v-model="date" type="date" />
       </FormField>
 
       <FormField :label="t('finance.fields.description')" input-id="movement-description">
         <FormInput id="movement-description" v-model="description" type="text" />
       </FormField>
 
-      <FormField :label="t('finance.fields.date')" input-id="movement-date">
-        <FormInput id="movement-date" v-model="date" type="date" />
+      <FormField :label="t('finance.fields.category')" input-id="movement-category">
+        <ColorSelect id="movement-category" v-model="categoryId" :options="categoryOptions" />
+      </FormField>
+
+      <FormField :label="t('finance.fields.worker')" input-id="movement-worker">
+        <FormInput id="movement-worker" v-model="workerName" type="text" />
+      </FormField>
+
+      <FormField :label="t('finance.fields.amount')" input-id="movement-amount">
+        <FormCurrencyInput id="movement-amount" v-model="amount" />
       </FormField>
 
       <p v-if="errorMessage" class="text-sm text-red-600">{{ errorMessage }}</p>

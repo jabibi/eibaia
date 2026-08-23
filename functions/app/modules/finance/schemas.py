@@ -6,7 +6,7 @@ from pydantic import BaseModel
 MovementType = Literal["expense", "income"]
 PaymentMethod = Literal["cash", "card"]
 MovementStatus = Literal["draft", "confirmed"]
-LabelColor = Literal[
+CategoryColor = Literal[
     "red",
     "orange",
     "amber",
@@ -28,7 +28,8 @@ class MovementIn(BaseModel):
     type: MovementType
     method: PaymentMethod | None = None
     cashbox_id: str | None = None
-    label_id: str | None = None
+    category_id: str | None = None
+    worker_name: str | None = None
     amount_cents: int
     description: str
     date: Date
@@ -38,7 +39,8 @@ class MovementUpdateIn(BaseModel):
     type: MovementType | None = None
     method: PaymentMethod | None = None
     cashbox_id: str | None = None
-    label_id: str | None = None
+    category_id: str | None = None
+    worker_name: str | None = None
     amount_cents: int | None = None
     description: str | None = None
     date: Date | None = None
@@ -53,7 +55,8 @@ class MovementOut(BaseModel):
     type: MovementType
     method: PaymentMethod | None
     cashbox_id: str | None
-    label_id: str | None
+    category_id: str | None
+    worker_name: str | None
     amount_cents: int
     description: str
     date: Date
@@ -108,16 +111,16 @@ class CashboxListOut(BaseModel):
     cashboxes: list[CashboxOut]
 
 
-class LabelIn(BaseModel):
+class CategoryIn(BaseModel):
     name: str
-    color: LabelColor
+    color: CategoryColor
 
 
-class LabelOut(BaseModel):
+class CategoryOut(BaseModel):
     id: str
     name: str
-    color: LabelColor
+    color: CategoryColor
 
 
-class LabelListOut(BaseModel):
-    labels: list[LabelOut]
+class CategoryListOut(BaseModel):
+    categories: list[CategoryOut]

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {
-  listLabels,
+  listCategories,
   listMovements,
-  type Label,
+  type Category,
   type Movement,
   type MovementStatus,
   type PaymentMethod,
@@ -63,14 +63,14 @@ const emptyMessage = computed(() => (filter.value === "review" ? t("finance.revi
 useHead({ title: pageTitle });
 
 const loadedMovements = ref<Movement[]>([]);
-const labels = ref<Label[]>([]);
+const categories = ref<Category[]>([]);
 const nextPageToken = ref<string | null>(null);
 const loading = ref(true);
 const errorMessage = ref("");
 
-async function loadLabels() {
-  const response = await listLabels();
-  labels.value = response.labels;
+async function loadCategories() {
+  const response = await listCategories();
+  categories.value = response.categories;
 }
 
 function listParams(): { status?: MovementStatus; scope?: PaymentMethod } {
@@ -112,7 +112,7 @@ async function loadMore() {
 watch(filter, loadFirstPage);
 onMounted(() => {
   loadFirstPage();
-  loadLabels();
+  loadCategories();
 });
 </script>
 
@@ -135,7 +135,7 @@ onMounted(() => {
 
     <MovementList
       :movements="loadedMovements"
-      :labels="labels"
+      :categories="categories"
       :loading="loading"
       :empty-message="emptyMessage"
       show-actions

@@ -10,10 +10,10 @@ from .schemas import (
     CashboxIn,
     CashboxListOut,
     CashboxOut,
+    CategoryIn,
+    CategoryListOut,
+    CategoryOut,
     FinanceSummaryOut,
-    LabelIn,
-    LabelListOut,
-    LabelOut,
     MovementIn,
     MovementListOut,
     MovementOut,
@@ -62,11 +62,11 @@ def get_report(
     date_from: Date,
     date_to: Date,
     scope: PaymentMethod | None = None,
-    label_id: str | None = None,
+    category_id: str | None = None,
     _user: CurrentUser = Depends(_MANAGE),
 ):
     try:
-        return services.get_report(date_from, date_to, scope, label_id)
+        return services.get_report(date_from, date_to, scope, category_id)
     except ValueError as exc:
         raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
@@ -81,27 +81,27 @@ def create_cashbox(payload: CashboxIn, _user: CurrentUser = Depends(_MANAGE)):
     return services.create_cashbox(payload)
 
 
-@router.get("/labels", response_model=LabelListOut)
-def list_labels(_user: CurrentUser = Depends(_BASIC)):
-    return LabelListOut(labels=services.list_labels())
+@router.get("/categories", response_model=CategoryListOut)
+def list_categories(_user: CurrentUser = Depends(_BASIC)):
+    return CategoryListOut(categories=services.list_categories())
 
 
-@router.post("/labels", response_model=LabelOut)
-def create_label(payload: LabelIn, _user: CurrentUser = Depends(_MANAGE)):
-    return services.create_label(payload)
+@router.post("/categories", response_model=CategoryOut)
+def create_category(payload: CategoryIn, _user: CurrentUser = Depends(_MANAGE)):
+    return services.create_category(payload)
 
 
-@router.patch("/labels/{label_id}", response_model=LabelOut)
-def update_label(label_id: str, payload: LabelIn, _user: CurrentUser = Depends(_MANAGE)):
+@router.patch("/categories/{category_id}", response_model=CategoryOut)
+def update_category(category_id: str, payload: CategoryIn, _user: CurrentUser = Depends(_MANAGE)):
     try:
-        return services.update_label(label_id, payload)
+        return services.update_category(category_id, payload)
     except ValueError as exc:
         raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
 
-@router.delete("/labels/{label_id}", status_code=http_status.HTTP_204_NO_CONTENT)
-def delete_label(label_id: str, _user: CurrentUser = Depends(_MANAGE)):
-    services.delete_label(label_id)
+@router.delete("/categories/{category_id}", status_code=http_status.HTTP_204_NO_CONTENT)
+def delete_category(category_id: str, _user: CurrentUser = Depends(_MANAGE)):
+    services.delete_category(category_id)
 
 
 @router.get("/movements", response_model=MovementListOut)

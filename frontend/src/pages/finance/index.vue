@@ -6,7 +6,7 @@ import {
   FinanceCashMonthKpi,
   FinanceCardMonthKpi,
   FinanceDraftsKpi,
-  FinanceLabelsKpi,
+  FinanceCategoriesKpi,
   FinanceReportsKpi,
   loadKpiProps,
 } from "~/core/components/kpis";
@@ -26,7 +26,7 @@ async function load() {
   try {
     const ids = ["finance_balance", "finance_cash_month", "finance_card_month"];
     if (permissionsStore.has("CASHBOX_MANAGE")) {
-      ids.push("finance_drafts", "finance_labels", "finance_reports");
+      ids.push("finance_drafts", "finance_categories", "finance_reports");
     }
     kpiProps.value = await loadKpiProps(ids);
   } catch (error) {
@@ -67,8 +67,8 @@ onMounted(load);
         <FinanceDraftsKpi :loading="loading" v-bind="kpiProps.finance_drafts" />
       </KpiCard>
 
-      <KpiCard v-if="permissionsStore.has('CASHBOX_MANAGE')" to="/finance/labels" kpi-id="finance_labels">
-        <FinanceLabelsKpi :loading="loading" v-bind="kpiProps.finance_labels" />
+      <KpiCard v-if="permissionsStore.has('CASHBOX_MANAGE')" to="/finance/categories" kpi-id="finance_categories">
+        <FinanceCategoriesKpi :loading="loading" v-bind="kpiProps.finance_categories" />
       </KpiCard>
 
       <KpiCard v-if="permissionsStore.has('CASHBOX_MANAGE')" to="/finance/reports" kpi-id="finance_reports">

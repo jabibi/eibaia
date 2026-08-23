@@ -7,10 +7,10 @@ from app.core.firebase import get_db, snapshot_data
 from .schemas import (
     CashboxIn,
     CashboxOut,
+    CategoryColor,
+    CategoryIn,
+    CategoryOut,
     FinanceSummaryOut,
-    LabelColor,
-    LabelIn,
-    LabelOut,
     MonthlyStatOut,
     MovementIn,
     MovementOut,
@@ -24,14 +24,14 @@ from .schemas import (
 
 MOVEMENT_COLLECTION = "cashbox_movement"
 CASHBOX_COLLECTION = "cashbox"
-LABEL_COLLECTION = "cashbox_movement_label"
+CATEGORY_COLLECTION = "cashbox_movement_category"
 
 DEFAULT_CASHBOX_NAME = "Caja"
-DEFAULT_LABEL_COLOR: LabelColor = "blue"
+DEFAULT_CATEGORY_COLOR: CategoryColor = "blue"
 
 
 def validate_business_rules(
-    method: PaymentMethod | None, amount_cents: int, cashbox_id: str | None, label_id: str | None
+    method: PaymentMethod | None, amount_cents: int, cashbox_id: str | None, category_id: str | None
 ) -> None:
     if method is None:
         raise ValueError("method is required")
@@ -39,10 +39,10 @@ def validate_business_rules(
         raise ValueError("amount must be positive")
     if cashbox_id is None:
         raise ValueError("cashbox_id is required")
-    if label_id is None:
-        raise ValueError("label_id is required")
-    if get_label(label_id) is None:
-        raise ValueError("label not found")
+    if category_id is None:
+        raise ValueError("category_id is required")
+    if get_category(category_id) is None:
+        raise ValueError("category not found")
 
 
 def _signed_amount(type_: MovementType, amount_cents: int) -> int:
@@ -60,7 +60,8 @@ def doc_to_out(doc) -> MovementOut:
         type=data["type"],
         method=data.get("method"),
         cashbox_id=data.get("cashbox_id"),
-        label_id=data.get("label_id"),
+        category_id=data.get("category_id"),
+        worker_name=data.get("worker_name"),
         amount_cents=data["amount_cents"],
         description=data["description"],
         date=data["date"],
@@ -102,41 +103,41 @@ def get_cashbox(cashbox_id: str):
     return doc if doc.exists else None
 
 
-def label_doc_to_out(doc) -> LabelOut:
+def category_doc_to_out(doc) -> CategoryOut:
     data = snapshot_data(doc)
-    return LabelOut(id=doc.id, name=data["name"], color=data.get("color", DEFAULT_LABEL_COLOR))
+    return CategoryOut(id=doc.id, name=data["name"], color=data.get("color", DEFAULT_CATEGORY_COLOR))
 
 
-def list_labels() -> list[LabelOut]:
+def list_categories() -> list[CategoryOut]:
     db = get_db()
-    docs = db.collection(LABEL_COLLECTION).order_by("name").stream()
-    return [label_doc_to_out(doc) for doc in docs]
+    docs = db.collection(CATEGORY_COLLECTION).order_by("name").stream()
+    return [category_doc_to_out(doc) for doc in docs]
 
 
-def get_label(label_id: str):
+def get_category(category_id: str):
     db = get_db()
-    doc = db.collection(LABEL_COLLECTION).document(label_id).get()
+    doc = db.collection(CATEGORY_COLLECTION).document(category_id).get()
     return doc if doc.exists else None
 
 
-def create_label(payload: LabelIn) -> LabelOut:
+def create_category(payload: CategoryIn) -> CategoryOut:
     db = get_db()
-    doc_ref = db.collection(LABEL_COLLECTION).document()
+    doc_ref = db.collection(CATEGORY_COLLECTION).document()
     doc_ref.set({"name": payload.name, "color": payload.color})
-    return label_doc_to_out(doc_ref.get())
+    return category_doc_to_out(doc_ref.get())
 
 
-def update_label(label_id: str, payload: LabelIn) -> LabelOut:
+def update_category(category_id: str, payload: CategoryIn) -> CategoryOut:
     db = get_db()
-    doc_ref = db.collection(LABEL_COLLECTION).document(label_id)
+    doc_ref = db.collection(CATEGORY_COLLECTION).document(category_id)
     if not doc_ref.get().exists:
-        raise ValueError("label not found")
+        raise ValueError("category not found")
     doc_ref.update({"name": payload.name, "color": payload.color})
-    return label_doc_to_out(doc_ref.get())
+    return category_doc_to_out(doc_ref.get())
 
 
-def delete_label(label_id: str) -> None:
-    get_db().collection(LABEL_COLLECTION).document(label_id).delete()
+def delete_category(category_id: str) -> None:
+    get_db().collection(CATEGORY_COLLECTION).document(category_id).delete()
 
 
 def seed_defaults() -> None:
@@ -154,7 +155,7 @@ def _adjust_cashbox_total(db, cashbox_id: str, delta_cents: int) -> None:
 
 
 def create_movement(payload: MovementIn, uid: str, display_name: str | None) -> MovementOut:
-    validate_business_rules(payload.method, payload.amount_cents, payload.cashbox_id, payload.label_id)
+    validate_business_rules(payload.method, payload.amount_cents, payload.cashbox_id, payload.category_id)
     assert payload.cashbox_id is not None  # guaranteed by validate_business_rules
     if get_cashbox(payload.cashbox_id) is None:
         raise ValueError("cashbox not found")
@@ -166,7 +167,8 @@ def create_movement(payload: MovementIn, uid: str, display_name: str | None) -> 
             "type": payload.type,
             "method": payload.method,
             "cashbox_id": payload.cashbox_id,
-            "label_id": payload.label_id,
+            "category_id": payload.category_id,
+            "worker_name": payload.worker_name,
             "amount_cents": payload.amount_cents,
             "description": payload.description,
             "date": payload.date.isoformat(),
@@ -205,8 +207,8 @@ def update_movement(movement_id: str, payload: MovementUpdateIn) -> MovementOut:
     merged_method = payload.method if payload.method is not None else existing.get("method")
     merged_amount = payload.amount_cents if payload.amount_cents is not None else existing["amount_cents"]
     merged_cashbox_id = payload.cashbox_id if payload.cashbox_id is not None else existing.get("cashbox_id")
-    merged_label_id = payload.label_id if payload.label_id is not None else existing.get("label_id")
-    validate_business_rules(merged_method, merged_amount, merged_cashbox_id, merged_label_id)
+    merged_category_id = payload.category_id if payload.category_id is not None else existing.get("category_id")
+    validate_business_rules(merged_method, merged_amount, merged_cashbox_id, merged_category_id)
     assert merged_cashbox_id is not None  # guaranteed by validate_business_rules
     if get_cashbox(merged_cashbox_id) is None:
         raise ValueError("cashbox not found")
@@ -215,9 +217,11 @@ def update_movement(movement_id: str, payload: MovementUpdateIn) -> MovementOut:
         "type": merged_type,
         "method": merged_method,
         "cashbox_id": merged_cashbox_id,
-        "label_id": merged_label_id,
+        "category_id": merged_category_id,
         "amount_cents": merged_amount,
     }
+    if payload.worker_name is not None:
+        updates["worker_name"] = payload.worker_name
     if payload.description is not None:
         updates["description"] = payload.description
     if payload.date is not None:
@@ -301,7 +305,7 @@ def get_summary() -> FinanceSummaryOut:
 
 
 def get_report(
-    date_from: date, date_to: date, scope: PaymentMethod | None, label_id: str | None
+    date_from: date, date_to: date, scope: PaymentMethod | None, category_id: str | None
 ) -> ReportOut:
     if date_from > date_to:
         raise ValueError("date_from must not be after date_to")
@@ -321,7 +325,7 @@ def get_report(
         data = snapshot_data(doc)
         if scope is not None and data.get("method") != scope:
             continue
-        if label_id is not None and data.get("label_id") != label_id:
+        if category_id is not None and data.get("category_id") != category_id:
             continue
 
         movements.append(doc_to_out(doc))

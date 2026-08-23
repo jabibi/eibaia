@@ -1,5 +1,5 @@
 import { apiFetch } from "~/core/api/http";
-import type { LabelColor } from "~/core/ui/labelColors";
+import type { CategoryColor } from "~/core/ui/categoryColors";
 
 export type MovementType = "expense" | "income";
 export type PaymentMethod = "cash" | "card";
@@ -10,7 +10,8 @@ export interface Movement {
   type: MovementType;
   method: PaymentMethod | null;
   cashbox_id: string | null;
-  label_id: string | null;
+  category_id: string | null;
+  worker_name: string | null;
   amount_cents: number;
   description: string;
   date: string;
@@ -26,7 +27,8 @@ export interface MovementInput {
   type: MovementType;
   method?: PaymentMethod | null;
   cashbox_id?: string | null;
-  label_id?: string | null;
+  category_id?: string | null;
+  worker_name?: string | null;
   amount_cents: number;
   description: string;
   date: string;
@@ -81,7 +83,7 @@ export function getReport(params: {
   date_from: string;
   date_to: string;
   scope?: PaymentMethod;
-  label_id?: string;
+  category_id?: string;
 }) {
   return apiFetch<ReportResult>("/finance/reports", { query: params });
 }
@@ -94,30 +96,30 @@ export function createCashbox(payload: { name: string }) {
   return apiFetch<Cashbox>("/finance/cashboxes", { method: "POST", body: payload });
 }
 
-export interface Label {
+export interface Category {
   id: string;
   name: string;
-  color: LabelColor;
+  color: CategoryColor;
 }
 
-interface LabelListResponse {
-  labels: Label[];
+interface CategoryListResponse {
+  categories: Category[];
 }
 
-export function listLabels() {
-  return apiFetch<LabelListResponse>("/finance/labels");
+export function listCategories() {
+  return apiFetch<CategoryListResponse>("/finance/categories");
 }
 
-export function createLabel(payload: { name: string; color: LabelColor }) {
-  return apiFetch<Label>("/finance/labels", { method: "POST", body: payload });
+export function createCategory(payload: { name: string; color: CategoryColor }) {
+  return apiFetch<Category>("/finance/categories", { method: "POST", body: payload });
 }
 
-export function updateLabel(id: string, payload: { name: string; color: LabelColor }) {
-  return apiFetch<Label>(`/finance/labels/${id}`, { method: "PATCH", body: payload });
+export function updateCategory(id: string, payload: { name: string; color: CategoryColor }) {
+  return apiFetch<Category>(`/finance/categories/${id}`, { method: "PATCH", body: payload });
 }
 
-export function deleteLabel(id: string) {
-  return apiFetch<void>(`/finance/labels/${id}`, { method: "DELETE" });
+export function deleteCategory(id: string) {
+  return apiFetch<void>(`/finance/categories/${id}`, { method: "DELETE" });
 }
 
 export function listMovements(pageToken?: string | null, status?: MovementStatus, scope?: PaymentMethod) {

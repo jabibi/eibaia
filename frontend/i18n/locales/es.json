@@ -53,8 +53,8 @@
       "movementsCount": "{count} movimientos",
       "drafts": "Pendientes de confirmar",
       "draftsHint": "Ir a revisión",
-      "labels": "Etiquetas",
-      "labelsHint": "Gestionar categorías de movimientos",
+      "categories": "Categorías",
+      "categoriesHint": "Gestionar categorías de movimientos",
       "reports": "Informes y Analítica",
       "reportsHint": "Generar y exportar informes"
     },
@@ -89,7 +89,8 @@
     "fields": {
       "type": "Tipo",
       "method": "Método de pago",
-      "label": "Etiqueta",
+      "category": "Categoría",
+      "worker": "Trabajadora",
       "amount": "Importe",
       "description": "Concepto",
       "date": "Fecha",
@@ -129,9 +130,9 @@
         "lastMonth": "Último mes",
         "currentMonth": "Mes actual",
         "type": "Tipo",
-        "label": "Etiqueta",
+        "category": "Categoría",
         "allTypes": "Todos",
-        "allLabels": "Todas"
+        "allCategories": "Todas"
       },
       "summary": {
         "income": "Ingresos",
@@ -157,21 +158,21 @@
       "deleteError": "No se ha podido eliminar el movimiento.",
       "confirmError": "No se ha podido confirmar el movimiento."
     },
-    "labels": {
-      "title": "Etiquetas de movimientos",
+    "categories": {
+      "title": "Categorías de movimientos",
       "name": "Nombre",
       "color": "Color",
       "add": "Añadir",
-      "edit": "Editar etiqueta",
-      "save": "Guardar etiqueta",
+      "edit": "Editar categoría",
+      "save": "Guardar categoría",
       "cancel": "Cancelar edición",
-      "delete": "Eliminar etiqueta",
+      "delete": "Eliminar categoría",
       "actions": "Acciones",
-      "empty": "Todavía no hay etiquetas.",
-      "loadError": "No se han podido cargar las etiquetas.",
-      "saveError": "No se ha podido guardar la etiqueta.",
-      "deleteError": "No se ha podido eliminar la etiqueta.",
-      "confirmDelete": "¿Seguro que quieres eliminar la etiqueta «{name}»? Esta acción no se puede deshacer."
+      "empty": "Todavía no hay categorías.",
+      "loadError": "No se han podido cargar las categorías.",
+      "saveError": "No se ha podido guardar la categoría.",
+      "deleteError": "No se ha podido eliminar la categoría.",
+      "confirmDelete": "¿Seguro que quieres eliminar la categoría «{name}»? Esta acción no se puede deshacer."
     }
   },
   "users": {
