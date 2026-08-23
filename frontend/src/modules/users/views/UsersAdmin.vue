@@ -54,8 +54,13 @@ async function loadUsers() {
 }
 
 async function handleRoleChange(user: UserItem, roleId: string) {
+  const newRoleId = roleId || null;
+  if (newRoleId === null && user.role_id !== null) {
+    if (!confirm(t("users.confirmRemoveRole", { email: user.email }))) return;
+  }
+
   try {
-    await updateUserRole(user.uid, roleId);
+    await updateUserRole(user.uid, newRoleId);
     await loadUsers();
   } catch (error) {
     errorMessage.value = t("users.roleUpdateError", { email: user.email });
@@ -124,7 +129,7 @@ onMounted(() => {
                     :model-value="user.role_id ?? ''"
                     @update:model-value="(role) => handleRoleChange(user, role)"
                   >
-                    <option value="" disabled>{{ t("users.noRole") }}</option>
+                    <option value="">{{ t("users.noRole") }}</option>
                     <option v-for="role in roleOptions" :key="role.value" :value="role.value">
                       {{ role.label }}
                     </option>

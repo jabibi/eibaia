@@ -35,7 +35,7 @@ export async function getUsersSummary(): Promise<UsersSummary> {
   };
 }
 
-export function updateUserRole(uid: string, roleId: string) {
+export function updateUserRole(uid: string, roleId: string | null) {
   return apiFetch<UserItem>(`/users/${uid}/role`, {
     method: "PATCH",
     body: { role_id: roleId },

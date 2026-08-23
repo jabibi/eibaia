@@ -14,6 +14,7 @@ const ROLE_LABEL_KEYS: Record<string, string> = {
   admin: "sidebar.roles.admin",
   manager: "sidebar.roles.manager",
   employee: "sidebar.roles.employee",
+  user: "sidebar.roles.user",
 };
 const roleLabel = computed(() => {
   const roleId = authStore.roleId;

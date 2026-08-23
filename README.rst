@@ -73,7 +73,7 @@ Firestore (``functions/app/modules/roles/``):
   páginas se protegen comprobando ese código directamente, no hay más granularidad por
   debajo — un grupo *es* un permiso.
 - Un **rol** (``user_roles``) es solo un nombre más una lista de códigos de grupo que
-  concede. Los tres roles ya sembrados (``roles/services.py``, vía
+  concede. Los cuatro roles ya sembrados (``roles/services.py``, vía
   ``functions/scripts/seed_rbac.py``):
 
   ============ ========================================== ==============================
@@ -87,9 +87,13 @@ Firestore (``functions/app/modules/roles/``):
   ``employee`` ``CASHBOX_BASIC``                            Operación básica: crear
                                                              gastos/ingresos, editar o
                                                              eliminar solo sus borradores.
+  ``user``     ``CASHBOX_BASIC``                            Igual que ``employee`` hoy
+                                                             (rol separado a propósito
+                                                             para poder darle permisos
+                                                             propios más adelante).
   ============ ========================================== ==============================
 
-El sistema no está cerrado a esos tres: ``POST /roles`` (protegido con ``SYSTEM_ADMIN``)
+El sistema no está cerrado a esos cuatro: ``POST /roles`` (protegido con ``SYSTEM_ADMIN``)
 crea roles nuevos combinando libremente los grupos existentes — hoy no hay pantalla en el
 frontend para ello, solo API.
 

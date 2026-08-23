@@ -24,7 +24,8 @@
     "roles": {
       "admin": "Administrador",
       "manager": "Manager",
-      "employee": "Empleado"
+      "employee": "Empleado",
+      "user": "Usuario"
     }
   },
   "home": {
@@ -187,6 +188,7 @@
       "reactivate": "Reactivar"
     },
     "noRole": "Sin rol",
+    "confirmRemoveRole": "¿Seguro que quieres quitarle el rol a {email}? Se quedará sin acceso a la aplicación hasta que se le asigne uno nuevo.",
     "empty": "No hay usuarios en este estado.",
     "loading": "Cargando…",
     "loadError": "No se ha podido cargar el listado de miembros.",

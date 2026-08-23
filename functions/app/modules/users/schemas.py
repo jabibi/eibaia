@@ -20,7 +20,7 @@ class UserListOut(BaseModel):
 
 
 class RoleUpdateIn(BaseModel):
-    role_id: str
+    role_id: str | None
 
 
 class ActiveUpdateIn(BaseModel):

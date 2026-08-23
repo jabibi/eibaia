@@ -31,13 +31,16 @@ def list_users(page_token: str | None = None, max_results: int = 100, status: Us
     return users, page.next_page_token or None
 
 
-def set_user_role(uid: str, role_id: str) -> UserOut:
-    if not get_db().collection("user_roles").document(role_id).get().exists:
+def set_user_role(uid: str, role_id: str | None) -> UserOut:
+    if role_id is not None and not get_db().collection("user_roles").document(role_id).get().exists:
         raise ValueError(f"Unknown role_id: {role_id}")
 
     user_record = firebase_auth.get_user(uid)
     claims = dict(user_record.custom_claims or {})
-    claims["role_id"] = role_id
+    if role_id is None:
+        claims.pop("role_id", None)
+    else:
+        claims["role_id"] = role_id
     firebase_auth.set_custom_user_claims(uid, claims)
     return _to_user_out(firebase_auth.get_user(uid))
 

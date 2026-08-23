@@ -52,6 +52,20 @@ export const useAuthStore = defineStore("auth", {
       await usePermissionsStore().load();
     },
 
+    /**
+     * Re-checks role_id against the backend without waiting for a Firebase auth-state
+     * change (which only fires on sign-in/out, never when an admin grants a role while
+     * the user is already signed in). Used by pending.vue to notice an approval that
+     * happened while the tab/PWA was backgrounded, without requiring a hard reload.
+     */
+    async refreshRoleId() {
+      if (!this.user) return;
+      this.roleId = await syncRoleId(this.user);
+      if (this.roleId) {
+        await usePermissionsStore().load();
+      }
+    },
+
     async logout() {
       const { $firebaseAuth } = useNuxtApp();
       await signOut($firebaseAuth);

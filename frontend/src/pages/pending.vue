@@ -15,6 +15,32 @@ async function handleLogout() {
   await authStore.logout();
   await navigateTo("/");
 }
+
+// Un admin puede conceder el rol mientras esta pestaña/PWA está abierta en segundo
+// plano; onAuthStateChanged no se dispara para eso (no cambia el estado de sesión,
+// solo el role_id en Firestore), así que no basta con la comprobación inicial del
+// middleware. Al volver a primer plano, se re-consulta el rol y, si ya lo tiene, se
+// navega a /home sin que haga falta recargar la página a mano.
+async function checkApproval() {
+  await authStore.refreshRoleId();
+  if (authStore.isApproved) {
+    await navigateTo("/home");
+  }
+}
+
+function handleVisibilityChange() {
+  if (document.visibilityState === "visible") {
+    checkApproval();
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("visibilitychange", handleVisibilityChange);
+});
 </script>
 
 <template>

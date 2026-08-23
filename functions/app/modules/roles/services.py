@@ -34,12 +34,19 @@ USER_ROLES = {
     },
     "manager": {
         "name": "Manager",
-        "description": "Gestión de la caja y revisión de movimientos",
+        "description": "Operaciones de gestión y de control",
         "group_ids": ["CASHBOX_BASIC", "CASHBOX_MANAGE"],
     },
     "employee": {
         "name": "Empleado",
-        "description": "Operación básica de la caja",
+        "description": "Operaciones básicas y accesos de empleado",
+        "group_ids": ["CASHBOX_BASIC"],
+    },
+    # Mismos group_ids que "employee" por ahora — rol separado a propósito para
+    # poder darle permisos propios más adelante sin migrar a nadie de rol.
+    "user": {
+        "name": "Usuario",
+        "description": "Solo operaciones básicas",
         "group_ids": ["CASHBOX_BASIC"],
     },
 }
