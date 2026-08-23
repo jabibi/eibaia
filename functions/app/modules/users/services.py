@@ -2,7 +2,9 @@ from firebase_admin import auth as firebase_auth
 
 from app.core.firebase import get_db, snapshot_data
 
-from .schemas import UserOut, UserStatus
+from .schemas import DashboardPreferencesIn, DashboardPreferencesOut, UserOut, UserStatus
+
+DASHBOARD_PREFS_COLLECTION = "dashboard_preferences"
 
 
 def _to_user_out(user_record: firebase_auth.UserRecord) -> UserOut:
@@ -67,3 +69,17 @@ def get_permissions_for(role_id: str | None) -> list[str]:
     if not doc.exists:
         return []
     return list(snapshot_data(doc).get("group_ids", []))
+
+
+def get_dashboard_preferences(uid: str) -> DashboardPreferencesOut:
+    doc = get_db().collection(DASHBOARD_PREFS_COLLECTION).document(uid).get()
+    if not doc.exists:
+        return DashboardPreferencesOut(pinned_kpis=[])
+    return DashboardPreferencesOut(pinned_kpis=snapshot_data(doc).get("pinned_kpis", []))
+
+
+def set_dashboard_preferences(uid: str, payload: DashboardPreferencesIn) -> DashboardPreferencesOut:
+    get_db().collection(DASHBOARD_PREFS_COLLECTION).document(uid).set(
+        {"pinned_kpis": [kpi.model_dump() for kpi in payload.pinned_kpis]}
+    )
+    return DashboardPreferencesOut(pinned_kpis=payload.pinned_kpis)

@@ -3,7 +3,15 @@ from fastapi import APIRouter, Depends, HTTPException, status as http_status
 from app.core.security import CurrentUser, get_current_user, require_permission
 
 from . import services
-from .schemas import ActiveUpdateIn, RoleUpdateIn, UserListOut, UserOut, UserStatus
+from .schemas import (
+    ActiveUpdateIn,
+    DashboardPreferencesIn,
+    DashboardPreferencesOut,
+    RoleUpdateIn,
+    UserListOut,
+    UserOut,
+    UserStatus,
+)
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -27,6 +35,19 @@ def read_me(user: CurrentUser = Depends(get_current_user)):
 @router.get("/me/permissions", response_model=list[str])
 def read_my_permissions(user: CurrentUser = Depends(get_current_user)):
     return services.get_permissions_for(user.role_id)
+
+
+@router.get("/me/dashboard-preferences", response_model=DashboardPreferencesOut)
+def read_my_dashboard_preferences(user: CurrentUser = Depends(get_current_user)):
+    return services.get_dashboard_preferences(user.uid)
+
+
+@router.put("/me/dashboard-preferences", response_model=DashboardPreferencesOut)
+def write_my_dashboard_preferences(
+    payload: DashboardPreferencesIn,
+    user: CurrentUser = Depends(get_current_user),
+):
+    return services.set_dashboard_preferences(user.uid, payload)
 
 
 @router.get("", response_model=UserListOut)

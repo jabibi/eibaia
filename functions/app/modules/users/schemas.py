@@ -25,3 +25,16 @@ class RoleUpdateIn(BaseModel):
 
 class ActiveUpdateIn(BaseModel):
     active: bool
+
+
+class PinnedKpiIn(BaseModel):
+    id: str
+    order: int
+
+
+class DashboardPreferencesIn(BaseModel):
+    pinned_kpis: list[PinnedKpiIn]
+
+
+class DashboardPreferencesOut(BaseModel):
+    pinned_kpis: list[PinnedKpiIn]

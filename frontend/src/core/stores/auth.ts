@@ -6,6 +6,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { usePermissionsStore } from "~/core/stores/permissions";
+import { useDashboardPreferencesStore } from "~/core/stores/dashboardPreferences";
 
 interface AuthState {
   user: User | null;
@@ -35,8 +36,10 @@ export const useAuthStore = defineStore("auth", {
           this.roleId = user ? await syncRoleId(user) : null;
           if (user) {
             await usePermissionsStore().load();
+            await useDashboardPreferencesStore().load();
           } else {
             usePermissionsStore().clear();
+            useDashboardPreferencesStore().clear();
           }
           this.ready = true;
           resolve();
@@ -50,6 +53,7 @@ export const useAuthStore = defineStore("auth", {
       this.user = user;
       this.roleId = await syncRoleId(user);
       await usePermissionsStore().load();
+      await useDashboardPreferencesStore().load();
     },
 
     /**
@@ -70,6 +74,7 @@ export const useAuthStore = defineStore("auth", {
       const { $firebaseAuth } = useNuxtApp();
       await signOut($firebaseAuth);
       usePermissionsStore().clear();
+      useDashboardPreferencesStore().clear();
       this.user = null;
       this.roleId = null;
     },

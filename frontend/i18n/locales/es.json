@@ -30,7 +30,15 @@
   },
   "home": {
     "greeting": "Hola, {name}",
-    "summary": "Resumen general del hogar (próximamente)."
+    "editDashboard": "Editar inicio",
+    "saveDashboard": "Guardar orden",
+    "empty": "Todavía no has fijado ningún KPI. Ve a Caja y marca la estrella de una tarjeta para que aparezca aquí.",
+    "loadError": "No se ha podido cargar la información de inicio.",
+    "pinKpi": "Fijar en Inicio",
+    "unpinKpi": "Quitar de Inicio",
+    "removeKpi": "Quitar de Inicio",
+    "moveLeft": "Mover a la izquierda",
+    "moveRight": "Mover a la derecha"
   },
   "finance": {
     "title": "Caja",

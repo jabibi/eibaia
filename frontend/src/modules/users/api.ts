@@ -48,3 +48,23 @@ export function updateUserActive(uid: string, active: boolean) {
     body: { active },
   });
 }
+
+export interface PinnedKpi {
+  id: string;
+  order: number;
+}
+
+export interface DashboardPreferences {
+  pinned_kpis: PinnedKpi[];
+}
+
+export function getDashboardPreferences() {
+  return apiFetch<DashboardPreferences>("/users/me/dashboard-preferences");
+}
+
+export function updateDashboardPreferences(prefs: DashboardPreferences) {
+  return apiFetch<DashboardPreferences>("/users/me/dashboard-preferences", {
+    method: "PUT",
+    body: prefs,
+  });
+}
