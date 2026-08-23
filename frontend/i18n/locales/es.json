@@ -31,8 +31,11 @@
   "home": {
     "greeting": "Hola, {name}",
     "editDashboard": "Editar inicio",
-    "saveDashboard": "Guardar orden",
-    "empty": "Todavía no has fijado ningún KPI. Ve a Caja y marca la estrella de una tarjeta para que aparezca aquí.",
+    "saveDashboard": "Guardar edición",
+    "cancelDashboard": "Cancelar edición",
+    "emptyTitle": "Sin tarjetas destacadas",
+    "emptyDescription": "Marca la estrella en cualquier tarjeta de la aplicación para tener acceso rápido desde aquí.",
+    "emptyCta": "Ir a Caja",
     "loadError": "No se ha podido cargar la información de inicio.",
     "pinKpi": "Fijar en Inicio",
     "unpinKpi": "Quitar de Inicio",

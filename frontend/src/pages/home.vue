@@ -15,6 +15,10 @@ const { t } = useI18n();
 useHead({ title: t("sidebar.home") });
 
 const isEditing = ref(false);
+// Snapshot del orden de KPIs al entrar en modo edición — permite "Cancelar" (deshacer
+// reordenar/quitar de esta sesión de edición) en vez de dejar los cambios ya persistidos
+// sin forma de volver atrás, sobre todo tras quitar todas las tarjetas.
+const editSnapshot = ref<string[] | null>(null);
 const loading = ref(true);
 const errorMessage = ref("");
 const kpiProps = ref<Record<string, Record<string, unknown>>>({});
@@ -73,8 +77,22 @@ async function load() {
   }
 }
 
-function toggleEditing() {
-  isEditing.value = !isEditing.value;
+function startEditing() {
+  editSnapshot.value = dashboardPreferences.orderedIds;
+  isEditing.value = true;
+}
+
+function confirmEditing() {
+  editSnapshot.value = null;
+  isEditing.value = false;
+}
+
+async function cancelEditing() {
+  if (editSnapshot.value) {
+    await dashboardPreferences.reorder(editSnapshot.value);
+  }
+  editSnapshot.value = null;
+  isEditing.value = false;
 }
 
 function moveLeft(index: number) {
@@ -108,31 +126,62 @@ onMounted(load);
       <h1 class="min-w-0 truncate text-2xl font-semibold text-slate-800">
         {{ t("home.greeting", { name: authStore.user?.displayName ?? "" }) }}
       </h1>
+      <div v-if="isEditing" class="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          :aria-label="t('home.cancelDashboard')"
+          :title="t('home.cancelDashboard')"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          @click="cancelEditing"
+        >
+          <Icon name="lucide:undo-2" class="h-5 w-5" />
+          <span class="sr-only">{{ t("home.cancelDashboard") }}</span>
+        </button>
+        <button
+          type="button"
+          :aria-label="t('home.saveDashboard')"
+          :title="t('home.saveDashboard')"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-indigo-600 bg-indigo-600 text-white shadow-sm transition-all hover:bg-indigo-700 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          @click="confirmEditing"
+        >
+          <Icon name="lucide:check" class="h-5 w-5" />
+          <span class="sr-only">{{ t("home.saveDashboard") }}</span>
+        </button>
+      </div>
       <button
-        v-if="dashboardPreferences.pinnedKpis.length > 0"
+        v-else-if="dashboardPreferences.pinnedKpis.length > 0"
         type="button"
-        :aria-label="isEditing ? t('home.saveDashboard') : t('home.editDashboard')"
-        :title="isEditing ? t('home.saveDashboard') : t('home.editDashboard')"
-        class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border shadow-sm transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-        :class="
-          isEditing
-            ? 'border-indigo-600 bg-indigo-600 text-white hover:bg-indigo-700'
-            : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900'
-        "
-        @click="toggleEditing"
+        :aria-label="t('home.editDashboard')"
+        :title="t('home.editDashboard')"
+        class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        @click="startEditing"
       >
-        <Icon :name="isEditing ? 'lucide:check' : 'lucide:pencil'" class="h-5 w-5 transition-transform" />
-        <span class="sr-only">{{ isEditing ? t("home.saveDashboard") : t("home.editDashboard") }}</span>
+        <Icon name="lucide:pencil" class="h-5 w-5" />
+        <span class="sr-only">{{ t("home.editDashboard") }}</span>
       </button>
     </div>
 
     <p v-if="errorMessage" class="mt-2 text-sm text-red-600">{{ errorMessage }}</p>
 
-    <p v-if="dashboardPreferences.ready && resolvedKpis.length === 0" class="mt-6 text-sm text-slate-500">
-      {{ t("home.empty") }}
-    </p>
+    <div
+      v-if="dashboardPreferences.ready && resolvedKpis.length === 0"
+      class="mt-6 flex min-h-[220px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/60 p-6 text-center transition-all duration-300 hover:border-slate-400 hover:bg-slate-50 sm:p-8"
+    >
+      <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-full text-amber-400">
+        <Icon name="lucide:star" class="h-6 w-6" />
+      </div>
+      <h2 class="text-base font-semibold text-slate-900">{{ t("home.emptyTitle") }}</h2>
+      <p class="mt-1 max-w-xs text-xs leading-relaxed text-slate-500">{{ t("home.emptyDescription") }}</p>
+      <NuxtLink
+        to="/finance"
+        class="mt-4 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 active:scale-95"
+      >
+        {{ t("home.emptyCta") }}
+        <Icon name="lucide:arrow-right" class="h-4 w-4" />
+      </NuxtLink>
+    </div>
 
-    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div v-else class="mt-6 grid grid-cols-1 gap-4 transition-all duration-300 sm:grid-cols-2 lg:grid-cols-4">
       <template v-for="(kpi, index) in resolvedKpis" :key="kpi.id">
         <KpiCard v-if="!isEditing" :to="kpi.to" :variant="kpi.variant" :kpi-id="kpi.id" :show-star="false">
           <component :is="kpi.component" v-bind="kpi.props" />

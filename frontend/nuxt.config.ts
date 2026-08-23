@@ -44,6 +44,7 @@ export default defineNuxtConfig({
         "lucide:settings",
         "lucide:star",
         "lucide:trash-2",
+        "lucide:undo-2",
         "lucide:user",
         "lucide:wallet",
         "lucide:x",
