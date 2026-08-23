@@ -18,8 +18,8 @@
     "home": "Inicio",
     "finance": "Caja",
     "settings": "Configuración",
-    "collapseMenu": "Cerrar barra lateral",
-    "expandMenu": "Abrir barra lateral",
+    "collapseMenu": "Cerrar panel lateral",
+    "expandMenu": "Abrir panel lateral",
     "logout": "Cerrar sesión",
     "roles": {
       "admin": "Administrador",

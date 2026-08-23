@@ -39,6 +39,7 @@ export default defineNuxtConfig({
         "lucide:loader-circle",
         "lucide:log-out",
         "lucide:menu",
+        "lucide:panel-left-close",
         "lucide:pencil",
         "lucide:plus",
         "lucide:settings",

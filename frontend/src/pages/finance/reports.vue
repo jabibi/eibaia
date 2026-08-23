@@ -262,6 +262,13 @@ function exportPdf() {
         <meta charset="utf-8" />
         <title>${escapeHtml(t("finance.reports.title"))}</title>
         <style>
+          @page { margin: 1cm; size: auto; }
+          @media print {
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+          }
           body { font-family: Arial, sans-serif; color: #1e293b; margin: 0; }
           .banner {
             background: #0f766e; color: #fff; text-align: center; padding: 16px 24px;

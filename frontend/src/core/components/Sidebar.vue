@@ -111,12 +111,13 @@ async function handleLogout() {
         <span v-if="!collapsed || mobileOpen" class="truncate text-lg font-semibold">
           <span style="color: #15803d">Elosu</span><span style="color: #dc2626">E!</span>
         </span>
-        <Icon
+        <span
           v-if="!collapsed"
-          name="lucide:chevron-left"
-          class="ml-auto hidden shrink-0 text-xs text-slate-600 md:block"
-        />
-        <Icon name="lucide:x" class="ml-auto shrink-0 text-lg text-slate-600 md:hidden" />
+          class="ml-auto hidden h-6 w-6 shrink-0 items-center justify-center text-slate-600 md:flex"
+        >
+          <Icon name="lucide:panel-left-close" class="text-lg" />
+        </span>
+        <Icon name="lucide:panel-left-close" class="ml-auto shrink-0 text-lg text-slate-600 md:hidden" />
       </button>
     </div>
 
