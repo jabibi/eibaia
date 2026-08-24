@@ -374,3 +374,7 @@ infraestructura de proyecto). Por eso la carpeta se movió a `frontend/public/` 
 `src/`). Si algún asset estático (favicon, imágenes de `public/img/...`) empieza a devolver el
 HTML de fallback de la SPA en vez del propio fichero, es señal de que algo volvió a vivir bajo
 `src/public/` por error.
+
+## Este repo es un fork (eibaia)
+
+@CLAUDE.eibaia.md
