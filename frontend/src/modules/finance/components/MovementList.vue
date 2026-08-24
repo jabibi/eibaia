@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { deleteMovement, updateMovementStatus, type Category, type Movement } from "~/modules/finance/api";
 import { formatCurrency } from "~/core/utils/currency";
+import { formatShortDate } from "~/core/utils/date";
 import { useAuthStore } from "~/core/stores/auth";
 import { usePermissionsStore } from "~/core/stores/permissions";
 import Card from "~/core/components/ui/Card.vue";
@@ -42,6 +43,15 @@ function typeColorClass(movement: Movement): string {
   return movement.type === "expense" ? "text-red-600" : "text-emerald-600";
 }
 
+function typeIcon(movement: Movement): string {
+  return movement.type === "expense" ? "lucide:arrow-down" : "lucide:arrow-up";
+}
+
+function methodIcon(movement: Movement): string | null {
+  if (!movement.method) return null;
+  return movement.method === "card" ? "lucide:credit-card" : "lucide:coins";
+}
+
 const emit = defineEmits<{ (e: "refresh"): void }>();
 
 const { t } = useI18n();
@@ -54,8 +64,11 @@ function displayCents(movement: Movement): number {
   return movement.type === "expense" ? -movement.amount_cents : movement.amount_cents;
 }
 
+// "Confirmado" es el estado habitual de la mayoría de filas, así que se reserva el color vivo
+// (warning) para "Borrador" (pendiente de revisión) — la excepción que de verdad conviene
+// destacar — y se deja "Confirmado" en un tono neutro para no saturar la tabla de pills verdes.
 function statusSeverity(status: Movement["status"]) {
-  return status === "confirmed" ? "success" : "warning";
+  return status === "confirmed" ? "neutral" : "warning";
 }
 
 function isMutable(movement: Movement): boolean {
@@ -108,7 +121,9 @@ async function handleConfirm(movement: Movement) {
             <th :class="tableHeaderCellClass">{{ t("finance.fields.worker") }}</th>
             <th :class="[tableHeaderCellClass, 'text-right']">{{ t("finance.fields.amount") }}</th>
             <th :class="tableHeaderCellClass">{{ t("finance.fields.status") }}</th>
-            <th v-if="showActions" :class="tableHeaderCellClass">{{ t("finance.fields.actions") }}</th>
+            <th v-if="showActions" :class="[tableHeaderCellClass, 'text-right']">
+              {{ t("finance.fields.actions") }}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -124,9 +139,13 @@ async function handleConfirm(movement: Movement) {
           </tr>
           <tr v-for="movement in movements" :key="movement.id" :class="tableRowClass">
             <td :class="tableCellClass">
-              <span :class="typeColorClass(movement)">{{ typeLine(movement) }}</span>
+              <span class="inline-flex items-center gap-1.5" :title="typeLine(movement)">
+                <Icon :name="typeIcon(movement)" :class="typeColorClass(movement)" />
+                <Icon v-if="methodIcon(movement)" :name="methodIcon(movement)!" class="text-slate-400" />
+                <span class="sr-only">{{ typeLine(movement) }}</span>
+              </span>
             </td>
-            <td :class="tableCellClass">{{ movement.date }}</td>
+            <td :class="tableCellClass">{{ formatShortDate(movement.date) }}</td>
             <td :class="tableCellClass">{{ movement.description }}</td>
             <td :class="tableCellClass">
               <span
@@ -162,7 +181,7 @@ async function handleConfirm(movement: Movement) {
               />
             </td>
             <td v-if="showActions" :class="tableCellClass">
-              <div class="flex items-center gap-3">
+              <div class="flex items-center justify-end gap-1">
                 <TableIconAction
                   v-if="canEdit(movement)"
                   :to="`/finance/${movement.id}`"

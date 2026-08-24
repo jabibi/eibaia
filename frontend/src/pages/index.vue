@@ -28,13 +28,13 @@ async function handleLogin() {
 </script>
 
 <template>
-  <div class="relative flex min-h-svh flex-col items-center justify-center gap-8 bg-slate-50 px-4">
-    <GithubLink class="fixed right-4 top-4" size="text-xl" />
+  <div class="relative flex min-h-dvh flex-col items-center justify-center gap-8 bg-slate-50 px-4">
+    <GithubLink class="fixed right-6 top-6 p-2" size="text-xl" />
 
     <h1 class="sr-only">{{ t("app.title") }}</h1>
     <Logo />
 
-    <Button icon="logos:google-icon" :loading="loading" @click="handleLogin">
+    <Button variant="outline" icon="logos:google-icon" :loading="loading" @click="handleLogin">
       {{ t("login.loginWithGoogle") }}
     </Button>
 

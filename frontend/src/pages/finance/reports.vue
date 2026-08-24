@@ -9,6 +9,7 @@ import {
   type ReportTotals,
 } from "~/modules/finance/api";
 import { formatCurrency } from "~/core/utils/currency";
+import { formatShortDate } from "~/core/utils/date";
 import { currentMonthRange, previousMonthRange } from "~/core/utils/dateRange";
 import { usePermissionsStore } from "~/core/stores/permissions";
 import Button from "~/core/components/ui/Button.vue";
@@ -64,6 +65,15 @@ function displayCents(movement: Movement): number {
 
 function typeColorClass(movement: Movement): string {
   return movement.type === "expense" ? "text-red-600" : "text-emerald-600";
+}
+
+function typeIcon(movement: Movement): string {
+  return movement.type === "expense" ? "lucide:arrow-down" : "lucide:arrow-up";
+}
+
+function methodIcon(movement: Movement): string | null {
+  if (!movement.method) return null;
+  return movement.method === "card" ? "lucide:credit-card" : "lucide:coins";
 }
 
 const scopeLabel = computed(() =>
@@ -438,9 +448,13 @@ onMounted(() => {
             </tr>
             <tr v-for="movement in movements" :key="movement.id" :class="tableRowClass">
               <td :class="tableCellClass">
-                <span :class="typeColorClass(movement)">{{ typeLine(movement) }}</span>
+                <span class="inline-flex items-center gap-1.5" :title="typeLine(movement)">
+                  <Icon :name="typeIcon(movement)" :class="typeColorClass(movement)" />
+                  <Icon v-if="methodIcon(movement)" :name="methodIcon(movement)!" class="text-slate-400" />
+                  <span class="sr-only">{{ typeLine(movement) }}</span>
+                </span>
               </td>
-              <td :class="tableCellClass">{{ movement.date }}</td>
+              <td :class="tableCellClass">{{ formatShortDate(movement.date) }}</td>
               <td :class="tableCellClass">{{ movement.description }}</td>
               <td :class="tableCellClass">
                 <span

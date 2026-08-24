@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import Logo from "~/core/components/Logo.vue";
+import Card from "~/core/components/ui/Card.vue";
+import StatusBadge from "~/core/components/ui/StatusBadge.vue";
 import Button from "~/core/components/ui/Button.vue";
 import GithubLink from "~/core/components/GithubLink.vue";
 import { useAuthStore } from "~/core/stores/auth";
@@ -10,6 +12,9 @@ const authStore = useAuthStore();
 const { t } = useI18n();
 
 useHead({ title: t("pending.title") });
+
+const checking = ref(false);
+const stillPending = ref(false);
 
 async function handleLogout() {
   await authStore.logout();
@@ -25,6 +30,17 @@ async function checkApproval() {
   await authStore.refreshRoleId();
   if (authStore.isApproved) {
     await navigateTo("/home");
+  }
+}
+
+async function handleCheckStatus() {
+  checking.value = true;
+  stillPending.value = false;
+  try {
+    await checkApproval();
+    stillPending.value = !authStore.isApproved;
+  } finally {
+    checking.value = false;
   }
 }
 
@@ -44,16 +60,27 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="relative flex min-h-svh flex-col items-center justify-center gap-8 bg-slate-50 px-4">
-    <GithubLink class="fixed right-4 top-4" size="text-xl" />
+  <div class="relative flex min-h-dvh flex-col items-center justify-center gap-8 bg-slate-50 px-4 py-8">
+    <GithubLink class="fixed right-6 top-6 p-2" size="text-xl" />
 
     <h1 class="sr-only">{{ t("pending.title") }}</h1>
     <Logo />
 
-    <p class="max-w-sm text-center text-slate-600">{{ t("pending.message") }}</p>
+    <Card tone="warning" class="w-full max-w-sm space-y-4 p-6 text-center">
+      <StatusBadge :label="t('pending.status')" icon="lucide:clock" variant="warning" />
 
-    <Button variant="danger" icon="lucide:log-out" @click="handleLogout">
-      {{ t("pending.logout") }}
-    </Button>
+      <p class="text-sm text-slate-600">{{ t("pending.message") }}</p>
+
+      <div class="flex flex-col gap-2 pt-2">
+        <Button variant="success" icon="lucide:refresh-cw" :loading="checking" @click="handleCheckStatus">
+          {{ t("pending.checkStatus") }}
+        </Button>
+        <Button variant="outline" icon="lucide:log-out" @click="handleLogout">
+          {{ t("pending.logout") }}
+        </Button>
+      </div>
+
+      <p v-if="stillPending" class="text-xs text-amber-950">{{ t("pending.stillPending") }}</p>
+    </Card>
   </div>
 </template>

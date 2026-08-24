@@ -1,7 +1,7 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    variant?: "primary" | "secondary" | "danger";
+    variant?: "primary" | "secondary" | "danger" | "outline" | "success";
     type?: "button" | "submit";
     disabled?: boolean;
     icon?: string;
@@ -20,6 +20,8 @@ withDefaults(
       'bg-sky-600 text-white shadow-sm hover:bg-sky-700': variant === 'primary',
       'text-slate-600 hover:bg-slate-100 hover:text-slate-800': variant === 'secondary',
       'bg-red-600 text-white shadow-sm hover:bg-red-700': variant === 'danger',
+      'border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50': variant === 'outline',
+      'bg-emerald-600 text-white shadow-sm hover:bg-emerald-700': variant === 'success',
     }"
   >
     <Icon v-if="loading" name="lucide:loader-circle" class="animate-spin" />
