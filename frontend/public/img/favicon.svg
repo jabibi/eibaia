@@ -31,28 +31,55 @@
     <path d="M 0,380 C 120,360 220,410 340,380 C 420,360 480,390 512,375 L 512,512 L 0,512 Z" fill="url(#riverGrad1)" opacity="0.3" />
     <path d="M 0,420 C 150,400 280,450 512,410 L 512,512 L 0,512 Z" fill="url(#riverGrad2)" opacity="0.85" />
 
-    <!-- Gráfico central: ESCALADO AUMENTADO (De 1.35 a 2.1) Y CENTRADO -->
-    <g transform="translate(256, 215) scale(2.1)">
+    <!-- Líneas de la corriente de agua -->
+    <path d="M 60,398 C 140,388 200,406 260,396" stroke="#bae6fd" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5" />
+    <path d="M 320,404 C 380,398 430,392 470,396" stroke="#bae6fd" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5" />
 
-      <!-- Sol / Ícono superior minimalista -->
-      <circle cx="0" cy="-78" r="12" fill="#f59e0b" />
-      <circle cx="0" cy="-78" r="6" fill="#fef3c7" />
+    <!-- Gráfico central: edificio + sol, referenciando la composición de logo-home.svg.
+         Centrado en (256,256) y escalado para que quepa dentro de la "safe zone" circular
+         (~66% del lienzo) que aplican los iconos adaptativos de Android — si se agranda o
+         se sube, el sol vuelve a quedar cortado por la máscara del launcher. -->
+    <g transform="translate(256, 305) scale(1.9)">
+
+      <!-- Sol con rayos (en vez del círculo/anillo plano anterior) -->
+      <g stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round">
+        <line x1="0" y1="-91" x2="0" y2="-95" />
+        <line x1="0" y1="-61" x2="0" y2="-57" />
+        <line x1="-15" y1="-76" x2="-19" y2="-76" />
+        <line x1="15" y1="-76" x2="19" y2="-76" />
+        <line x1="-10.6" y1="-86.6" x2="-13.4" y2="-89.4" />
+        <line x1="10.6" y1="-86.6" x2="13.4" y2="-89.4" />
+        <line x1="-10.6" y1="-65.4" x2="-13.4" y2="-62.6" />
+        <line x1="10.6" y1="-65.4" x2="13.4" y2="-62.6" />
+      </g>
+      <circle cx="0" cy="-76" r="12" fill="#f59e0b" />
+      <circle cx="0" cy="-76" r="6" fill="#fef3c7" />
 
       <!-- Estructura principal del edificio -->
       <rect x="-32" y="-52" width="64" height="96" rx="6" fill="#334155" />
-      <path d="M -36,-52 L 36,-52 L 30,-60 L -30,-60 Z" fill="#1e293b" />
 
-      <!-- Planta Uno (Foco principal del hogar en azul acentuado) -->
+      <!-- Cornisa plana (como en logo-home.svg) -->
+      <rect x="-38" y="-59" width="76" height="7" rx="1.5" fill="#1e293b" />
+
+      <!-- Planta superior: ventanas grises -->
+      <rect x="-20" y="-44" width="14" height="14" rx="2" fill="#94a3b8" />
+      <rect x="6" y="-44" width="14" height="14" rx="2" fill="#94a3b8" />
+
+      <!-- Planta principal (Foco del hogar en azul acentuado) -->
       <rect x="-26" y="-18" width="52" height="38" rx="5" fill="#0284c7" />
 
-      <!-- Ventanas grandes e iluminadas -->
-      <rect x="-18" y="-11" width="14" height="24" rx="2.5" fill="#fef08a" />
-      <rect x="4" y="-11" width="14" height="24" rx="2.5" fill="#fef08a" />
+      <!-- Ventanas iluminadas -->
+      <rect x="-18" y="-11" width="14" height="24" rx="2.5" fill="#fef08a" stroke="#ffffff" stroke-width="1.5" />
+      <rect x="4" y="-11" width="14" height="24" rx="2.5" fill="#fef08a" stroke="#ffffff" stroke-width="1.5" />
 
-      <!-- Planta baja y puerta de entrada simplificada -->
+      <!-- Planta baja y portal -->
       <rect x="-32" y="28" width="64" height="16" fill="#475569" />
-      <rect x="-10" y="30" width="20" height="14" rx="3" fill="#ffffff" />
-      <line x1="0" y1="30" x2="0" y2="44" stroke="#0284c7" stroke-width="1.8" />
+      <rect x="-11" y="30" width="22" height="14" rx="3" fill="#ffffff" />
+      <rect x="-9" y="32" width="18" height="12" rx="2" fill="#e2e8f0" />
+      <line x1="0" y1="32" x2="0" y2="44" stroke="#0284c7" stroke-width="1.6" />
+      <circle cx="-3" cy="38" r="1.1" fill="#0284c7" />
+      <circle cx="3" cy="38" r="1.1" fill="#0284c7" />
+      <circle cx="0" cy="26" r="2.3" fill="#f59e0b" />
     </g>
   </g>
 </svg>
