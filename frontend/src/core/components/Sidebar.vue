@@ -112,7 +112,7 @@ async function handleLogout() {
           <img :src="'/img/logo-mark.svg'" alt="E!Ibaia" class="h-8 w-8" />
         </span>
         <span v-if="!collapsed || mobileOpen" class="truncate text-lg font-semibold">
-          <span style="color: #0284c7">E!Ibaia</span>
+          <span style="color: #0284c7">E!</span><span style="color: #1e293b">Ibaia</span>
         </span>
         <span
           v-if="!collapsed"
