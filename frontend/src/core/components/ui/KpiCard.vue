@@ -43,7 +43,12 @@ function toggleStar() {
       :aria-label="isPinned ? t('home.unpinKpi') : t('home.pinKpi')"
       @click.stop.prevent="toggleStar"
     >
-      <Icon name="lucide:star" class="h-5 w-5" :class="isPinned ? 'text-amber-400' : 'text-slate-300 hover:text-slate-400'" />
+      <Icon
+        name="lucide:star"
+        mode="svg"
+        class="h-5 w-5"
+        :class="isPinned ? 'text-amber-400 *:fill-amber-400' : 'text-slate-300 hover:text-slate-400'"
+      />
     </button>
     <div class="pointer-events-none relative">
       <slot />
