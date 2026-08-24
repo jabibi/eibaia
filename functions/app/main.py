@@ -8,7 +8,7 @@ from app.modules.users.router import router as users_router
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="ElosuE! API")
+    app = FastAPI(title="E!Ibaia API")
 
     app.add_middleware(
         CORSMiddleware,

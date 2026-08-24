@@ -1,8 +1,8 @@
 {
   "app": {
-    "name": "ElosuE!",
+    "name": "E!Ibaia",
     "tagline": "Gestión del hogar",
-    "title": "ElosuE! - Gestión del hogar"
+    "title": "E!Ibaia - Gestión del hogar"
   },
   "login": {
     "title": "Iniciar sesión",
@@ -145,7 +145,7 @@
       "export": {
         "excel": "Exportar Excel",
         "pdf": "Exportar PDF",
-        "docTitle": "ElosuE! - Informe de Analítica",
+        "docTitle": "EIbaia - Informe de Analítica",
         "periodLabel": "Periodo: {from} al {to}",
         "summaryTitle": "Resumen del periodo",
         "sheetName": "Informe"

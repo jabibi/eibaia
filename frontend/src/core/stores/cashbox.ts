@@ -6,7 +6,7 @@ import { listCashboxes, type Cashbox } from "~/modules/finance/api";
 // localStorage para no tener que pedirlo a cada página que lo necesite (KPI,
 // formulario de movimiento, el ribbon de entorno) y para que esté disponible
 // incluso antes de que esa página monte su propio fetch.
-const STORAGE_KEY = "elosue:cashbox-cache";
+const STORAGE_KEY = "eibaia:cashbox-cache";
 const MAX_AGE_MS = 24 * 60 * 60 * 1000; // 1 día — "una vez al día sería suficiente"
 
 interface CashboxCacheEntry {

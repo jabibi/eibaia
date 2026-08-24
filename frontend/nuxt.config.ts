@@ -5,8 +5,8 @@ import tailwindcss from "@tailwindcss/vite";
 // called from Vue components (e.g. app.vue) only apply after client-side
 // hydration, which non-JS crawlers (WhatsApp, Facebook, Twitter) never run.
 // Open Graph tags MUST live here, not in a component, or link previews break.
-const SITE_URL = "https://elosue.web.app";
-const SITE_TITLE = "ElosuE! - Gestión del Hogar";
+const SITE_URL = "https://eibaia.web.app";
+const SITE_TITLE = "E!Ibaia - Gestión del Hogar";
 const SITE_DESCRIPTION = "Aplicación de gestión de caja, gastos y organización del hogar.";
 const OG_IMAGE = `${SITE_URL}/images/og-share.jpg`;
 
@@ -19,7 +19,7 @@ export default defineNuxtConfig({
   modules: ["@pinia/nuxt", "@nuxtjs/i18n", "@nuxt/icon", "@vite-pwa/nuxt"],
   // Con ssr:false + hosting estático no hay servidor en producción que sirva el bundle
   // local de iconos de @nuxt/icon — sin esto, cada carga de página pedía los SVG en vivo a
-  // api.iconify.design (confirmado viendo las peticiones de red en elosue.web.app), un CDN de
+  // api.iconify.design (confirmado viendo las peticiones de red en eibaia.web.app), un CDN de
   // terceros del que la app quedaba dependiendo en runtime. Listar aquí los iconos usados los
   // incrusta en el bundle en build time — cero peticiones externas. Si se añade un icono
   // nuevo en el código y no aparece aquí, seguirá funcionando (cae de vuelta al CDN), pero
@@ -70,15 +70,15 @@ export default defineNuxtConfig({
   pwa: {
     registerType: "autoUpdate",
     manifest: {
-      name: "ElosuE!",
-      short_name: "ElosuE!",
+      name: "E!Ibaia",
+      short_name: "E!Ibaia",
       description: SITE_DESCRIPTION,
       start_url: "/",
       scope: "/",
       display: "standalone",
       orientation: "portrait",
       background_color: "#ffffff",
-      theme_color: "#15803d",
+      theme_color: "#0284c7",
       lang: "es",
       icons: [
         { src: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
@@ -90,7 +90,7 @@ export default defineNuxtConfig({
       navigateFallback: "/",
       // Firebase Hosting reserva /__/** para sus propias páginas especiales (p. ej.
       // /__/auth/handler, que el popup de signInWithPopup carga en nuestro propio
-      // dominio — authDomain es elosue.web.app — para completar el login con Google).
+      // dominio — authDomain es eibaia.web.app — para completar el login con Google).
       // Sin excluirlo, la NavigationRoute del Service Worker se lo roba y le sirve el
       // SPA en su lugar: el popup de login "solo vuelve a abrir la web" y el login
       // nunca se completa. Reproducido y confirmado en Android tras añadir la PWA.
@@ -129,7 +129,7 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: "es" },
       title: "Gestión del hogar",
-      titleTemplate: "%s · ElosuE!",
+      titleTemplate: "%s · E!Ibaia",
       link: [
         { rel: "icon", type: "image/svg+xml", href: "/img/favicon.svg" },
         // @vite-pwa/nuxt inyecta este link en tiempo de ejecución (vía JS), pero con
@@ -142,11 +142,11 @@ export default defineNuxtConfig({
       ],
       meta: [
         { name: "color-scheme", content: "light" },
-        { name: "theme-color", content: "#15803d" },
+        { name: "theme-color", content: "#0284c7" },
         { name: "mobile-web-app-capable", content: "yes" },
         { name: "apple-mobile-web-app-capable", content: "yes" },
         { name: "apple-mobile-web-app-status-bar-style", content: "default" },
-        { name: "apple-mobile-web-app-title", content: "ElosuE!" },
+        { name: "apple-mobile-web-app-title", content: "E!Ibaia" },
         { name: "description", content: SITE_DESCRIPTION },
 
         { property: "og:title", content: SITE_TITLE },

@@ -23,7 +23,7 @@ const selectedColor = computed(() => props.options.find((option) => option.value
     <select
       :id="id"
       :value="modelValue"
-      class="w-full rounded-md border border-slate-300 bg-white py-1.5 pr-8 text-xs text-slate-700 shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 md:text-sm"
+      class="w-full rounded-md border border-slate-300 bg-white py-1.5 pr-8 text-xs text-slate-700 shadow-sm transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 md:text-sm"
       :class="selectedColor ? 'pl-7' : 'pl-3'"
       @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
     >

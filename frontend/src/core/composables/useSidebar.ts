@@ -1,4 +1,4 @@
-const STORAGE_KEY = "elosue:sidebar-collapsed";
+const STORAGE_KEY = "eibaia:sidebar-collapsed";
 
 export function useSidebar() {
   const collapsed = useState<boolean>("sidebar-collapsed", () => true);

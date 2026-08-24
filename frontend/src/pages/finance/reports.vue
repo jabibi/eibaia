@@ -231,7 +231,7 @@ async function exportExcel() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `ElosuE_Informe_${dateFrom.value}_${dateTo.value}.xlsx`;
+  link.download = `EIbaia_Informe_${dateFrom.value}_${dateTo.value}.xlsx`;
   link.click();
   URL.revokeObjectURL(url);
 }

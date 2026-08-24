@@ -34,12 +34,12 @@ function toggleStar() {
     <NuxtLink
       :to="to"
       class="absolute inset-0 rounded-lg focus-visible:outline-none focus-visible:ring-2"
-      :class="variant === 'danger' ? 'focus-visible:ring-red-500' : 'focus-visible:ring-indigo-500'"
+      :class="variant === 'danger' ? 'focus-visible:ring-red-500' : 'focus-visible:ring-sky-500'"
     />
     <button
       v-if="kpiId && showStar"
       type="button"
-      class="absolute right-3 top-3 z-10 rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+      class="absolute right-3 top-3 z-10 rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
       :aria-label="isPinned ? t('home.unpinKpi') : t('home.pinKpi')"
       @click.stop.prevent="toggleStar"
     >

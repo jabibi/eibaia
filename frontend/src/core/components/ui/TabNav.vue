@@ -11,10 +11,10 @@ defineEmits<{ (e: "update:modelValue", value: string): void }>();
         :key="option.value"
         type="button"
         :aria-current="modelValue === option.value ? 'page' : undefined"
-        class="border-b-2 px-1 py-3 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        class="border-b-2 px-1 py-3 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
         :class="
           modelValue === option.value
-            ? 'border-indigo-600 font-medium text-indigo-600'
+            ? 'border-sky-600 font-medium text-sky-600'
             : 'border-transparent text-slate-500 hover:text-slate-700'
         "
         @click="$emit('update:modelValue', option.value)"

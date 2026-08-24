@@ -8,8 +8,8 @@ defineEmits<{ (e: "update:modelValue", value: boolean): void }>();
     type="button"
     role="switch"
     :aria-checked="modelValue"
-    class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
-    :class="modelValue ? 'bg-indigo-600' : 'bg-slate-300'"
+    class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-1"
+    :class="modelValue ? 'bg-sky-600' : 'bg-slate-300'"
     @click="$emit('update:modelValue', !modelValue)"
   >
     <span

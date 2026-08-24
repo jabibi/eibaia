@@ -20,7 +20,7 @@ defineEmits<{ click: [] }>();
     :to="to"
     :aria-label="iconOnly ? label : undefined"
     :title="tooltip"
-    class="flex h-10 cursor-pointer items-center rounded-md text-sm text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+    class="flex h-10 cursor-pointer items-center rounded-md text-sm text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
     :class="[
       variant === 'danger' ? 'hover:bg-red-50 hover:text-red-600' : 'hover:bg-slate-100',
       iconOnly ? 'md:w-10' : 'w-full',
@@ -42,7 +42,7 @@ defineEmits<{ click: [] }>();
     type="button"
     :aria-label="iconOnly ? label : undefined"
     :title="tooltip"
-    class="flex h-10 cursor-pointer items-center rounded-md text-sm text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+    class="flex h-10 cursor-pointer items-center rounded-md text-sm text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
     :class="[
       variant === 'danger' ? 'hover:bg-red-50 hover:text-red-600' : 'hover:bg-slate-100',
       iconOnly ? 'md:w-10' : 'w-full',
