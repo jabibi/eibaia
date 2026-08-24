@@ -1,9 +1,9 @@
 <script setup lang="ts">
-withDefaults(defineProps<{ width?: number; height?: number }>(), { width: 320, height: 320 });
+withDefaults(defineProps<{ width?: number; height?: number }>(), { width: 260, height: 370 });
 </script>
 
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" :width="width" :height="height" class="select-none">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="120 55 260 370" :width="width" :height="height" class="select-none">
     <defs>
       <!-- Degradados -->
       <linearGradient id="riverGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -16,9 +16,6 @@ withDefaults(defineProps<{ width?: number; height?: number }>(), { width: 320, h
         <circle cx="0" cy="0" r="92" />
       </clipPath>
     </defs>
-
-    <!-- Fondo blanco -->
-    <rect width="100%" height="100%" fill="#ffffff" />
 
     <!-- Emblema Central -->
     <g transform="translate(250, 175)">
