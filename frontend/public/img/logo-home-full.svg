@@ -4,93 +4,134 @@
       @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap');
 
       .brand-title {
-        font-family: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Arial, sans-serif;
+        font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
         font-weight: 800;
-        font-size: 44px;
-        fill: #15803d;
+        font-size: 42px;
+        fill: #1e293b;
       }
       .brand-accent {
-        fill: #dc2626;
+        fill: #0284c7;
       }
       .brand-sub {
-        font-family: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Arial, sans-serif;
+        font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
         font-weight: 700;
-        font-size: 13.5px;
-        fill: #dc2626;
-        letter-spacing: 4.5px;
+        font-size: 14px;
+        fill: #0369a1;
+        letter-spacing: 4px;
       }
       .brand-tag {
-        font-family: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Arial, sans-serif;
+        font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
         font-weight: 600;
         font-size: 11px;
         fill: #64748b;
         letter-spacing: 2px;
       }
     </style>
+
+    <!-- Degradados -->
+    <linearGradient id="riverGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <!-- Máscara circular interior -->
+    <clipPath id="circleClip">
+      <circle cx="0" cy="0" r="92" />
+    </clipPath>
   </defs>
 
   <!-- Fondo Blanco Aislado -->
   <rect width="100%" height="100%" fill="#ffffff" fill-opacity="0" />
 
-  <!-- Ilustración Central -->
-  <g transform="translate(250, 197) scale(1.5)">
+  <!-- Emblema Central -->
+  <g transform="translate(250, 175)">
+    <!-- Ilustración recortada en círculo (sin bordes ni fondo de cielo) -->
+    <g clip-path="url(#circleClip)">
+      <!-- Sol / Ícono de energía superior (Naranja / Ámbar) -->
+      <g transform="translate(0, -52)">
+        <circle cx="0" cy="0" r="11" fill="#f59e0b" opacity="0.9" />
+        <circle cx="0" cy="0" r="6" fill="#fef3c7" />
+        <g stroke="#f59e0b" stroke-width="2" stroke-linecap="round">
+          <line x1="0" y1="-14" x2="0" y2="-17" />
+          <line x1="0" y1="14" x2="0" y2="17" />
+          <line x1="-14" y1="0" x2="-17" y2="0" />
+          <line x1="14" y1="0" x2="17" y2="0" />
+          <line x1="-10" y1="-10" x2="-12" y2="-12" />
+          <line x1="10" y1="-10" x2="12" y2="-12" />
+        </g>
+      </g>
 
-    <!-- 1. SOL (Fondo lejano) -->
-    <g transform="translate(0, -54)">
-      <circle cx="0" cy="0" r="11" fill="#f59e0b" />
-      <circle cx="0" cy="0" r="5.5" fill="#fef3c7" />
-      <circle cx="0" cy="0" r="2.5" fill="#d97706" />
-      <g stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round">
-        <line x1="0" y1="-16" x2="0" y2="-20" />
-        <line x1="0" y1="16" x2="0" y2="20" />
-        <line x1="-16" y1="0" x2="-20" y2="0" />
-        <line x1="16" y1="0" x2="20" y2="0" />
-        <line x1="-11" y1="-11" x2="-14" y2="-14" />
-        <line x1="11" y1="-11" x2="14" y2="-14" />
-        <line x1="-11" y1="11" x2="-14" y2="14" />
-        <line x1="11" y1="11" x2="14" y2="14" />
+      <!-- Suelo del Parque Urbano -->
+      <rect x="-100" y="36" width="200" height="60" fill="#f1f5f9" />
+
+      <!-- Cauce del río (Ibaia) en forma de cinta atravesando el suelo -->
+      <path d="M -100,52 C -40,52 -20,72 30,62 C 60,56 80,47 100,52 L 100,72 C 80,67 60,76 30,82 C -20,92 -40,72 -100,72 Z" fill="url(#riverGrad)" />
+
+      <!-- Orilla cercana / Paseo (Para darle perspectiva de río y no de mar) -->
+      <path d="M -100,72 C -40,72 -20,92 30,82 C 60,76 80,67 100,72 L 100,95 L -100,95 Z" fill="#e2e8f0" />
+
+      <!-- Líneas de la corriente de agua -->
+      <path d="M -80,60 C -60,60 -40,64 -20,66" stroke="#bae6fd" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6" />
+      <path d="M 40,70 C 60,67 75,60 90,62" stroke="#bae6fd" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6" />
+
+      <!-- Parque urbano arbolado (Izquierda) -->
+      <g transform="translate(-48, 12)">
+        <rect x="-2.5" y="8" width="5" height="28" fill="#475569" rx="1" />
+        <circle cx="-6" cy="-2" r="15" fill="#0f766e" />
+        <circle cx="6" cy="-4" r="16" fill="#14b8a6" />
+        <circle cx="0" cy="-12" r="16" fill="#0d9488" />
+      </g>
+
+      <!-- Parque urbano arbolado (Derecha) -->
+      <g transform="translate(48, 12)">
+        <rect x="-2.5" y="8" width="5" height="28" fill="#475569" rx="1" />
+        <circle cx="-6" cy="-4" r="16" fill="#14b8a6" />
+        <circle cx="6" cy="-2" r="15" fill="#0f766e" />
+        <circle cx="0" cy="-12" r="16" fill="#0d9488" />
+      </g>
+
+      <!-- Edificio Urbano de Varias Plantas -->
+      <g transform="translate(0, 8)">
+        <!-- Estructura principal -->
+        <rect x="-24" y="-42" width="48" height="78" rx="2" fill="#334155" />
+
+        <!-- Cornisa / Tejado -->
+        <rect x="-27" y="-45" width="54" height="4" rx="1" fill="#1e293b" />
+
+        <!-- Planta 2 (Ventanas superiores) -->
+        <rect x="-17" y="-35" width="12" height="10" rx="1" fill="#94a3b8" />
+        <rect x="5" y="-35" width="12" height="10" rx="1" fill="#94a3b8" />
+
+        <!-- PLANTA UNO (Protagonismo del Hogar - Sin el corazón) -->
+        <rect x="-22" y="-19" width="44" height="24" rx="2" fill="#0284c7" />
+
+        <!-- Ventanas iluminadas (Cálidas) -->
+        <rect x="-16" y="-13" width="12" height="12" rx="1.5" fill="#fef08a" stroke="#ffffff" stroke-width="1.5" />
+        <rect x="4" y="-13" width="12" height="12" rx="1.5" fill="#fef08a" stroke="#ffffff" stroke-width="1.5" />
+
+        <!-- Cruceros de las ventanas -->
+        <line x1="-10" y1="-13" x2="-10" y2="-1" stroke="#0284c7" stroke-width="1" />
+        <line x1="10" y1="-13" x2="10" y2="-1" stroke="#0284c7" stroke-width="1" />
+
+        <!-- Planta Baja y Portal -->
+        <rect x="-24" y="13" width="48" height="23" fill="#475569" />
+
+        <!-- Marco de Portal y Puerta -->
+        <rect x="-8" y="18" width="16" height="18" rx="2" fill="#ffffff" />
+        <rect x="-6" y="20" width="12" height="16" rx="1" fill="#e2e8f0" />
+        <!-- Separación de la puerta doble -->
+        <line x1="0" y1="20" x2="0" y2="36" stroke="#0284c7" stroke-width="1.2" />
+        <!-- Tiradores -->
+        <circle cx="-2" cy="28" r="1" fill="#0284c7" />
+        <circle cx="2" cy="28" r="1" fill="#0284c7" />
+        <!-- Aplique / Luz de portal en naranja -->
+        <circle cx="0" cy="15" r="2" fill="#f59e0b" />
       </g>
     </g>
-
-    <!-- 2. LAGO EN SEGUNDO PLANO -->
-    <g transform="translate(0, -18)">
-      <path d="M -78,14 C -45,4 0,18 45,8 C 65,4 78,12 78,22 C 78,30 45,30 0,32 C -45,34 -78,28 -78,14 Z" fill="#7dd3fc" opacity="0.9" />
-      <path d="M -68,18 C -35,10 10,24 58,14 C 70,12 74,18 60,22 C 25,27 -30,29 -68,22 Z" fill="#38bdf8" />
-      <path d="M -52,24 C -20,18 15,28 50,22 C 58,21 45,28 10,30 C -25,32 -48,29 -52,24 Z" fill="#0284c7" />
-    </g>
-
-    <!-- 3. PINOS EN PLANO MEDIO -->
-    <polygon points="-60,26 -40,-22 -20,26" fill="#166534" />
-    <polygon points="-60,6 -40,-32 -20,6" fill="#15803d" />
-    <polygon points="-44,40 -26,-12 -8,40" fill="#14532d" />
-    <polygon points="-44,20 -26,-22 -8,20" fill="#166534" />
-
-    <polygon points="20,26 40,-22 60,26" fill="#166534" />
-    <polygon points="20,6 40,-32 60,6" fill="#15803d" />
-    <polygon points="8,40 26,-12 44,40" fill="#14532d" />
-    <polygon points="8,20 26,-22 44,20" fill="#166534" />
-
-    <!-- 4. CASERÍO EN PRIMER PLANO -->
-    <rect x="-28" y="0" width="56" height="44" fill="#f5f5f4" />
-    <rect x="-28" y="44" width="56" height="5" fill="#d6d3d1" />
-
-    <polygon points="-37,0 0,-23 37,0" fill="#b91c1c" />
-    <polygon points="-28,0 0,-16 28,0" fill="#dc2626" />
-
-    <rect x="-14" y="6" width="28" height="8" rx="0.5" fill="#5c3a21" />
-    <rect x="-14" y="6" width="28" height="2" fill="#3d2413" />
-
-    <rect x="-23" y="19" width="8" height="10" fill="#4a3121" />
-    <rect x="15" y="19" width="8" height="10" fill="#4a3121" />
-
-    <rect x="5" y="28" width="18" height="18" fill="#1c120c" />
-    <rect x="-21" y="30" width="10" height="12" fill="#1c120c" />
-
-    <polygon points="-8,47 -3,22 1,1 6,27 3,47 -2,42" fill="#15803d" />
   </g>
 
   <!-- Tipografía del Logotipo -->
-  <text x="250" y="340" text-anchor="middle" class="brand-title">Elosu<tspan class="brand-accent">E!</tspan></text>
-  <text x="250" y="380" text-anchor="middle" class="brand-sub">GESTIÓN DEL HOGAR</text>
-  <text x="250" y="408" text-anchor="middle" class="brand-tag">HARITZ ONDO BASERRIA</text>
+  <text x="250" y="338" text-anchor="middle" class="brand-title">Ibaia<tspan class="brand-accent">E!</tspan></text>
+  <text x="250" y="378" text-anchor="middle" class="brand-sub">GESTIÓN DEL HOGAR</text>
+  <text x="250" y="404" text-anchor="middle" class="brand-tag">IBAIA ETXEBIZITZA</text>
 </svg>
