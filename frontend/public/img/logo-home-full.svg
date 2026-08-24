@@ -48,7 +48,7 @@
     <!-- Ilustración recortada en círculo (sin bordes ni fondo de cielo) -->
     <g clip-path="url(#circleClip)">
       <!-- Sol / Ícono de energía superior (Naranja / Ámbar) -->
-      <g transform="translate(0, -52)">
+      <g transform="translate(0, -70)">
         <circle cx="0" cy="0" r="11" fill="#f59e0b" opacity="0.9" />
         <circle cx="0" cy="0" r="6" fill="#fef3c7" />
         <g stroke="#f59e0b" stroke-width="2" stroke-linecap="round">
@@ -131,7 +131,7 @@
   </g>
 
   <!-- Tipografía del Logotipo -->
-  <text x="250" y="338" text-anchor="middle" class="brand-title">Ibaia<tspan class="brand-accent">E!</tspan></text>
+  <text x="250" y="338" text-anchor="middle" class="brand-title"><tspan class="brand-accent">E!</tspan>Ibaia</text>
   <text x="250" y="378" text-anchor="middle" class="brand-sub">GESTIÓN DEL HOGAR</text>
   <text x="250" y="404" text-anchor="middle" class="brand-tag">IBAIA ETXEBIZITZA</text>
 </svg>
