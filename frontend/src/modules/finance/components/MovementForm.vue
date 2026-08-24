@@ -175,7 +175,7 @@ onMounted(async () => {
       <p v-if="errorMessage" class="text-sm text-red-600">{{ errorMessage }}</p>
 
       <div class="flex gap-2">
-        <Button :disabled="saving" @click="handleSubmit">
+        <Button variant="success" :disabled="saving" @click="handleSubmit">
           {{ saving ? "…" : t("finance.form.save") }}
         </Button>
         <Button variant="secondary" @click="router.back()">

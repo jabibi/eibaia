@@ -11,7 +11,10 @@
   },
   "pending": {
     "title": "Cuenta pendiente",
+    "status": "Pendiente de aprobación",
     "message": "Tu cuenta está pendiente de aprobación por un administrador. En cuanto se te asigne un rol podrás acceder a la aplicación.",
+    "checkStatus": "Comprobar estado",
+    "stillPending": "Todavía no. Vuelve a intentarlo en un rato.",
     "logout": "Cerrar sesión"
   },
   "sidebar": {
