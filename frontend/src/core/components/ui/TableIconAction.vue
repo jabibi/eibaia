@@ -22,7 +22,7 @@ const toneClass = computed(
     :to="to"
     :title="label"
     :aria-label="label"
-    class="inline-flex items-center justify-center rounded-md p-1.5 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+    class="inline-flex items-center justify-center rounded-md p-1.5 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
     :class="toneClass"
   >
     <Icon :name="icon" />
@@ -32,7 +32,7 @@ const toneClass = computed(
     type="button"
     :title="label"
     :aria-label="label"
-    class="inline-flex items-center justify-center rounded-md p-1.5 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+    class="inline-flex items-center justify-center rounded-md p-1.5 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
     :class="toneClass"
     @click="$emit('click')"
   >

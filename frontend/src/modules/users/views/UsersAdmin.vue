@@ -151,7 +151,7 @@ onMounted(() => {
                   <button
                     v-if="status === 'inactive'"
                     type="button"
-                    class="rounded text-sm font-medium text-indigo-600 hover:text-indigo-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                    class="rounded text-sm font-medium text-green-700 hover:text-green-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
                     @click="handleActiveChange(user, true)"
                   >
                     {{ t("users.actions.reactivate") }}

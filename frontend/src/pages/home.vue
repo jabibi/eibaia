@@ -131,7 +131,7 @@ onMounted(load);
           type="button"
           :aria-label="t('home.cancelDashboard')"
           :title="t('home.cancelDashboard')"
-          class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
           @click="cancelEditing"
         >
           <Icon name="lucide:undo-2" class="h-5 w-5" />
@@ -141,7 +141,7 @@ onMounted(load);
           type="button"
           :aria-label="t('home.saveDashboard')"
           :title="t('home.saveDashboard')"
-          class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-indigo-600 bg-indigo-600 text-white shadow-sm transition-all hover:bg-indigo-700 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-green-700 bg-green-700 text-white shadow-sm transition-all hover:bg-green-800 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
           @click="confirmEditing"
         >
           <Icon name="lucide:check" class="h-5 w-5" />
@@ -153,7 +153,7 @@ onMounted(load);
         type="button"
         :aria-label="t('home.editDashboard')"
         :title="t('home.editDashboard')"
-        class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
         @click="startEditing"
       >
         <Icon name="lucide:pencil" class="h-5 w-5" />
@@ -193,7 +193,7 @@ onMounted(load);
         >
           <button
             type="button"
-            class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-400 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-400 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
             :aria-label="t('home.removeKpi')"
             @click="removeKpi(kpi.id)"
           >
@@ -204,7 +204,7 @@ onMounted(load);
             <div class="inline-flex divide-x divide-slate-200 overflow-hidden rounded-full border border-slate-200">
               <button
                 type="button"
-                class="flex h-8 w-10 items-center justify-center text-slate-500 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-30"
+                class="flex h-8 w-10 items-center justify-center text-slate-500 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-green-700 disabled:cursor-not-allowed disabled:opacity-30"
                 :disabled="index === 0"
                 :aria-label="t('home.moveLeft')"
                 @click="moveLeft(index)"
@@ -213,7 +213,7 @@ onMounted(load);
               </button>
               <button
                 type="button"
-                class="flex h-8 w-10 items-center justify-center text-slate-500 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-30"
+                class="flex h-8 w-10 items-center justify-center text-slate-500 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-green-700 disabled:cursor-not-allowed disabled:opacity-30"
                 :disabled="index === resolvedKpis.length - 1"
                 :aria-label="t('home.moveRight')"
                 @click="moveRight(index)"

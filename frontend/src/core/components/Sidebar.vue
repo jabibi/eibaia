@@ -73,7 +73,7 @@ async function handleLogout() {
     type="button"
     :aria-label="t('sidebar.expandMenu')"
     :aria-expanded="mobileOpen"
-    class="fixed left-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-md bg-white text-slate-600 shadow ring-1 ring-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 md:hidden"
+    class="fixed left-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-md bg-white text-slate-600 shadow ring-1 ring-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700 md:hidden"
     @click="sidebar.openMobile()"
   >
     <Icon name="lucide:menu" class="text-lg" />
@@ -101,7 +101,7 @@ async function handleLogout() {
         :title="!mobileOpen ? (collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')) : undefined"
         :aria-label="collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')"
         :aria-expanded="!collapsed"
-        class="flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-md hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        class="flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-md hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700"
         :class="isIconOnly ? 'md:w-10 md:cursor-e-resize' : 'w-full md:cursor-w-resize'"
         @click="handleLogoClick"
       >

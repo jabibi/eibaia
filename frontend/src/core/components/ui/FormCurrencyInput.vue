@@ -58,7 +58,7 @@ function handleBlur() {
     inputmode="decimal"
     autocomplete="off"
     :disabled="disabled"
-    class="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-right text-xs text-slate-700 shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 md:text-sm disabled:cursor-not-allowed disabled:opacity-60"
+    class="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-right text-xs text-slate-700 shadow-sm transition-colors focus:border-green-700 focus:outline-none focus:ring-1 focus:ring-green-700 md:text-sm disabled:cursor-not-allowed disabled:opacity-60"
     @focus="handleFocus"
     @input="handleInput"
     @blur="handleBlur"
