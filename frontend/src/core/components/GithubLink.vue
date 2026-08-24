@@ -7,7 +7,8 @@ withDefaults(defineProps<{ size?: string }>(), { size: "text-lg" });
     href="https://github.com/jabibi/elosue"
     target="_blank"
     rel="noreferrer"
-    aria-label="GitHub"
+    :aria-label="$slots.default ? undefined : 'GitHub'"
+    :title="$slots.default ? undefined : 'GitHub'"
     class="inline-flex items-center gap-1.5 rounded text-slate-500 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
   >
     <Icon name="simple-icons:github" :class="size" />

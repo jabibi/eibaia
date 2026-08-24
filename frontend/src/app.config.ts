@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  version: "0.2f ",
+  version: "1.0",
   icon: {
     mode: "css",
     cssLayer: "base",

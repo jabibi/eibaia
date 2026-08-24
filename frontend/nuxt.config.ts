@@ -101,7 +101,13 @@ export default defineNuxtConfig({
       clientsClaim: true,
     },
     client: {
-      installPrompt: true,
+      // false: no hay ningún botón "Instalar app" propio que consuma el evento
+      // capturado (@vite-pwa/nuxt expondría $pwa.install() para eso) — con
+      // true, intercepta beforeinstallprompt vía preventDefault() y nunca
+      // vuelve a llamar a prompt(), así que el navegador solo avisa por
+      // consola ("Banner not shown") sin mostrar nunca su banner nativo.
+      // Dejarlo en false deja que Chrome/Android muestren su propio banner.
+      installPrompt: false,
       periodicSyncForUpdates: 3600,
     },
   },
@@ -137,6 +143,7 @@ export default defineNuxtConfig({
       meta: [
         { name: "color-scheme", content: "light" },
         { name: "theme-color", content: "#15803d" },
+        { name: "mobile-web-app-capable", content: "yes" },
         { name: "apple-mobile-web-app-capable", content: "yes" },
         { name: "apple-mobile-web-app-status-bar-style", content: "default" },
         { name: "apple-mobile-web-app-title", content: "ElosuE!" },

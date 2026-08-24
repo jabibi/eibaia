@@ -1,39 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
-  <defs>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap');
-
-      .brand-title {
-        font-family: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Arial, sans-serif;
-        font-weight: 800;
-        font-size: 44px;
-        fill: #15803d;
-      }
-      .brand-accent {
-        fill: #dc2626;
-      }
-      .brand-sub {
-        font-family: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Arial, sans-serif;
-        font-weight: 700;
-        font-size: 13.5px;
-        fill: #dc2626;
-        letter-spacing: 4.5px;
-      }
-      .brand-tag {
-        font-family: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Arial, sans-serif;
-        font-weight: 600;
-        font-size: 11px;
-        fill: #64748b;
-        letter-spacing: 2px;
-      }
-    </style>
-  </defs>
-
-  <!-- Fondo Blanco Aislado -->
-  <rect width="100%" height="100%" fill="#ffffff" fill-opacity="0" />
-
-  <!-- Ilustración Central -->
-  <g transform="translate(250, 197) scale(1.5)">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="49 23 414 414" width="100%" height="100%">
+  <!-- Ilustración Central, fondo transparente y recorte ajustado al contenido
+       (a diferencia de favicon.svg, pensado como icono de app con margen de
+       seguridad para el squircle/máscara adaptativa de Android). -->
+  <g transform="translate(256, 260) scale(2.4)">
 
     <!-- 1. SOL (Fondo lejano) -->
     <g transform="translate(0, -54)">
@@ -88,9 +57,4 @@
 
     <polygon points="-8,47 -3,22 1,1 6,27 3,47 -2,42" fill="#15803d" />
   </g>
-
-  <!-- Tipografía del Logotipo -->
-  <text x="250" y="340" text-anchor="middle" class="brand-title">Elosu<tspan class="brand-accent">E!</tspan></text>
-  <text x="250" y="380" text-anchor="middle" class="brand-sub">GESTIÓN DEL HOGAR</text>
-  <text x="250" y="408" text-anchor="middle" class="brand-tag">HARITZ ONDO BASERRIA</text>
 </svg>

@@ -95,18 +95,21 @@ async function handleLogout() {
     ]"
     @click="handleAsideBackgroundClick"
   >
-    <div class="flex items-center gap-1 px-2 py-2" :class="isIconOnly ? 'md:justify-center md:px-1.5' : ''">
+    <div class="flex items-center gap-1 px-1.5 py-2">
       <button
         type="button"
         :title="!mobileOpen ? (collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')) : undefined"
         :aria-label="collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')"
         :aria-expanded="!collapsed"
         class="flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-md hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-        :class="isIconOnly ? 'md:w-10 md:justify-center md:cursor-e-resize' : 'flex-1 px-2 md:cursor-w-resize'"
+        :class="isIconOnly ? 'md:w-10 md:cursor-e-resize' : 'w-full md:cursor-w-resize'"
         @click="handleLogoClick"
       >
-        <span class="flex shrink-0 items-center justify-center" :class="isIconOnly ? 'h-8 w-8' : 'size-[18px]'">
-          <img :src="'/img/favicon.svg'" alt="ElosuE!" :class="isIconOnly ? '' : 'size-[18px]'" />
+        <!-- Columna de icono a tamaño fijo (40x40) siempre, en los dos modos —
+        mismo criterio que SidebarNavItem: el icono no se desplaza al
+        desplegar el panel, solo aparece el texto a continuación. -->
+        <span class="flex h-10 w-10 shrink-0 items-center justify-center">
+          <img :src="'/img/logo-mark.svg'" alt="ElosuE!" class="h-8 w-8" />
         </span>
         <span v-if="!collapsed || mobileOpen" class="truncate text-lg font-semibold">
           <span style="color: #15803d">Elosu</span><span style="color: #dc2626">E!</span>
@@ -121,7 +124,7 @@ async function handleLogout() {
       </button>
     </div>
 
-    <nav class="flex-1 space-y-1 overflow-y-auto px-2" :class="isIconOnly ? 'md:px-1.5' : ''">
+    <nav class="flex-1 space-y-1 overflow-y-auto px-1.5">
       <SidebarNavItem
         v-for="item in visibleItems"
         :key="item.to"
@@ -134,7 +137,7 @@ async function handleLogout() {
       />
     </nav>
 
-    <div class="p-2" :class="isIconOnly ? 'md:px-1.5' : ''">
+    <div class="px-1.5 py-2">
       <SidebarUserCard :icon-only="isIconOnly" />
 
       <SidebarNavItem
@@ -147,7 +150,7 @@ async function handleLogout() {
       />
 
       <div class="mt-2 flex justify-center">
-        <GithubLink v-if="!isIconOnly" size="text-sm">{{ t("app.name") }} v{{ appConfig.version }}</GithubLink>
+        <GithubLink v-if="!isIconOnly" size="text-sm">{{ t("app.name") }} {{ appConfig.version }}</GithubLink>
         <GithubLink v-else size="text-base" />
       </div>
     </div>

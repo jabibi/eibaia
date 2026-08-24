@@ -7,6 +7,21 @@ Consulta también `README.rst` para la descripción general del stack, roles/per
 No añadas la línea `Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>` (ni ninguna
 variante de trailer de coautoría de Claude) en los mensajes de commit de este repo.
 
+## Python 3.12 movido a `/opt/firebase/.python-runtime/` (compartido entre proyectos)
+
+El intérprete que usa `functions/venv` ya no vive bajo `~/.local/share/uv/python/` (donde lo
+deja `uv` por defecto) sino en `/opt/firebase/.python-runtime/cpython-3.12.14-linux-x86_64-gnu/`,
+un nivel por encima de este repo, a propósito — para que otros proyectos futuros de
+`/opt/firebase` puedan reutilizar el mismo toolchain en vez de que cada uno se descargue el
+suyo. `run_dev.sh` sigue funcionando igual sin cambios porque solo depende de
+`functions/venv/bin/uvicorn`, que ya apunta ahí.
+
+Si creas otro proyecto en `/opt/firebase` que necesite Python 3.12: reutiliza directamente
+`/opt/firebase/.python-runtime/cpython-3.12.14-linux-x86_64-gnu/bin/python3.12` (p. ej.
+`.../python3.12 -m venv venv`), o exporta `UV_PYTHON_INSTALL_DIR=/opt/firebase/.python-runtime`
+antes de usar `uv` en ese proyecto para que instale/busque ahí en vez de en
+`~/.local/share/uv/python/`.
+
 ## Caja única y ribbon de entorno (`ribbon_label`)
 
 Se asume una única caja (`cashbox`) compartida por todos los usuarios y movimientos —
