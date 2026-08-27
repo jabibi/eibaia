@@ -40,8 +40,17 @@ function handleLogoClick() {
  * menu item itself just navigates. */
 function handleAsideBackgroundClick(event: MouseEvent) {
   if (mobileOpen.value) return;
-  const target = event.target as HTMLElement;
-  if (target.closest("a, button")) return;
+  /** Use composedPath() instead of event.target.closest(): the header
+   * toggle button collapses/expands synchronously on click, which can
+   * v-if-remove the very element (text label, collapse icon) that was
+   * event.target before this handler runs — closest() on a detached node
+   * always returns null, so it'd silently fall through to here and undo
+   * the toggle that just happened. composedPath() is captured at dispatch
+   * time and stays correct regardless of DOM mutations in between. */
+  const insideInteractive = event
+    .composedPath()
+    .some((node) => node instanceof HTMLElement && (node.tagName === "A" || node.tagName === "BUTTON"));
+  if (insideInteractive) return;
   if (collapsed.value) {
     sidebar.expand();
   } else {
